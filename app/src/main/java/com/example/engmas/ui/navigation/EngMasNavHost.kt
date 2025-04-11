@@ -1,30 +1,28 @@
 package com.example.engmas.ui.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.engmas.ui.screens.account.AccountDestination
-import com.example.engmas.ui.screens.account.AccountScreen
+import com.example.engmas.ui.screens.auth.login.LoginScreen
 import com.example.engmas.ui.screens.challenge.ChallengeDestination
 import com.example.engmas.ui.screens.challenge.ChallengeScreen
 import com.example.engmas.ui.screens.challenge.online.ChallengeOnlineDestination
-import com.example.engmas.ui.screens.challenge.online.Challenge_OnlineScreen
 import com.example.engmas.ui.screens.challenge.online.Challenge_OnlineUiState
 import com.example.engmas.ui.screens.challenge.online.Challenge_PlayOnlineScreen
 import com.example.engmas.ui.screens.challenge.online.ResultState
 import com.example.engmas.ui.screens.exam.ExamDestination
 import com.example.engmas.ui.screens.exam.ExamScreen
-import com.example.engmas.ui.screens.exam.Exam_SelectScreen
 import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
 import com.example.engmas.ui.screens.practice.PracticeScreen
+import androidx.navigation.navigation
+import com.example.engmas.ui.screens.auth.signup.SignUpScreen
 
 @Composable
 fun EngMasNavHost(
@@ -34,7 +32,12 @@ fun EngMasNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = HomeDestination.route,
+
+        // startDestination = HomeDestination.route,
+
+        // QQ:
+        startDestination = AccountDestination.route,
+
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
@@ -72,8 +75,23 @@ fun EngMasNavHost(
             )
         }
 
-        composable(route = AccountDestination.route) {
-            AccountScreen()
+        // QQ:
+        // Account (Login - SignUp)
+        navigation(
+            startDestination = "login",
+            route = AccountDestination.route
+        ) {
+            composable("login") {
+                LoginScreen(
+                    navController = navController // Truyền navController vào
+                )
+            }
+
+            composable("signup") {
+                SignUpScreen(
+                    navController = navController // Truyền navController vào
+                )
+            }
         }
     }
 }

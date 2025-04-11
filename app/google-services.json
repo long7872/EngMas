@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1050528789621",
+    "project_id": "engmas-cd351",
+    "storage_bucket": "engmas-cd351.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050528789621:android:fca6315120cb5d3094343c",
+        "android_client_info": {
+          "package_name": "com.example.engmas"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqYmZeBv2cGtOMeqhEaBf8dKZxvoj67ak"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
