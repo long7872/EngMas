@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "782248244457",
+    "project_id": "engmas-lqh",
+    "storage_bucket": "engmas-lqh.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782248244457:android:e796f4cb14c65ead9d2c78",
+        "android_client_info": {
+          "package_name": "com.example.engmas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "782248244457-qpmjd1ojhr0g2138glpasvj4i9js2fsd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.engmas",
+            "certificate_hash": "35d5db0e9981be58d58cd1d90df819bad51e2249"
+          }
+        },
+        {
+          "client_id": "782248244457-262vc68v086v5filc0coad575fo36tqs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMR0T3hi-GNHUfrSW0_lNR6rOtwzWuGks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "782248244457-262vc68v086v5filc0coad575fo36tqs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

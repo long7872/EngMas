@@ -16,6 +16,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
+import com.example.engmas.ui.navigation.NavigationDestination
 import com.example.engmas.ui.screens.challenge.online.ResultState
 import com.example.engmas.ui.utils.UnscrambleGameContent
 

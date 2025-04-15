@@ -39,9 +39,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.engmas.R
+import com.example.engmas.ui.navigation.NavigationDestination
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.BorderSide
 import com.example.engmas.ui.utils.customBorder
+
+object ChallengeScoreBoardDestination: NavigationDestination {
+    override val route = "challenge/scoreboard"
+    override val titleRes = R.string.tab_challenge_scoreboard
+}
 
 @Composable
 fun Challenge_ScoreBoardScreen(
