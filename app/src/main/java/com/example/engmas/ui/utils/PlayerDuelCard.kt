@@ -30,6 +30,8 @@ import com.example.engmas.ui.theme.KufamFont
 
 @Composable
 fun PlayerDuelCard(
+    thisUserQuestionCompleted: Int,
+    otherUserQuestionCompleted: Int,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -43,7 +45,7 @@ fun PlayerDuelCard(
             modifier = Modifier.fillMaxSize()
         ) {
             PlayerInfo(
-                questionCompleted = 10,
+                questionCompleted = thisUserQuestionCompleted,
                 modifier = Modifier.weight(0.33f)
             )
             Image(
@@ -56,7 +58,7 @@ fun PlayerDuelCard(
                     .weight(0.33f)
             )
             PlayerInfo(
-                questionCompleted = 8,
+                questionCompleted = otherUserQuestionCompleted,
                 modifier = Modifier.weight(0.33f)
             )
         }
@@ -99,5 +101,5 @@ private fun PlayerInfo(
 @Preview
 @Composable
 fun PlayerDuelCardPreview() {
-    PlayerDuelCard()
+//    PlayerDuelCard()
 }
