@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -99,8 +100,11 @@ fun EngMasApp(
     } ?: HomeDestination
 
     var selectedIndex by remember { mutableIntStateOf(0) }
-    val isChallengeSubRoute by remember {
-        mutableStateOf(currentEngMasScreen.route.startsWith(ChallengeDestination.route))
+    val isChallengeSubRoute by remember(currentEngMasScreen) {
+        derivedStateOf { currentEngMasScreen.route.startsWith(ChallengeDestination.route) }
+    }
+    val isAuthSubRoute by remember(currentEngMasScreen) {
+        derivedStateOf { currentEngMasScreen.route.startsWith("auth") }
     }
 
     when (currentEngMasScreen) {
@@ -113,9 +117,10 @@ fun EngMasApp(
     }
 
     Log.d(TAG, "$selectedIndex $currentEngMasScreen")
+    Log.d(TAG, "isAuthSubRoute: $isAuthSubRoute")
     Scaffold(
         topBar = { EngMasTopAppBar(
-            selectedIndex = selectedIndex,
+            isAuthScreen = isAuthSubRoute,
             canNavigateBack = selectedIndex == 0,
             navigateUp = {
                 if (isChallengeSubRoute) {
@@ -142,12 +147,12 @@ fun EngMasApp(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EngMasTopAppBar(
-    selectedIndex: Int,
+    isAuthScreen: Boolean,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (selectedIndex != 0) {
+    if (!isAuthScreen) {
         TopAppBar(
             navigationIcon = {
                 if (canNavigateBack) {

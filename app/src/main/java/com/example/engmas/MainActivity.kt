@@ -14,10 +14,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.engmas.ui.EngMasApp
 import com.example.engmas.ui.screens.challenge.ChallengeScreen
 import com.example.engmas.ui.theme.EngMasTheme
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         enableEdgeToEdge()
         setContent {
             EngMasTheme {

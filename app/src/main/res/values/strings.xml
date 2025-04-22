@@ -6,7 +6,7 @@
 <!--login/signup-->
     <string name="tab_auth_login">Login</string>
     <string name="tab_auth_signup">Sign Up</string>
-    <string name="placeholder_name_field">Khanh Long</string>
+    <string name="placeholder_name_field">username</string>
     <string name="placeholder_email_field">"example@gmail.com"</string>
     <string name="placeholder_password_field">*******************</string>
     <string name="seek_icon">Seek</string>

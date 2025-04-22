@@ -26,7 +26,7 @@ class LoginViewModel : ViewModel() {
 
     init {
         if (auth.currentUser != null) {
-//            loginState.value = LoginState.Success
+            loginState.value = LoginState.Success
         }
     }
 
