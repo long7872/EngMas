@@ -30,6 +30,11 @@
     <string name="tomorrow_streak">Tomorrow Streak</string>
 
 <!--practice-->
+    <string name="course1">Course 1</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="moreoptions">More Options</string>
+    <string name="foodicon">Food Icon</string>
+    <string name="food">Food</string>
 
 <!--exam-->
     <string name="toeic_logo">TOEIC Logo</string>

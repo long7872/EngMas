@@ -1,4 +1,4 @@
-package com.example.engmas.ui.screens.practice.vocabulary
+package com.example.engmas.ui.screens.practice.courses
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -43,8 +43,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.engmas.R
-import com.example.engmas.ui.screens.practice.vocabulary.fakedata.Items
-import com.example.engmas.ui.screens.practice.vocabulary.fakedata.VocabularyItem
+import com.example.engmas.ui.screens.practice.courses.fakedata.Items
+import com.example.engmas.ui.screens.practice.courses.fakedata.VocabularyItem
 import com.example.engmas.ui.theme.KufamFont
 
 @Composable
@@ -68,7 +68,7 @@ fun Content(
             TitleRow(
                 containerColor = Color(0xFFE3F2FD),
                 itemColor = Color(0xFF757575),
-                text = R.string.vocabulary,
+                text = R.string.course1,
                 onClick = {  }
             )
 

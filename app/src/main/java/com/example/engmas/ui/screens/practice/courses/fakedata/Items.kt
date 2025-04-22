@@ -1,4 +1,4 @@
-package com.example.engmas.ui.screens.practice.vocabulary.fakedata
+package com.example.engmas.ui.screens.practice.courses.fakedata
 
 import androidx.compose.ui.graphics.Color
 import com.example.engmas.R
