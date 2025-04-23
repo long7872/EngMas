@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         FirebaseApp.initializeApp(this)
 
         // Gọi upload dữ liệu
-        // UserDataUploader().uploadData()
+        UserDataUploader().uploadData()
 
         enableEdgeToEdge()
         setContent {

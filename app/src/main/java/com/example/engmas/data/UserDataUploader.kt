@@ -28,7 +28,7 @@ class UserDataUploader {
 
     // Hàm upload dữ liệu người dùng và streak vào Firebase
     fun uploadData() {
-        for (i in 1..10) {  // Tạo 10 người dùng giả
+        for (i in 1..11) {  // Tạo 10 người dùng giả
             val userName = "UserGPT${Random.nextInt(100, 999)}"  // Tạo tên người dùng ngẫu nhiên
             val score = Random.nextInt(100, 999)  // Tạo điểm số ngẫu nhiên
 

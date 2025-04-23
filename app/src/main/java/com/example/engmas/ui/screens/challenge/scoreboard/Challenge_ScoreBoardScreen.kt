@@ -65,7 +65,7 @@ fun Challenge_ScoreBoardScreen(
 //    WinnerFrame(
 //        avatarRes = R.drawable.avatar1_test,
 //        frameSize = dimensionResource(R.dimen.avatar_frame_size),
-//        modifier = Modifier.fillMaxSize()
+//        modifier = Modifierf.fillMaxSize()
 //    )
 
     // Lấy dữ liệu người chơi từ ViewModel
@@ -229,9 +229,10 @@ private fun ScoreTable(
 ) {
     // Q:
     // Giả sử currentUserId đã có
-    val currentUsername = "UserGPT172"
+    val currentUsername = "UserGPT712"
     var currentUser: UserScore? by remember { mutableStateOf(UserScore()) }
     var isOutBoard by remember { mutableStateOf(false) }
+
     LaunchedEffect(players) {
         if (players.isNotEmpty()) {
             currentUser = viewModel.getUserByName(currentUsername)
