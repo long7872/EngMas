@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -77,4 +79,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(platform(libs.firebase.bom)) // bom giúp đồng bộ version các thư viện firebase
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore) // Firestore (NoSQL mạnh mẽ, phổ biến)
+    implementation(libs.firebase.database) // Realtime Database (đơn giản, nhẹ hơn Firestore)
 }
