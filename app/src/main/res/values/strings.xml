@@ -3,7 +3,7 @@
 
     <string name="chat">Chat</string>
 
-<!--login/signup-->
+    <!--login/signup-->
     <string name="tab_auth_login">Login</string>
     <string name="tab_auth_signup">Sign Up</string>
     <string name="placeholder_name_field">username</string>
@@ -12,14 +12,14 @@
     <string name="seek_icon">Seek</string>
     <string name="hide_icon">Hide</string>
 
-<!--nav-->
+    <!--nav-->
     <string name="tab_home">Home</string>
     <string name="tab_practice">Practice</string>
     <string name="tab_exam">Exam</string>
     <string name="tab_challenge">Challenge</string>
     <string name="tab_account">Account</string>
 
-<!--home-->
+    <!--home-->
     <string name="search">Search Icon</string>
     <string name="search_placeholder">Search your words today…</string>
     <string name="streak_title">Learning streak</string>
@@ -29,9 +29,14 @@
     <string name="today_streak">Today Streak</string>
     <string name="tomorrow_streak">Tomorrow Streak</string>
 
-<!--practice-->
+    <!--practice-->
+    <string name="course1">Course 1</string>
+    <string name="vocabulary">Vocabulary</string>
+    <string name="moreoptions">More Options</string>
+    <string name="foodicon">Food Icon</string>
+    <string name="food">Food</string>
 
-<!--exam-->
+    <!--exam-->
     <string name="toeic_logo">TOEIC Logo</string>
     <string name="test_title">Test %1$d - ETS %2$d</string>
     <string name="completed_count">%1$d completed</string>
@@ -42,7 +47,7 @@
     <string name="listening_part">Listening</string>
     <string name="reading_part">Reading</string>
 
-<!--challenge-->
+    <!--challenge-->
     <string name="word_scramble">Word Scramble</string>
     <string name="avatar">Avatar</string>
     <string name="vs_logo">VS Logo</string>
@@ -59,7 +64,7 @@
     <string name="tab_challenge_offline">Play Offline</string>
     <string name="tab_challenge_scoreboard">Score Board</string>
 
-<!--account-->
+    <!--account-->
     <string name="user_tag">\@%1$s</string>
     <string name="user_email">Email: %1$s</string>
     <string name="user_id">User id: %1$s</string>

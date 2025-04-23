@@ -15,6 +15,7 @@ import com.example.engmas.data.UserDataUploader
 import com.example.engmas.ui.EngMasApp
 import com.example.engmas.ui.screens.challenge.ChallengeScreen
 import com.example.engmas.ui.screens.challenge.scoreboard.Challenge_ScoreBoardScreen
+import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.theme.EngMasTheme
 import com.google.firebase.FirebaseApp
 
@@ -26,8 +27,7 @@ class MainActivity : ComponentActivity() {
         FirebaseApp.initializeApp(this)
 
         // Gọi upload dữ liệu
-        UserDataUploader().uploadData()
-        FirebaseApp.initializeApp(this)
+        // UserDataUploader().uploadData()
 
         enableEdgeToEdge()
         setContent {

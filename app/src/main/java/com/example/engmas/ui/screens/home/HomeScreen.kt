@@ -1,6 +1,7 @@
 package com.example.engmas.ui.screens.home
 
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
+import com.example.engmas.data.Today
 import com.example.engmas.ui.navigation.NavigationDestination
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.CustomSearchBar
@@ -56,13 +59,35 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+//    val userId = "-00YTYZBzmyAU5cvRHY"
+
+    val streak by viewModel.streak.collectAsState()
+
+
+    // Gọi hàm để lấy UID đầu tiên và tải streak khi Composable được tạo
+    LaunchedEffect(Unit) {
+        viewModel.fetchFirstUserIdAndLoadStreak()
+    }
+
+
+    // Log dữ liệu streak khi nó thay đổi
+    LaunchedEffect(streak) {
+        streak?.let {
+            Log.d("HomeScreen", "Dữ liệu streak: ${it.completedDays}")
+        } ?: Log.e("HomeScreen", "Dữ liệu streak không có!")
+    }
+
     val query = uiState.query
     var isActive by rememberSaveable { mutableStateOf(false) }
     val searchResult = uiState.searchResults
+
     Column(
         modifier = modifier.fillMaxSize()
 
     ) {
+
+
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -83,33 +108,39 @@ fun HomeScreen(
             )
         }
         LearningStreakCard(
+            completedDays = streak?.completedDays ?: listOf(),
+            today = streak?.today ?: Today("", false),
+            highestStreak = streak?.highestStreak ?: 0,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(dimensionResource(R.dimen.padding_medium))
+                .padding(dimensionResource(R.dimen.padding_medium)),
         )
     }
 }
 
 @Composable
 private fun LearningStreakCard(
+    completedDays: List<String>,
+    today: Today,
+    highestStreak: Int,
     modifier: Modifier = Modifier
 ) {
     val days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-    val completedDays = mutableListOf("Tue", "Wed")
+    // val completedDays = mutableListOf("Tue", "Wed")
 
-    val today = Pair("Thu", false)
     val lastCompletedIndex = completedDays.lastOrNull()?.let { days.indexOf(it) } ?: -1
-    val todayIndex = days.indexOf(today.first)
+    val todayIndex = days.indexOf(today.day)
 
     if (lastCompletedIndex != -1 && todayIndex - lastCompletedIndex > 1) {
-        completedDays.clear()
+//        completedDays.clear()
     }
 
-    if (today.second && !completedDays.contains(today.first)) {
-        completedDays.add(today.first)
+    if (today.isCompleted && !completedDays.contains(today.day)) {
+//        completedDays.add(today.first)
     }
 
-    val isStreakBroken = !today.second
+    val isStreakBroken = !today.isCompleted
+    Log.d(null, "$isStreakBroken")
 
 
     Card(
@@ -123,6 +154,7 @@ private fun LearningStreakCard(
         ) {
             TitleStreakCard(
                 isStreakBroken = isStreakBroken,
+                highestStreak = highestStreak,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_large))
             )
@@ -141,19 +173,22 @@ private fun LearningStreakCard(
     }
 }
 
+
+
 @Composable
 private fun TitleStreakCard(
+    highestStreak: Int,
     isStreakBroken: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val imageBitmap = remember {
+    val imageBitmap =
         BitmapFactory.decodeResource(context.resources,
             if (isStreakBroken) R.drawable.streak_inactive
             else R.drawable.streak_active
-        )
-            .asImageBitmap()
-    }
+        ).asImageBitmap()
+
+    Log.d(null, "$isStreakBroken")
 
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -186,7 +221,8 @@ private fun TitleStreakCard(
                 color = Color(0xFF757575)
             )
             Text(
-                text = "6",
+                // HD
+                text = "$highestStreak",
                 fontFamily = KufamFont,
                 fontWeight = FontWeight.Bold,
                 fontSize = 64.sp,

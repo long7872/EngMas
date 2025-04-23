@@ -121,11 +121,11 @@ fun Challenge_MatchScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun Challenge_MatchScreenPreview() {
-    Challenge_MatchScreen(
-        Challenge_OnlineUiState(
-        ),
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun Challenge_MatchScreenPreview() {
+//    Challenge_MatchScreen(
+//        Challenge_OnlineUiState(
+//        ),
+//    )
+//}

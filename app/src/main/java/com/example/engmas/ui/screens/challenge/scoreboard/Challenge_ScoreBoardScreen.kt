@@ -41,11 +41,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.engmas.R
-<<<<<<< HEAD
-import com.example.engmas.data.model.UserScore
-=======
-import com.example.engmas.ui.navigation.NavigationDestination
->>>>>>> 2ec6db11067b78ba01b82caffee9a259250431c6
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.BorderSide
 import com.example.engmas.ui.utils.customBorder
@@ -53,6 +48,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.example.engmas.data.model.UserScore
+import com.example.engmas.ui.navigation.NavigationDestination
 
 
 object ChallengeScoreBoardDestination: NavigationDestination {
@@ -232,7 +229,7 @@ private fun ScoreTable(
 ) {
     // Q:
     // Giả sử currentUserId đã có
-    val currentUsername = "UserGPT298"
+    val currentUsername = "UserGPT172"
     var currentUser: UserScore? by remember { mutableStateOf(UserScore()) }
     var isOutBoard by remember { mutableStateOf(false) }
     LaunchedEffect(players) {

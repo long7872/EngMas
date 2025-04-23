@@ -5,22 +5,18 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-<<<<<<< HEAD
 
     id("com.google.gms.google-services")
-=======
-    alias(libs.plugins.google.services)
->>>>>>> 2ec6db11067b78ba01b82caffee9a259250431c6
 }
 
 android {
     namespace = "com.example.engmas"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.engmas"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -70,14 +66,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
     implementation(libs.room.runtime)
-    implementation(libs.firebase.common.ktx)
-    implementation(libs.firebase.firestore.ktx)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.androidx.credentials)
-    implementation(libs.androidx.credentials.play.services.auth)
-    implementation(libs.googleid)
-    implementation(libs.firebase.analytics)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     implementation(libs.androidx.datastore.preferences)
