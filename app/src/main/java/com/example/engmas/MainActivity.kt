@@ -21,17 +21,14 @@ import com.google.firebase.FirebaseApp
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-<<<<<<< HEAD
 
         // Khởi tạo Firebase nếu chưa được khởi tạo
         FirebaseApp.initializeApp(this)
 
         // Gọi upload dữ liệu
         UserDataUploader().uploadData()
-
-=======
         FirebaseApp.initializeApp(this)
->>>>>>> 2ec6db11067b78ba01b82caffee9a259250431c6
+
         enableEdgeToEdge()
         setContent {
             EngMasTheme {
