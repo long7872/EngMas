@@ -41,7 +41,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.engmas.R
+<<<<<<< HEAD
 import com.example.engmas.data.model.UserScore
+=======
+import com.example.engmas.ui.navigation.NavigationDestination
+>>>>>>> 2ec6db11067b78ba01b82caffee9a259250431c6
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.BorderSide
 import com.example.engmas.ui.utils.customBorder
@@ -50,6 +54,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
+
+object ChallengeScoreBoardDestination: NavigationDestination {
+    override val route = "challenge/scoreboard"
+    override val titleRes = R.string.tab_challenge_scoreboard
+}
 
 @Composable
 fun Challenge_ScoreBoardScreen(

@@ -46,6 +46,8 @@ object ChallengeDestination: NavigationDestination {
 @Composable
 fun ChallengeScreen(
     onOnlineButtonClicked: () -> Unit,
+    onOfflineButtonClicked: () -> Unit,
+    onScoreBoardButtonClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -97,7 +99,7 @@ fun ChallengeScreen(
                             color = Color(0xFFE82E2E),
                             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_larger))
                                 .weight(0.35f),
-                            onClick = {}
+                            onClick = onOfflineButtonClicked
                         )
                         Spacer(Modifier.weight(0.125f))
                         CustomButton(
@@ -106,7 +108,7 @@ fun ChallengeScreen(
                             color = Color(0xFFFFB700),
                             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_larger))
                                 .weight(0.35f),
-                            onClick = {}
+                            onClick = onScoreBoardButtonClicked
                         )
                         Spacer(Modifier.weight(0.15f))
                     }
@@ -120,6 +122,8 @@ fun ChallengeScreen(
 @Composable
 private fun ChallengeScreenPreview() {
     ChallengeScreen(
-        onOnlineButtonClicked = {}
+        onOnlineButtonClicked = {},
+        onOfflineButtonClicked = {},
+        onScoreBoardButtonClicked = {}
     )
 }

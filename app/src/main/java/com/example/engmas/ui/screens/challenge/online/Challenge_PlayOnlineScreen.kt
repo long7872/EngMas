@@ -85,23 +85,36 @@ fun Challenge_PlayOnlineScreen(
                 .clip(MaterialTheme.shapes.medium)
         ) {
             PlayerDuelCard(
+                thisUserQuestionCompleted = uiState.thisUserCurrentQuestion,
+                otherUserQuestionCompleted = uiState.otherUserCurrentQuestion,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = dimensionResource(R.dimen.padding_small)),
             )
         }
 
-        UnscrambleGameContent(
-            unscrambleWord = "Comfortable",
-            resultState = uiState.resultState,
-            onSkipButton = onSkipButton,
-            onSubmitButton = onSubmitButton,
-            modifier = Modifier.fillMaxSize()
-        )
+        if (uiState.unscrambleList.isNotEmpty()) {
+            UnscrambleGameContent(
+                unscrambleWord = uiState.unscrambleList[uiState.thisUserCurrentQuestion],
+                resultState = uiState.resultState,
+                onSkipButton = onSkipButton,
+                onSubmitButton = onSubmitButton,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
     }
 
     if (uiState.resultState != ResultState.None) {
         WinnerOverlay(
+            thisUserQuestionCompleted = uiState.thisUserCurrentQuestion,
+            otherUserQuestionCompleted = uiState.otherUserCurrentQuestion,
             onExit = onExitButton,
             onPlayAgain = onPlayAgainButton,
             isWinner = uiState.resultState == ResultState.Win,
@@ -112,6 +125,8 @@ fun Challenge_PlayOnlineScreen(
 
 @Composable
 fun WinnerOverlay(
+    thisUserQuestionCompleted: Int,
+    otherUserQuestionCompleted: Int,
     onExit: () -> Unit,
     onPlayAgain: () -> Unit,
     isWinner: Boolean,
@@ -144,6 +159,8 @@ fun WinnerOverlay(
                         .clip(MaterialTheme.shapes.medium)
                 ) {
                     PlayerDuelCard(
+                        thisUserQuestionCompleted = thisUserQuestionCompleted,
+                        otherUserQuestionCompleted = otherUserQuestionCompleted,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(bottom = dimensionResource(R.dimen.padding_small)),

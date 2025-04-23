@@ -1,5 +1,6 @@
 package com.example.engmas.ui
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,17 +60,23 @@ import com.example.engmas.R
 import com.example.engmas.ui.navigation.EngMasNavHost
 import com.example.engmas.ui.navigation.NavigationDestination
 import com.example.engmas.ui.screens.account.AccountDestination
+import com.example.engmas.ui.screens.auth.login.AuthLoginDestination
+import com.example.engmas.ui.screens.auth.signup.AuthSignUpDestination
 import com.example.engmas.ui.screens.challenge.ChallengeDestination
+import com.example.engmas.ui.screens.challenge.offline.ChallengeOfflineDestination
 import com.example.engmas.ui.screens.challenge.online.ChallengeOnlineDestination
 import com.example.engmas.ui.screens.challenge.online.Challenge_OnlineUiState
 import com.example.engmas.ui.screens.challenge.online.Challenge_PlayOnlineScreen
 import com.example.engmas.ui.screens.challenge.online.ResultState
+import com.example.engmas.ui.screens.challenge.scoreboard.ChallengeScoreBoardDestination
 import com.example.engmas.ui.screens.exam.ExamDestination
 import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
 import com.example.engmas.ui.theme.InterFont
 import com.example.engmas.ui.theme.KufamFont
+
+const val TAG = "MainActivity"
 
 @Composable
 fun EngMasApp(
@@ -80,7 +88,11 @@ fun EngMasApp(
         ExamDestination,
         ChallengeDestination,
         ChallengeOnlineDestination,
+        ChallengeOfflineDestination,
+        ChallengeScoreBoardDestination,
         AccountDestination,
+        AuthLoginDestination,
+        AuthSignUpDestination
     )
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentEngMasScreen = allDestinations.find {
@@ -88,8 +100,11 @@ fun EngMasApp(
     } ?: HomeDestination
 
     var selectedIndex by remember { mutableIntStateOf(0) }
-    val isChallengeSubRoute by remember {
-        mutableStateOf(currentEngMasScreen.route.startsWith(ChallengeDestination.route))
+    val isChallengeSubRoute by remember(currentEngMasScreen) {
+        derivedStateOf { currentEngMasScreen.route.startsWith(ChallengeDestination.route) }
+    }
+    val isAuthSubRoute by remember(currentEngMasScreen) {
+        derivedStateOf { currentEngMasScreen.route.startsWith("auth") }
     }
 
     when (currentEngMasScreen) {
@@ -101,8 +116,11 @@ fun EngMasApp(
         else -> selectedIndex = 0
     }
 
+    Log.d(TAG, "$selectedIndex $currentEngMasScreen")
+    Log.d(TAG, "isAuthSubRoute: $isAuthSubRoute")
     Scaffold(
         topBar = { EngMasTopAppBar(
+            isAuthScreen = isAuthSubRoute,
             canNavigateBack = selectedIndex == 0,
             navigateUp = {
                 if (isChallengeSubRoute) {
@@ -113,7 +131,7 @@ fun EngMasApp(
             }
         ) },
         bottomBar = { EngMasBottomNavigationBar(
-            currentDestination = currentEngMasScreen,
+            selectedIndex = selectedIndex,
             navController = navController
         ) },
         containerColor = Color(0xFFF5F5F5)
@@ -129,64 +147,67 @@ fun EngMasApp(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EngMasTopAppBar(
+    isAuthScreen: Boolean,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TopAppBar(
-        navigationIcon = {
-            if (canNavigateBack) {
+    if (!isAuthScreen) {
+        TopAppBar(
+            navigationIcon = {
+                if (canNavigateBack) {
+                    IconButton(
+                        onClick = navigateUp,
+                        modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium))
+                            .size(dimensionResource(R.dimen.icon_size)
+                                    + dimensionResource(R.dimen.padding_small))
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.back_icon),
+                            tint = Color(0xFF757575),
+                            contentDescription = stringResource(R.string.chat),
+                            modifier = Modifier.size(dimensionResource(R.dimen.icon_size))
+                        )
+                    }
+                }
+            },
+            title = {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = Color(0xFF2D5FA7))) { append("Eng") }
+                        withStyle(style = SpanStyle(color = Color(0xFF757575))) { append("Mas") }
+                    },
+                    fontFamily = KufamFont,
+                    fontWeight = FontWeight.Black,
+                    fontSize = 40.sp,
+                    textAlign = if (canNavigateBack) TextAlign.Center else TextAlign.Start,
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(top = dimensionResource(R.dimen.padding_small))
+                )
+            },
+            actions = {
                 IconButton(
-                    onClick = navigateUp,
-                    modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium))
+                    onClick = {},
+                    modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_medium))
                         .size(dimensionResource(R.dimen.icon_size)
                                 + dimensionResource(R.dimen.padding_small))
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.back_icon),
-                        tint = Color(0xFF757575),
+                        painter = painterResource(R.drawable.chat_icon),
+                        tint = Color(0xFF2B4EA2),
                         contentDescription = stringResource(R.string.chat),
                         modifier = Modifier.size(dimensionResource(R.dimen.icon_size))
                     )
                 }
-            }
-        },
-        title = {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = Color(0xFF2D5FA7))) { append("Eng") }
-                    withStyle(style = SpanStyle(color = Color(0xFF757575))) { append("Mas") }
-                },
-                fontFamily = KufamFont,
-                fontWeight = FontWeight.Black,
-                fontSize = 40.sp,
-                textAlign = if (canNavigateBack) TextAlign.Center else TextAlign.Start,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = dimensionResource(R.dimen.padding_small))
-            )
-        },
-        actions = {
-            IconButton(
-                onClick = {},
-                modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_medium))
-                    .size(dimensionResource(R.dimen.icon_size)
-                            + dimensionResource(R.dimen.padding_small))
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.chat_icon),
-                    tint = Color(0xFF2B4EA2),
-                    contentDescription = stringResource(R.string.chat),
-                    modifier = Modifier.size(dimensionResource(R.dimen.icon_size))
-                )
-            }
-        },
-        modifier = modifier
-    )
+            },
+            modifier = modifier
+        )
+    }
 }
 
 @Composable
 fun EngMasBottomNavigationBar(
-    currentDestination: NavigationDestination,
+    selectedIndex: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -217,16 +238,6 @@ fun EngMasBottomNavigationBar(
             text = stringResource(R.string.tab_account)
         )
     )
-    var selectedIndex by remember { mutableIntStateOf(0) }
-
-    selectedIndex = when (currentDestination) {
-        is HomeDestination -> 1
-        is PracticeDestination -> 2
-        is ExamDestination -> 3
-        is ChallengeDestination -> 4
-        is AccountDestination -> 5
-        else -> 0
-    }
 
     if (selectedIndex != 0) {
         NavigationBar(

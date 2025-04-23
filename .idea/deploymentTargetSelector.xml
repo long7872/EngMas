@@ -13,7 +13,14 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
+<<<<<<< HEAD
       <SelectionState runConfigName="MainActivity">
+=======
+      <SelectionState runConfigName="SignUpScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="CSearchBarPreview">
+>>>>>>> 2ec6db11067b78ba01b82caffee9a259250431c6
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

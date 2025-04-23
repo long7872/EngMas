@@ -2,12 +2,32 @@
     <string name="app_name">EngMas</string>
 
     <string name="chat">Chat</string>
-    
+
+<!--login/signup-->
+    <string name="tab_auth_login">Login</string>
+    <string name="tab_auth_signup">Sign Up</string>
+    <string name="placeholder_name_field">username</string>
+    <string name="placeholder_email_field">"example@gmail.com"</string>
+    <string name="placeholder_password_field">*******************</string>
+    <string name="seek_icon">Seek</string>
+    <string name="hide_icon">Hide</string>
+
+<!--nav-->
     <string name="tab_home">Home</string>
     <string name="tab_practice">Practice</string>
     <string name="tab_exam">Exam</string>
     <string name="tab_challenge">Challenge</string>
     <string name="tab_account">Account</string>
+
+<!--home-->
+    <string name="search">Search Icon</string>
+    <string name="search_placeholder">Search your words today…</string>
+    <string name="streak_title">Learning streak</string>
+    <string name="streak_guide">Learn 10 minutes everyday\n
+        to gain your streak!</string>
+    <string name="past_streak">Past Streak</string>
+    <string name="today_streak">Today Streak</string>
+    <string name="tomorrow_streak">Tomorrow Streak</string>
 
 <!--practice-->
 
@@ -36,4 +56,25 @@
     <string name="answer_wrong">Wrong</string>
     <string name="online_win_result">Winner Trophy</string>
     <string name="online_lose_result">Loser Trophy</string>
+    <string name="tab_challenge_offline">Play Offline</string>
+    <string name="tab_challenge_scoreboard">Score Board</string>
+
+<!--account-->
+    <string name="user_tag">\@%1$s</string>
+    <string name="user_email">Email: %1$s</string>
+    <string name="user_id">User id: %1$s</string>
+    <string name="general_option">General</string>
+    <string name="notification_icon">Notification Icon</string>
+    <string name="notification_text">Notification settings</string>
+    <string name="info_icon">Personal Icon</string>
+    <string name="info_text">Personal information</string>
+    <string name="achievement_icon">Achievement Icon</string>
+    <string name="achievement_text">Achievement</string>
+    <string name="friend_icon">Friend Icon</string>
+    <string name="friend_text">Friends</string>
+    <string name="danger_option">Danger Zone</string>
+    <string name="sign_out_icon">Sign out Icon</string>
+    <string name="sign_out_text">Sign out</string>
+    <string name="delete_icon">Delete Icon</string>
+    <string name="delete_text">Delete account</string>
 </resources>

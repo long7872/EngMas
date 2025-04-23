@@ -11,6 +11,14 @@
     <dimen name="icon_size">40dp</dimen>
     <dimen name="nav_icon_size">32dp</dimen>
 
+    <dimen name="search_icon_size">32dp</dimen>
+    <dimen name="streak_frame_size">144dp</dimen>
+    <dimen name="streak_icon_size">32dp</dimen>
+
+    <dimen name="text_field_height">52dp</dimen>
+    <dimen name="hide_seek_icon_size">26dp</dimen>
+    <dimen name="social_icon_size">40dp</dimen>
+
     <dimen name="checkbox_button_size">22dp</dimen>
     <dimen name="button_size">72dp</dimen>
     <dimen name="start_icon_size">16dp</dimen>
@@ -26,4 +34,11 @@
     <dimen name="frame_winner_vertical_padding">40dp</dimen>
     <dimen name="answer_state_icon">32dp</dimen>
     <dimen name="result_trophy_size">256dp</dimen>
+
+    <dimen name="bio_card_size">156dp</dimen>
+    <dimen name="user_bio_avatar">112dp</dimen>
+    <dimen name="option_row_size">72dp</dimen>
+    <dimen name="option_icon_size">26dp</dimen>
+    <dimen name="goto_icon_size">8dp</dimen>
+    <dimen name="option_icon_text_gap">39dp</dimen>
 </resources>
