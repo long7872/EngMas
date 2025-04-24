@@ -19,6 +19,8 @@ object ChallengeOnlineDestination: NavigationDestination {
 @Composable
 fun Challenge_OnlineScreen(
     viewModel: Challenge_OnlineViewModel = viewModel(),
+    exitToChallenge: () -> Unit,
+    exitToOnline: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val auth = FirebaseAuth.getInstance()
@@ -29,7 +31,17 @@ fun Challenge_OnlineScreen(
         viewModel.startMatching(userId)
     }
     Challenge_MatchScreen(
-        onSubmitButton = { viewModel.nextQuestion() },
+        onFinishTimeBar = { viewModel.nextQuestion() },
+        onSkipButton = { viewModel.nextQuestion() },
+        onSubmitButton = { viewModel.nextQuestion(it) },
+        onExitButton = {
+            viewModel.doneChallenge()
+            exitToChallenge()
+        },
+        onPlayAgainButton = {
+            viewModel.doneChallenge()
+            exitToOnline()
+        },
         uiState = uiState
     )
 }
@@ -37,5 +49,5 @@ fun Challenge_OnlineScreen(
 @Preview(showBackground = true)
 @Composable
 private fun Challenge_OnlineScreenPreview() {
-    Challenge_OnlineScreen()
+//    Challenge_OnlineScreen()
 }

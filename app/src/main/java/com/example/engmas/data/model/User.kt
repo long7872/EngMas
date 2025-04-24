@@ -30,5 +30,5 @@ enum class UserStatus {
     Online,
     Matching,
     Matched,
-    Played
+    Play
 }

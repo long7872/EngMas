@@ -82,7 +82,16 @@ fun EngMasNavHost(
         }
         // sub-route: challenge/online
         composable(route = ChallengeOnlineDestination.route) {
-            Challenge_OnlineScreen()
+            Challenge_OnlineScreen(
+                exitToChallenge = { navController.navigate(ChallengeDestination.route) },
+                exitToOnline = {
+                    navController.navigate(ChallengeOnlineDestination.route) {
+                        popUpTo(ChallengeOnlineDestination.route) {
+                            inclusive = false
+                        }
+                    }
+                }
+            )
 //            Challenge_PlayOnlineScreen(
 //                uiState = Challenge_OnlineUiState(
 //                    resultState = ResultState.Win

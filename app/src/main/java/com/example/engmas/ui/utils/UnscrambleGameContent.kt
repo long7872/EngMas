@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,11 +32,12 @@ import com.example.engmas.ui.theme.KufamFont
 fun UnscrambleGameContent(
     unscrambleWord: String,
     resultState: ResultState,
+    onFinishTimeBar: () -> Unit,
     onSkipButton: () -> Unit,
-    onSubmitButton: () -> Unit,
+    onSubmitButton: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
+    var answer by remember { mutableStateOf("") }
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -44,7 +46,7 @@ fun UnscrambleGameContent(
             .imePadding()
     ) {
         TimeBar(
-            onFinish = {  },
+            onFinish = onFinishTimeBar,
             durationMillis = 30_000,
             modifier = Modifier.fillMaxWidth()
                 .padding(top = dimensionResource(R.dimen.button_horizontal_padding))
@@ -73,8 +75,8 @@ fun UnscrambleGameContent(
                     .padding(top = dimensionResource(R.dimen.button_horizontal_padding))
             )
             AnswerInputField(
-                value = "",
-                onValueChange =  {  },
+                value = answer,
+                onValueChange =  { answer = it },
                 resultState = resultState,
                 modifier = Modifier
                     .padding(top = dimensionResource(R.dimen.text_field_vertical_padding))
@@ -102,7 +104,7 @@ fun UnscrambleGameContent(
                 text = "Submit",
                 fontSize = 14.sp,
                 color = Color(0xFF09DD30),
-                onClick = onSubmitButton,
+                onClick = { onSubmitButton(answer) },
                 modifier = Modifier.weight(0.5f)
                     .padding(
                         start = dimensionResource(R.dimen.button_horizontal_padding) / 2,

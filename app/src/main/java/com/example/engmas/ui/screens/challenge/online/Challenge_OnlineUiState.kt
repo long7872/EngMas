@@ -9,7 +9,10 @@ data class Challenge_OnlineUiState(
     val originalList: List<String> = emptyList(),
     val unscrambleList: List<String> = emptyList(),
     val thisUserCurrentQuestion: Int = 0,
-    val otherUserCurrentQuestion: Int = 0
+    val otherUserCurrentQuestion: Int = 0,
+    val thisUserScore: Int = 0,
+    val otherUserScore: Int = 0,
+    val isGameStarted: Boolean = false,
 )
 
 enum class MatchingState {

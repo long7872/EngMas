@@ -63,8 +63,9 @@ import com.example.engmas.ui.utils.UnscrambleGameContent
 fun Challenge_PlayOnlineScreen(
     uiState: Challenge_OnlineUiState,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    onFinishTimeBar: () -> Unit,
     onSkipButton: () -> Unit,
-    onSubmitButton: () -> Unit,
+    onSubmitButton: (String) -> Unit,
     onExitButton: () -> Unit,
     onPlayAgainButton: () -> Unit,
     modifier: Modifier = Modifier
@@ -85,8 +86,8 @@ fun Challenge_PlayOnlineScreen(
                 .clip(MaterialTheme.shapes.medium)
         ) {
             PlayerDuelCard(
-                thisUserQuestionCompleted = uiState.thisUserCurrentQuestion,
-                otherUserQuestionCompleted = uiState.otherUserCurrentQuestion,
+                thisUserQuestionCompleted = uiState.thisUserCurrentQuestion + 1,
+                otherUserQuestionCompleted = uiState.otherUserCurrentQuestion + 1,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = dimensionResource(R.dimen.padding_small)),
@@ -94,13 +95,30 @@ fun Challenge_PlayOnlineScreen(
         }
 
         if (uiState.unscrambleList.isNotEmpty()) {
-            UnscrambleGameContent(
-                unscrambleWord = uiState.unscrambleList[uiState.thisUserCurrentQuestion],
-                resultState = uiState.resultState,
-                onSkipButton = onSkipButton,
-                onSubmitButton = onSubmitButton,
-                modifier = Modifier.fillMaxSize()
-            )
+            if ((uiState.thisUserCurrentQuestion < uiState.unscrambleList.size-1)) {
+                UnscrambleGameContent(
+                    unscrambleWord = uiState.unscrambleList[uiState.thisUserCurrentQuestion],
+                    resultState = uiState.resultState,
+                    onFinishTimeBar = onFinishTimeBar,
+                    onSkipButton = onSkipButton,
+                    onSubmitButton = onSubmitButton,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Waiting for your opponent...",
+                        fontFamily = KufamFont,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 30.sp,
+                        color = Color(0xFF757575),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         } else {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -159,8 +177,8 @@ fun WinnerOverlay(
                         .clip(MaterialTheme.shapes.medium)
                 ) {
                     PlayerDuelCard(
-                        thisUserQuestionCompleted = thisUserQuestionCompleted,
-                        otherUserQuestionCompleted = otherUserQuestionCompleted,
+                        thisUserQuestionCompleted = thisUserQuestionCompleted + 1,
+                        otherUserQuestionCompleted = otherUserQuestionCompleted + 1,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(bottom = dimensionResource(R.dimen.padding_small)),
@@ -226,6 +244,7 @@ private fun Challenge_PlayOnlineScreenPreview() {
         uiState = Challenge_OnlineUiState(
             resultState = ResultState.Lose
         ),
+        onFinishTimeBar = {},
         onSkipButton = {},
         onSubmitButton = {},
         onExitButton = {},

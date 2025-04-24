@@ -36,6 +36,7 @@ fun Challenge_PlayOfflineScreen(
         UnscrambleGameContent(
             unscrambleWord = "Comfortable",
             resultState = resultState,
+            onFinishTimeBar = {},
             onSkipButton = {},
             onSubmitButton = {},
             modifier = Modifier.fillMaxSize()

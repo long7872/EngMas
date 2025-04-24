@@ -4,24 +4,30 @@ import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.engmas.data.model.Challenge
 import com.example.engmas.data.model.User
 import com.example.engmas.data.model.UserStatus
+import com.example.engmas.data.repository.ChallengeRepository
 import com.example.engmas.data.repository.NetworkUserRepository
 import com.example.engmas.data.repository.NetworkWordRepository
 import com.example.engmas.network.RetrofitClient
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlin.random.Random
 
 class Challenge_OnlineViewModel: ViewModel() {
     private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
     private val userRepository = NetworkUserRepository(RetrofitClient.userApi)
     private val wordRepository = NetworkWordRepository(RetrofitClient.userApi)
+    private val challengeRepository = ChallengeRepository()
 
     private val _uiState = MutableStateFlow(Challenge_OnlineUiState())
     val uiState: StateFlow<Challenge_OnlineUiState> = _uiState.asStateFlow()
@@ -30,7 +36,7 @@ class Challenge_OnlineViewModel: ViewModel() {
         enterMatching()
     }
 
-    fun enterMatching() {
+    private fun enterMatching() {
         _uiState.update {
             it.copy(
                 matchingState = MatchingState.Matching
@@ -44,31 +50,51 @@ class Challenge_OnlineViewModel: ViewModel() {
             } catch (e: Exception) {
                 Log.e(null , "enterMatching: ${e.message}")
             }
+            Log.e("Game" , "enterMatching")
         }
     }
 
     fun startMatching(userId: String) {
+        Log.e("Game" , "startMatching")
         viewModelScope.launch {
             while (true) {
                 try {
                     val users = userRepository.getAllUsers()
 
-                    val matchedUser = users.firstOrNull {
+                    var matchedUser = users.firstOrNull {
                         it.userId != userId && it.status == UserStatus.Matching.name
                     }
 
-                    _uiState.update {
-                        it.copy(matchedUser = matchedUser ?: User())
-                    }
-
                     if (matchedUser != null) {
-                        val success1 = userRepository.updateUserStatus(userId, UserStatus.Matched.name)
-                        val success2 = userRepository.updateUserStatus(matchedUser.userId, UserStatus.Matched.name)
+                        userRepository.updateUserStatus(matchedUser.userId, userId)
+                        var thisUserStatus = userRepository.getUser(userId).status
 
-                        if (success1 && success2) {
-                            generateGame(userId, matchedUser.userId)
-                            enterMatched()
-                            break
+                        if (thisUserStatus != UserStatus.Matching.name) {
+                            matchedUser = userRepository.getUser(thisUserStatus)
+                            userRepository.updateUserStatus(matchedUser.userId, userId)
+                        }
+
+                        thisUserStatus = userRepository.getUser(userId).status
+                        val otherUserStatus = userRepository.getUser(matchedUser.userId).status
+                        if (thisUserStatus == matchedUser.userId
+                            && otherUserStatus == userId
+                        ) {
+
+                            _uiState.update {
+                                it.copy(matchedUser = matchedUser)
+                            }
+                            delay(2000)
+                            val success1 = userRepository.updateUserStatus(userId, UserStatus.Matched.name)
+                            val success2 = userRepository.updateUserStatus(
+                                matchedUser.userId,
+                                UserStatus.Matched.name
+                            )
+                            Log.e("Game" , "Match opponent")
+                            if (success1 && success2) {
+                                generateGame(userId, matchedUser.userId)
+                                enterMatched()
+                                break
+                            }
                         }
                     }
 
@@ -76,12 +102,12 @@ class Challenge_OnlineViewModel: ViewModel() {
                     // Xử lý lỗi nếu cần
                 }
 
-                delay(3000)
+                delay(1000)
             }
         }
     }
 
-    fun enterMatched() {
+    private fun enterMatched() {
         _uiState.update {
             it.copy(matchingState = MatchingState.Matched)
         }
@@ -91,7 +117,7 @@ class Challenge_OnlineViewModel: ViewModel() {
             delay(2000)
             try {
                 // 1. Update trạng thái người chơi hiện tại thành Played
-                userRepository.updateUserStatus(userId, UserStatus.Played.name)
+                userRepository.updateUserStatus(userId, UserStatus.Play.name)
 
                 // 2. Lặp cho đến khi đối thủ cũng là Played
                 while (true) {
@@ -99,7 +125,7 @@ class Challenge_OnlineViewModel: ViewModel() {
                     val allUsers = userRepository.getAllUsers()
                     val matchedUser = allUsers.firstOrNull { it.userId == matchedUserId }
 
-                    if (matchedUser?.status == UserStatus.Played.name) {
+                    if (matchedUser?.status == UserStatus.Play.name) {
                         // 3. Khi cả 2 là Played, bắt đầu game
                         _uiState.update {
                             it.copy(matchingState = MatchingState.Play)
@@ -123,13 +149,20 @@ class Challenge_OnlineViewModel: ViewModel() {
 
     private fun generateGame(userId: String, matchedUserId: String) {
         val seed = generateSeed(userId, matchedUserId)
-
+        Log.e("Game" , "generate")
         viewModelScope.launch {
-            repeat(10) {
-                getUnscrambleWord(seed)
-                delay(100) // delay nhỏ để tránh API bị overload, nếu cần
-                Log.d("Unscramble", "OriginalList: ${_uiState.value.originalList}," +
-                        " ScrambledList: ${_uiState.value.unscrambleList}")
+            createChallenge(userId, matchedUserId)
+            observeChallenge(userId, matchedUserId)
+            if (userId < matchedUserId) {
+                Log.d("Game", "Host")
+                repeat(10) {
+                    getUnscrambleWord(seed)
+                    delay(100) // delay nhỏ để tránh API bị overload, nếu cần
+                    Log.d("Unscramble", "OriginalList: ${_uiState.value.originalList}," +
+                            " ScrambledList: ${_uiState.value.unscrambleList}")
+                }
+            } else {
+                Log.d("Game", "Not Host")
             }
         }
     }
@@ -150,6 +183,7 @@ class Challenge_OnlineViewModel: ViewModel() {
                 if (updatedUnscrambleList.size >= 10) updatedUnscrambleList.removeAt(10)
                 updatedOriginalList.add(word)
                 updatedUnscrambleList.add(scrambled)
+                challengeRepository.uploadWordList(seed, updatedOriginalList, updatedUnscrambleList)
                 it.copy(
                     originalList = updatedOriginalList,
                     unscrambleList = updatedUnscrambleList
@@ -160,34 +194,147 @@ class Challenge_OnlineViewModel: ViewModel() {
         }
     }
 
-    fun nextQuestion() {
+    fun nextQuestion(answer: String = "") {
+        val currentProgress = _uiState.value.thisUserCurrentQuestion
+        val nextProgress = currentProgress + 1
         _uiState.update {
-            it.copy(thisUserCurrentQuestion = uiState.value.thisUserCurrentQuestion + 1)
+            it.copy(thisUserCurrentQuestion = nextProgress)
+        }
+
+        if (nextProgress < 10) {
+            val myId = auth.currentUser?.uid ?: return
+            val otherId = _uiState.value.matchedUser.userId
+            val challengeId = generateSeed(myId, otherId)
+
+            challengeRepository.updateProgress(challengeId, myId, nextProgress)
+
+            if (answer != "") {
+                viewModelScope.launch {
+                    val isTrue = _uiState.value.originalList[currentProgress] == answer
+                    if (isTrue) {
+                        val currentScore = _uiState.value.thisUserScore + 1
+                        _uiState.update {
+                            it.copy(thisUserScore = currentScore)
+                        }
+
+                        challengeRepository.updateScore(challengeId, myId, currentScore)
+                    }
+                }
+            }
+        } else {
+            val thisCurrentProgress = _uiState.value.thisUserCurrentQuestion
+            val otherCurrentProgress = _uiState.value.otherUserCurrentQuestion
+            if (thisCurrentProgress == 10 && otherCurrentProgress == 10) {
+                val thisScore = _uiState.value.thisUserScore
+                val otherScore = _uiState.value.otherUserScore
+                _uiState.update {
+                    it.copy(
+                        resultState = if (thisScore < otherScore)
+                            ResultState.Lose
+                        else ResultState.Win
+                    )
+                }
+            }
         }
     }
 
-    fun updateWinState() {
-        _uiState.update {
-            it.copy(
-                matchingState = MatchingState.Matching,
-                resultState = ResultState.Win
-            )
-        }
+    fun doneChallenge() {
+        val myId = auth.currentUser?.uid ?: return
+        val otherId = _uiState.value.matchedUser.userId
+        val challengeId = generateSeed(myId, otherId)
+        challengeRepository.deleteChallenge(challengeId)
     }
-    fun updateLoseState() {
-        _uiState.update {
-            it.copy(
-                matchingState = MatchingState.Matching,
-                resultState = ResultState.Lose
-            )
-        }
-    }
+
     fun resetResultState() {
         _uiState.update {
             it.copy(
                 resultState = ResultState.None
             )
         }
+    }
+
+    // create new challenge while 2 player matched
+    private suspend fun createChallenge(userId1: String, userId2: String) {
+        val challengeId = generateSeed(userId1, userId2)  // Challenge ID
+
+        val challenge = Challenge(
+            challengeId = challengeId,
+            player1Id = userId1,
+            player2Id = userId2,
+            player1Progress = 0,
+            player2Progress = 0,
+            player1Score = 0,
+            player2Score = 0,
+            player1Status = ResultState.None.name,
+            player2Status = ResultState.None.name
+        )
+
+        // Firestore auto create challenges
+        firestore.collection("challenges")
+            .document(challengeId)  // Unique Key
+            .set(challenge)      // Add Data
+            .addOnSuccessListener {
+                Log.d("Firestore", "Challenge created successfully!")
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error creating challenge: ${e.message}")
+            }
+            .await()
+    }
+
+    private fun observeChallenge(userId: String, otherId: String) {
+        val challengeId = generateSeed(userId, otherId)
+        firestore
+            .collection("challenges")
+            .document(challengeId)
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null && snapshot.exists()) {
+                    val challenge = snapshot.toObject(Challenge::class.java)
+                    val myId = auth.currentUser?.uid ?: return@addSnapshotListener
+
+                    var myProgress= 0
+                    var opponentProgress= 0
+                    var myScore = 0
+                    var opponentScore = 0
+                    var wordList = listOf("")
+                    var scrambleWordList = listOf("")
+                    if (challenge != null) {
+                        wordList = challenge.wordList
+                        scrambleWordList = challenge.scrambleWordList
+                        if (challenge.player1Id == myId) {
+                            myProgress = challenge.player1Progress
+                            myScore = challenge.player1Score
+                            opponentProgress = challenge.player2Progress
+                            opponentScore = challenge.player2Score
+                        } else if (challenge.player2Id == myId) {
+                            myProgress = challenge.player2Progress
+                            myScore = challenge.player2Score
+                            opponentProgress = challenge.player1Progress
+                            opponentScore = challenge.player1Score
+                        } else {
+                            Log.e("observeChallenge", "User ID not found in challenge!")
+                        }
+                    }
+
+                    _uiState.update {
+                        it.copy(
+                            thisUserCurrentQuestion = myProgress,
+                            otherUserCurrentQuestion = opponentProgress,
+                            thisUserScore = myScore,
+                            otherUserScore = opponentScore
+                        )
+                    }
+
+                    if (userId > otherId) {
+                        _uiState.update {
+                            it.copy(
+                                originalList = wordList,
+                                unscrambleList = scrambleWordList,
+                            )
+                        }
+                    }
+                }
+            }
     }
 
     private fun generateSeed(userId1: String, userId2: String): String {
@@ -202,4 +349,5 @@ class Challenge_OnlineViewModel: ViewModel() {
         chars.shuffle(Random(seed))
         return chars.joinToString("")
     }
+
 }

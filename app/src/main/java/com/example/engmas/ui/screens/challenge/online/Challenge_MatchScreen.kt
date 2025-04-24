@@ -29,17 +29,22 @@ import com.example.engmas.ui.utils.CircleFrame
 @Composable
 fun Challenge_MatchScreen(
     uiState: Challenge_OnlineUiState,
-    onSubmitButton: () -> Unit,
+    onFinishTimeBar: () -> Unit,
+    onSkipButton: () -> Unit,
+    onSubmitButton: (String) -> Unit,
+    onExitButton: () -> Unit,
+    onPlayAgainButton: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (uiState.matchingState == MatchingState.Play) {
         Challenge_PlayOnlineScreen(
             uiState = uiState,
             contentPadding = PaddingValues(0.dp),
-            onSkipButton = {},
+            onFinishTimeBar = onFinishTimeBar,
+            onSkipButton = onSkipButton,
             onSubmitButton = onSubmitButton,
-            onExitButton = {},
-            onPlayAgainButton = {}
+            onExitButton = onExitButton,
+            onPlayAgainButton = onPlayAgainButton
         )
     } else {
         Card(
@@ -127,5 +132,8 @@ private fun Challenge_MatchScreenPreview() {
     Challenge_MatchScreen(
         Challenge_OnlineUiState(
         ),
+        onFinishTimeBar = {},
+        onSkipButton = {},
+        onSubmitButton = {}
     )
 }
