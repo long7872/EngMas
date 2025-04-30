@@ -2,6 +2,7 @@
 <resources>
     <dimen name="padding_smaller">4dp</dimen>
     <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_smaller_medium">12dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_large">24dp</dimen>
     <dimen name="padding_larger">32dp</dimen>
@@ -38,6 +39,7 @@
     <dimen name="result_trophy_size">256dp</dimen>
 
     <dimen name="bio_card_size">156dp</dimen>
+    <dimen name="row_card_size">65dp</dimen>
     <dimen name="user_bio_avatar">112dp</dimen>
     <dimen name="option_row_size">72dp</dimen>
     <dimen name="option_icon_size">26dp</dimen>

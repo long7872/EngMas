@@ -48,7 +48,7 @@ import com.example.engmas.ui.screens.practice.courses.fakedata.VocabularyItem
 import com.example.engmas.ui.theme.KufamFont
 
 @Composable
-fun Content(
+private fun VocabularyCard(
     modifier: Modifier = Modifier,
     items: List<VocabularyItem> = Items
 ) {
@@ -127,7 +127,7 @@ fun Content(
 }
 
 @Composable
-fun ItemGrid(
+private fun ListItemGrid(
     items: List<VocabularyItem>,
     modifier: Modifier = Modifier
 ) {

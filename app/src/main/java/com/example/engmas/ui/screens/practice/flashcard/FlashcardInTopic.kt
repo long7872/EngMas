@@ -1,8 +1,9 @@
-package com.example.engmas.ui.screens.practice.courses
+package com.example.engmas.ui.screens.practice.vocabulary
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -26,6 +28,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -48,7 +51,7 @@ import com.example.engmas.ui.screens.practice.courses.fakedata.VocabularyItem
 import com.example.engmas.ui.theme.KufamFont
 
 @Composable
-fun Content(
+private fun Content(
     modifier: Modifier = Modifier,
     items: List<VocabularyItem> = Items
 ) {
@@ -74,10 +77,21 @@ fun Content(
 
             Spacer(modifier = Modifier.padding(4.dp))
 
-            ItemGrid(
-                items = items,
-                modifier = Modifier.weight(1f)
-            )
+            Column(
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.weight(0.8f)
+            ) {
+                Flashcard(
+                    text = R.string.vocabulary,
+                    onClick = {},
+                    itemColor = Color(0xFF2B4EA2),
+                    phonetic = R.string.vocabulary,
+                    iconDes = R.string.notification_icon,
+                    iconRes = R.drawable.vocabulary,
+                    containerColor = Color(0xFFE3F2FD),
+                    meaning = R.string.vocabulary
+                )
+            }
 
             OutlinedButton(
                 onClick = {},
@@ -93,7 +107,7 @@ fun Content(
                     )
             ) {
                 Text(
-                    text = "Mark all as known",
+                    text = "Mark as known",
                     color = Color(0xFF757575),
                     fontFamily = KufamFont,
                     fontSize = 15.sp,
@@ -114,7 +128,7 @@ fun Content(
                     )
             ) {
                 Text(
-                    text = "Start Learning",
+                    text = "Practice",
                     color = Color(0xFFFFFFFF),
                     fontFamily = KufamFont,
                     fontSize = 15.sp,
@@ -125,29 +139,6 @@ fun Content(
         }
     }
 }
-
-@Composable
-fun ItemGrid(
-    items: List<VocabularyItem>,
-    modifier: Modifier = Modifier
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        modifier = modifier.fillMaxSize()
-    ) {
-        items(items) { item ->
-            ContentRow(
-                containerColor = item.containerColor,
-                itemColor = item.itemColor,
-                iconRes = item.iconRes,
-                iconDes = item.iconDes,
-                text = item.text,
-                onClick = item.onClick
-            )
-        }
-    }
-}
-
 
 @Composable
 private fun TitleRow(
@@ -216,63 +207,86 @@ private fun TitleRow(
 }
 
 @Composable
-private fun ContentRow(
+private fun Flashcard(
     containerColor: Color,
     itemColor: Color,
     @DrawableRes iconRes: Int,
     @StringRes iconDes: Int,
     @StringRes text: Int,
+    @StringRes phonetic: Int,
+    @StringRes meaning: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = containerColor),
         modifier = modifier
-            .height(dimensionResource(R.dimen.option_row_size))
-            .padding(
-                top = dimensionResource(R.dimen.padding_smaller_medium),
-                start = dimensionResource(R.dimen.padding_smaller_medium),
-                end = dimensionResource(R.dimen.padding_smaller_medium)
-            )
+            .fillMaxWidth()
+            .padding(dimensionResource(R.dimen.padding_medium))
             .clickable { onClick() },
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
+            // Hình ảnh
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = stringResource(iconDes),
+                modifier = Modifier
+                    .size(250.dp) // Điều chỉnh kích thước của hình ảnh
+                    .clip(RoundedCornerShape(15.dp)) // Bo tròn cho hình ảnh
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Tên và phiên âm
+            Text(
+                text = stringResource(text),
+                fontFamily = KufamFont,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = itemColor,
+                textAlign = TextAlign.Center,
+            )
+
+            Text(
+                text = stringResource(phonetic),
+                fontFamily = KufamFont,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = itemColor,
+                textAlign = TextAlign.Center,
+            )
+
+            Text(
+                text = stringResource(meaning),
+                fontFamily = KufamFont,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                color = itemColor,
+                textAlign = TextAlign.Center,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            IconButton(
+                onClick = { /* Play sound */ },
+                modifier = Modifier
+                    .size(70.dp)
+                    .background(Color(0xFFE3F2FD), shape = RoundedCornerShape(50))
+                    .padding(8.dp)
             ) {
                 Icon(
-                    painter = painterResource(iconRes),
-                    tint = itemColor,
-                    contentDescription = stringResource(iconDes),
-                    modifier = Modifier
-                        .fillMaxHeight()
-                )
-                Spacer(Modifier.width(dimensionResource(R.dimen.option_icon_text_gap)))
-                Text(
-                    text = stringResource(text),
-                    fontFamily = KufamFont,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
-                    textAlign = TextAlign.Center,
-                    color = itemColor,
+                    painter = painterResource(R.drawable.speaker),
+                    contentDescription = "Play sound",
+                    tint = itemColor
                 )
             }
-            Icon(
-                painter = painterResource(R.drawable.more_options_icon),
-                tint = itemColor,
-                contentDescription = stringResource(R.string.moreoptions),
-                modifier = Modifier
-                    .width(dimensionResource(R.dimen.goto_icon_size))
-                    .aspectRatio(1 / 2f)
-            )
         }
     }
 }
