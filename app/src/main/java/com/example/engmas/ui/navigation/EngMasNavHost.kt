@@ -14,6 +14,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.engmas.coroutine.AppCoroutineScope
+import com.example.engmas.ui.GeneralViewModel
 import com.example.engmas.ui.screens.account.AccountDestination
 import com.example.engmas.ui.screens.account.AccountScreen
 import com.example.engmas.ui.screens.auth.login.AuthLoginDestination
@@ -40,9 +42,11 @@ import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
 import com.example.engmas.ui.screens.practice.PracticeScreen
+import kotlinx.coroutines.cancel
 
 @Composable
 fun EngMasNavHost(
+    generalViewModel: GeneralViewModel,
     navController: NavHostController,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     modifier: Modifier = Modifier
@@ -59,7 +63,9 @@ fun EngMasNavHost(
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
-            HomeScreen()
+            HomeScreen(
+                timerViewModel = generalViewModel
+            )
         }
 
         composable(route = PracticeDestination.route) {

@@ -134,6 +134,8 @@ private fun Challenge_MatchScreenPreview() {
         ),
         onFinishTimeBar = {},
         onSkipButton = {},
-        onSubmitButton = {}
+        onSubmitButton = {},
+        onExitButton = {},
+        onPlayAgainButton = {}
     )
 }

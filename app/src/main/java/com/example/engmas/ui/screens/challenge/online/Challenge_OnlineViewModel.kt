@@ -1,18 +1,21 @@
 package com.example.engmas.ui.screens.challenge.online
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.engmas.coroutine.AppCoroutineScope
 import com.example.engmas.data.model.Challenge
-import com.example.engmas.data.model.User
 import com.example.engmas.data.model.UserStatus
 import com.example.engmas.data.repository.ChallengeRepository
 import com.example.engmas.data.repository.NetworkUserRepository
+import com.example.engmas.data.repository.NetworkUserScoreRepository
 import com.example.engmas.data.repository.NetworkWordRepository
 import com.example.engmas.network.RetrofitClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +31,7 @@ class Challenge_OnlineViewModel: ViewModel() {
     private val userRepository = NetworkUserRepository(RetrofitClient.userApi)
     private val wordRepository = NetworkWordRepository(RetrofitClient.userApi)
     private val challengeRepository = ChallengeRepository()
+    private val userScoreRepository = NetworkUserScoreRepository()
 
     private val _uiState = MutableStateFlow(Challenge_OnlineUiState())
     val uiState: StateFlow<Challenge_OnlineUiState> = _uiState.asStateFlow()
@@ -37,16 +41,22 @@ class Challenge_OnlineViewModel: ViewModel() {
     }
 
     private fun enterMatching() {
+        val userId = auth.currentUser?.uid ?: return
         _uiState.update {
             it.copy(
                 matchingState = MatchingState.Matching
             )
         }
-        val userId = auth.currentUser?.uid ?: return
 
         viewModelScope.launch {
             try {
                 userRepository.updateUserStatus(userId, UserStatus.Matching.name)
+                val thisUser = userRepository.getUser(userId)
+                _uiState.update {
+                    it.copy(
+                        thisUser = thisUser
+                    )
+                }
             } catch (e: Exception) {
                 Log.e(null , "enterMatching: ${e.message}")
             }
@@ -99,7 +109,7 @@ class Challenge_OnlineViewModel: ViewModel() {
                     }
 
                 } catch (e: Exception) {
-                    // Xử lý lỗi nếu cần
+                    Log.e("Game", e.message.toString())
                 }
 
                 delay(1000)
@@ -210,7 +220,8 @@ class Challenge_OnlineViewModel: ViewModel() {
 
             if (answer != "") {
                 viewModelScope.launch {
-                    val isTrue = _uiState.value.originalList[currentProgress] == answer
+//                    val isTrue = _uiState.value.originalList[currentProgress] == answer
+                    val isTrue = true
                     if (isTrue) {
                         val currentScore = _uiState.value.thisUserScore + 1
                         _uiState.update {
@@ -221,20 +232,6 @@ class Challenge_OnlineViewModel: ViewModel() {
                     }
                 }
             }
-        } else {
-            val thisCurrentProgress = _uiState.value.thisUserCurrentQuestion
-            val otherCurrentProgress = _uiState.value.otherUserCurrentQuestion
-            if (thisCurrentProgress == 10 && otherCurrentProgress == 10) {
-                val thisScore = _uiState.value.thisUserScore
-                val otherScore = _uiState.value.otherUserScore
-                _uiState.update {
-                    it.copy(
-                        resultState = if (thisScore < otherScore)
-                            ResultState.Lose
-                        else ResultState.Win
-                    )
-                }
-            }
         }
     }
 
@@ -243,14 +240,6 @@ class Challenge_OnlineViewModel: ViewModel() {
         val otherId = _uiState.value.matchedUser.userId
         val challengeId = generateSeed(myId, otherId)
         challengeRepository.deleteChallenge(challengeId)
-    }
-
-    fun resetResultState() {
-        _uiState.update {
-            it.copy(
-                resultState = ResultState.None
-            )
-        }
     }
 
     // create new challenge while 2 player matched
@@ -284,10 +273,12 @@ class Challenge_OnlineViewModel: ViewModel() {
 
     private fun observeChallenge(userId: String, otherId: String) {
         val challengeId = generateSeed(userId, otherId)
+        Log.d("OnlineViewModel", "State ${_uiState.value}")
         firestore
             .collection("challenges")
             .document(challengeId)
             .addSnapshotListener { snapshot, _ ->
+                Log.d("OnlineViewModel", "State ${_uiState.value}")
                 if (snapshot != null && snapshot.exists()) {
                     val challenge = snapshot.toObject(Challenge::class.java)
                     val myId = auth.currentUser?.uid ?: return@addSnapshotListener
@@ -332,6 +323,42 @@ class Challenge_OnlineViewModel: ViewModel() {
                                 unscrambleList = scrambleWordList,
                             )
                         }
+                    }
+
+//                    Log.d("OnlineViewModel", "State ${_uiState.value}")
+
+                    val thisCurrentProgress = _uiState.value.thisUserCurrentQuestion
+                    val otherCurrentProgress = _uiState.value.otherUserCurrentQuestion
+                    if (thisCurrentProgress == 9 && otherCurrentProgress == 9) {
+                        val thisScore = _uiState.value.thisUserScore
+                        val otherScore = _uiState.value.otherUserScore
+                        _uiState.update {
+                            it.copy(
+                                resultState = if (thisScore < otherScore) {
+                                    ResultState.Lose
+                                }
+                                else {
+                                    ResultState.Win
+                                }
+                            )
+                        }
+                        if (_uiState.value.resultState == ResultState.Win) {
+                            AppCoroutineScope.scope.launch {
+                                val result = userScoreRepository.getUser(userId)
+                                result.onSuccess { user ->
+                                    val currentScore = user.score
+                                    val updatedScore = currentScore + 1
+                                    val updatedUser = user.copy(score = updatedScore)
+                                    val updateResult = userScoreRepository.updateUser(userId, updatedUser)
+                                    updateResult.onSuccess {
+                                        Log.d("OnlineViewModel", "✅ Firestore đã cập nhật userScore mới thành công")
+                                    }.onFailure { e ->
+                                        Log.e("OnlineViewModel", "❌ Lỗi khi cập nhật Firestore: ${e.message}")
+                                    }
+                                }
+                            }
+                        }
+                        Log.e("Game", "${_uiState.value.resultState}")
                     }
                 }
             }

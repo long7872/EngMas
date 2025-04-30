@@ -5,6 +5,7 @@ import com.example.engmas.data.model.User
 data class Challenge_OnlineUiState(
     val matchingState: MatchingState = MatchingState.Matching,
     val resultState: ResultState = ResultState.None,
+    val thisUser: User = User(),
     val matchedUser: User = User(),
     val originalList: List<String> = emptyList(),
     val unscrambleList: List<String> = emptyList(),

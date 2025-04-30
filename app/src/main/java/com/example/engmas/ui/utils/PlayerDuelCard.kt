@@ -30,7 +30,9 @@ import com.example.engmas.ui.theme.KufamFont
 
 @Composable
 fun PlayerDuelCard(
+    thisUserName: String,
     thisUserQuestionCompleted: Int,
+    otherUserName: String,
     otherUserQuestionCompleted: Int,
     modifier: Modifier = Modifier
 ) {
@@ -45,6 +47,7 @@ fun PlayerDuelCard(
             modifier = Modifier.fillMaxSize()
         ) {
             PlayerInfo(
+                playerName = thisUserName,
                 questionCompleted = thisUserQuestionCompleted,
                 modifier = Modifier.weight(0.33f)
             )
@@ -58,6 +61,7 @@ fun PlayerDuelCard(
                     .weight(0.33f)
             )
             PlayerInfo(
+                playerName = otherUserName,
                 questionCompleted = otherUserQuestionCompleted,
                 modifier = Modifier.weight(0.33f)
             )
@@ -67,6 +71,7 @@ fun PlayerDuelCard(
 
 @Composable
 private fun PlayerInfo(
+    playerName: String,
     questionCompleted: Int,
     modifier: Modifier = Modifier
 ) {
@@ -79,7 +84,7 @@ private fun PlayerInfo(
             frameSize = dimensionResource(R.dimen.avatar_dual_frame_size)
         )
         Text(
-            text = "User",
+            text = playerName,
             fontFamily = KufamFont,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,

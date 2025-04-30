@@ -30,6 +30,7 @@ fun TimeBar(
             progress = (elapsedTime.toFloat() / durationMillis).coerceIn(0f, 1f)
         }
         onFinish()
+        progress = 0f
     }
 
     Row(

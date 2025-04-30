@@ -8,8 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
+import com.example.engmas.coroutine.AppCoroutineScope
 import com.example.engmas.ui.navigation.NavigationDestination
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.cancel
 
 object ChallengeOnlineDestination: NavigationDestination {
     override val route = "challenge/online"
@@ -37,10 +39,12 @@ fun Challenge_OnlineScreen(
         onExitButton = {
             viewModel.doneChallenge()
             exitToChallenge()
+            AppCoroutineScope.scope.cancel()
         },
         onPlayAgainButton = {
             viewModel.doneChallenge()
             exitToOnline()
+            AppCoroutineScope.scope.cancel()
         },
         uiState = uiState
     )

@@ -1,5 +1,6 @@
 package com.example.engmas.data.repository
 
+import android.util.Log
 import com.example.engmas.data.model.Challenge
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,48 +42,19 @@ class ChallengeRepository {
             }
     }
 
-    fun updateGameState(challengeId: String) {
-        firestore.collection("challenges")
-            .document(challengeId)
-            .get()
-            .addOnSuccessListener { document ->
-                val challenge = document.toObject(Challenge::class.java)
-                if (challenge != null) {
-                    val field = "isGameStarted"
-                    firestore.collection("challenges")
-                        .document(challengeId)
-                        .update(field, true)
-                }
-            }
-    }
-
     fun uploadWordList(challengeId: String, wordList: List<String>, scrambleWordList: List<String>) {
-        firestore.collection("challenges")
-            .document(challengeId)
-            .get()
-            .addOnSuccessListener { document ->
-                val challenge = document.toObject(Challenge::class.java)
-                if (challenge != null) {
-                    firestore.collection("challenges")
-                        .document(challengeId)
-                        .update("wordList", wordList)
-                    firestore.collection("challenges")
-                        .document(challengeId)
-                        .update("scrambleWordList", scrambleWordList)
-                }
-            }
-    }
+        val batch = firestore.batch()
+        val challengeRef = firestore.collection("challenges").document(challengeId)
 
-    fun fetchWordList(challengeId: String, callback: (List<String>) -> Unit) {
-        firestore.collection("challenges")
-            .document(challengeId)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                val challenge = snapshot.toObject(Challenge::class.java)
-                callback(challenge?.wordList ?: emptyList())
+        batch.update(challengeRef, "wordList", wordList)
+        batch.update(challengeRef, "scrambleWordList", scrambleWordList)
+
+        batch.commit()
+            .addOnSuccessListener {
+                Log.d("Upload", "Both wordList and scrambleWordList updated successfully")
             }
-            .addOnFailureListener {
-                callback(emptyList())
+            .addOnFailureListener { e ->
+                Log.e("Upload", "Error updating word lists: ${e.message}")
             }
     }
 

@@ -7,7 +7,6 @@ interface UserRepository {
     suspend fun createUser(user: User): Result<Unit>
     suspend fun getUser(userId: String): User
     suspend fun getAllUsers(): List<User>
-    suspend fun updateUserStatus(userId: String, status: String): Boolean
 }
 
 class NetworkUserRepository(private val api: UserApiService): UserRepository {
@@ -50,7 +49,7 @@ class NetworkUserRepository(private val api: UserApiService): UserRepository {
         }
     }
 
-    override suspend fun updateUserStatus(userId: String, status: String): Boolean {
+    suspend fun updateUserStatus(userId: String, status: String): Boolean {
         val response = api.updateUserStatus(userId, mapOf("status" to status))
         return response.isSuccessful
     }

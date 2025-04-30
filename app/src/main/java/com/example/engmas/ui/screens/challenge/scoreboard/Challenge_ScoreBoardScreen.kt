@@ -23,7 +23,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +43,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
+import com.example.engmas.data.model.UserScore
 import com.example.engmas.ui.navigation.NavigationDestination
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.BorderSide
@@ -51,13 +58,22 @@ object ChallengeScoreBoardDestination: NavigationDestination {
 
 @Composable
 fun Challenge_ScoreBoardScreen(
+    viewModel: ScoreBoardViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
-//    WinnerFrame(
-//        avatarRes = R.drawable.avatar1_test,
-//        frameSize = dimensionResource(R.dimen.avatar_frame_size),
-//        modifier = Modifier.fillMaxSize()
-//    )
+    val players by viewModel.players.collectAsState()
+    val userScore by viewModel.currentUser.collectAsState()
+
+    var topPlayers by remember { mutableStateOf<List<UserScore>>(emptyList()) }
+
+    // Mỗi lần players thay đổi, update lại topPlayers
+    LaunchedEffect(players) {
+        if (players.isNotEmpty()) {
+            topPlayers = viewModel.getTopPlayers()
+        }
+        viewModel.fetchCurrentUser()
+    }
+
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -81,22 +97,30 @@ fun Challenge_ScoreBoardScreen(
                     .padding(top = dimensionResource(R.dimen.button_horizontal_padding))
             )
 
-            ScoreCard()
+            ScoreCard(
+                players = topPlayers,
+                userScore = userScore
+            )
         }
     }
 }
 
 @Composable
 private fun ScoreCard(
+    players: List<UserScore>,
+    userScore: UserScore,
     modifier: Modifier = Modifier
 ) {
-    val players = listOf(
-        Triple(2, "longquynh", 126),
-        Triple(3, "hahahaha", 89),
-        Triple(4, "blababbabaab", 63),
-        Triple(5, "thisnamelord", 32),
-        Triple(321, "yourname", 7)
-    )
+    val topPlayer = players.firstOrNull()
+    val otherPlayers = players.drop(1)
+
+//    val players = listOf(
+//        Triple(2, "longquynh", 126),
+//        Triple(3, "hahahaha", 89),
+//        Triple(4, "blababbabaab", 63),
+//        Triple(5, "thisnamelord", 32),
+//        Triple(321, "yourname", 7)
+//    )
 
     Card(
         elevation = CardDefaults.cardElevation(1.dp),
@@ -115,30 +139,31 @@ private fun ScoreCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                WinnerFrame(
-                    avatarRes = R.drawable.avatar1_test,
-                    frameSize = dimensionResource(R.dimen.avatar_frame_size)
-                )
-                Text(
-                    text = "User",
-                    fontFamily = KufamFont,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    color = Color(0xFFF9CC17),
-                    modifier = Modifier
-                        .padding(top = dimensionResource(R.dimen.frame_winner_vertical_padding))
-                )
-                Text(
-                    text = "255",
-                    fontFamily = KufamFont,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    color = Color(0xFFF9CC17),
-                    modifier = Modifier
-                )
+                topPlayer?.let {
+                    WinnerFrame(
+                        avatarRes = R.drawable.avatar1_test,
+                        frameSize = dimensionResource(R.dimen.avatar_frame_size)
+                    )
+                    Text(
+                        text = it.name,
+                        fontFamily = KufamFont,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = Color(0xFFF9CC17),
+                        modifier = Modifier.padding(top = dimensionResource(R.dimen.frame_winner_vertical_padding))
+                    )
+                    Text(
+                        text = it.score.toString(),
+                        fontFamily = KufamFont,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        color = Color(0xFFF9CC17),
+                    )
+                }
             }
             ScoreTable(
-                players = players,
+                players = otherPlayers,
+                userScore = userScore,
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.padding_medium))
                     .fillMaxHeight(0.5f)
@@ -189,14 +214,17 @@ private fun WinnerFrame(
 
 @Composable
 private fun ScoreTable(
-    players: List<Triple<Int, String, Int>>,
+    players: List<UserScore>,
+    userScore: UserScore,
     modifier: Modifier = Modifier
 ) {
+    var isFirst = true
+    val myRank = userScore.rank
+    val isOutBoard = myRank > 10
     LazyColumn(
         modifier = modifier
     ) {
-        var isFirst = true
-        items(players) { (rank, name, score) ->
+        items(players) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -204,7 +232,7 @@ private fun ScoreTable(
             ) {
                 if (isFirst) {
                     TableCell(
-                        text = rank.toString(),
+                        text = it.rank.toString(),
                         modifier = Modifier.weight(1f)
                             .customBorder(
                                 width = 1.dp,
@@ -213,7 +241,7 @@ private fun ScoreTable(
                             ).padding(dimensionResource(R.dimen.padding_medium))
                     )
                     TableCell(
-                        text = name,
+                        text = it.name,
                         modifier = Modifier.weight(3f)
                             .customBorder(
                                 width = 1.dp,
@@ -223,7 +251,7 @@ private fun ScoreTable(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                     TableCell(
-                        text = score.toString(),
+                        text = it.score.toString(),
                         modifier = Modifier.weight(1f)
                             .customBorder(
                                 width = 1.dp,
@@ -234,7 +262,7 @@ private fun ScoreTable(
                     isFirst = false
                 } else {
                     TableCell(
-                        text = rank.toString(),
+                        text = it.rank.toString(),
                         modifier = Modifier.weight(1f)
                             .customBorder(
                                 width = 1.dp,
@@ -243,7 +271,7 @@ private fun ScoreTable(
                             ).padding(dimensionResource(R.dimen.padding_medium))
                     )
                     TableCell(
-                        text = name,
+                        text = it.name,
                         modifier = Modifier.weight(3f)
                             .customBorder(
                                 width = 1.dp,
@@ -253,7 +281,87 @@ private fun ScoreTable(
                             .padding(dimensionResource(R.dimen.padding_medium))
                     )
                     TableCell(
-                        text = score.toString(),
+                        text = it.score.toString(),
+                        modifier = Modifier.weight(1f)
+                            .customBorder(
+                                width = 1.dp,
+                                color = Color(0xFF757575),
+                                sides = setOf(BorderSide.Bottom)
+                            ).padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+            }
+        }
+        if (isOutBoard) {
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                ) {
+                    TableCell(
+                        text = "...",
+                        modifier = Modifier.weight(1f)
+                            .customBorder(
+                                width = 1.dp,
+                                color = Color(0xFF757575),
+                                sides = setOf(BorderSide.Bottom)
+                            ).padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                    TableCell(
+                        text = "...",
+                        modifier = Modifier.weight(3f)
+                            .customBorder(
+                                width = 1.dp,
+                                color = Color(0xFF757575),
+                                sides = setOf(
+                                    BorderSide.Bottom,
+                                    BorderSide.Left,
+                                    BorderSide.Right
+                                )
+                            )
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                    TableCell(
+                        text = "...",
+                        modifier = Modifier.weight(1f)
+                            .customBorder(
+                                width = 1.dp,
+                                color = Color(0xFF757575),
+                                sides = setOf(BorderSide.Bottom)
+                            ).padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min)
+                ) {
+                    TableCell(
+                        text = myRank.toString(),
+                        modifier = Modifier.weight(1f)
+                            .customBorder(
+                                width = 1.dp,
+                                color = Color(0xFF757575),
+                                sides = setOf(BorderSide.Bottom)
+                            ).padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                    TableCell(
+                        text = userScore.name,
+                        modifier = Modifier.weight(3f)
+                            .customBorder(
+                                width = 1.dp,
+                                color = Color(0xFF757575),
+                                sides = setOf(
+                                    BorderSide.Bottom,
+                                    BorderSide.Left,
+                                    BorderSide.Right
+                                )
+                            )
+                            .padding(dimensionResource(R.dimen.padding_medium))
+                    )
+                    TableCell(
+                        text = userScore.score.toString(),
                         modifier = Modifier.weight(1f)
                             .customBorder(
                                 width = 1.dp,

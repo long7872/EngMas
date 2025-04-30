@@ -28,6 +28,11 @@
     <string name="past_streak">Past Streak</string>
     <string name="today_streak">Today Streak</string>
     <string name="tomorrow_streak">Tomorrow Streak</string>
+    <string name="analysis">Weekly analysis</string>
+    <string name="analysis_up">up</string>
+    <string name="analysis_down">down</string>
+    <string name="analysis_learned">words learned this week</string>
+    <string name="analysis_review">words to review this week</string>
 
 <!--practice-->
 
@@ -54,6 +59,7 @@
     <string name="scoreboard">SCORE BOARD</string>
     <string name="answer_correct">Correct</string>
     <string name="answer_wrong">Wrong</string>
+    <string name="waiting">Waiting for your opponent…</string>
     <string name="online_win_result">Winner Trophy</string>
     <string name="online_lose_result">Loser Trophy</string>
     <string name="tab_challenge_offline">Play Offline</string>

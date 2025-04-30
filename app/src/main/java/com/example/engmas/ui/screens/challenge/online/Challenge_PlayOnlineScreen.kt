@@ -86,7 +86,9 @@ fun Challenge_PlayOnlineScreen(
                 .clip(MaterialTheme.shapes.medium)
         ) {
             PlayerDuelCard(
+                thisUserName = uiState.thisUser.username,
                 thisUserQuestionCompleted = uiState.thisUserCurrentQuestion + 1,
+                otherUserName = uiState.matchedUser.username,
                 otherUserQuestionCompleted = uiState.otherUserCurrentQuestion + 1,
                 modifier = Modifier
                     .fillMaxSize()
@@ -110,7 +112,7 @@ fun Challenge_PlayOnlineScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Waiting for your opponent...",
+                        text = stringResource(R.string.waiting),
                         fontFamily = KufamFont,
                         fontWeight = FontWeight.Bold,
                         fontSize = 30.sp,
@@ -128,11 +130,12 @@ fun Challenge_PlayOnlineScreen(
             }
         }
     }
-
     if (uiState.resultState != ResultState.None) {
         WinnerOverlay(
-            thisUserQuestionCompleted = uiState.thisUserCurrentQuestion,
-            otherUserQuestionCompleted = uiState.otherUserCurrentQuestion,
+            thisUserName = uiState.thisUser.username,
+            thisUserQuestionCompleted = uiState.thisUserScore,
+            otherUserName = uiState.matchedUser.username,
+            otherUserQuestionCompleted = uiState.otherUserScore,
             onExit = onExitButton,
             onPlayAgain = onPlayAgainButton,
             isWinner = uiState.resultState == ResultState.Win,
@@ -143,7 +146,9 @@ fun Challenge_PlayOnlineScreen(
 
 @Composable
 fun WinnerOverlay(
+    thisUserName: String,
     thisUserQuestionCompleted: Int,
+    otherUserName: String,
     otherUserQuestionCompleted: Int,
     onExit: () -> Unit,
     onPlayAgain: () -> Unit,
@@ -177,7 +182,9 @@ fun WinnerOverlay(
                         .clip(MaterialTheme.shapes.medium)
                 ) {
                     PlayerDuelCard(
+                        thisUserName = thisUserName,
                         thisUserQuestionCompleted = thisUserQuestionCompleted + 1,
+                        otherUserName = otherUserName,
                         otherUserQuestionCompleted = otherUserQuestionCompleted + 1,
                         modifier = Modifier
                             .fillMaxSize()

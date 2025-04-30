@@ -53,6 +53,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -80,8 +81,10 @@ const val TAG = "MainActivity"
 
 @Composable
 fun EngMasApp(
+    generalViewModel: GeneralViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
+
     val allDestinations = listOf<NavigationDestination>(
         HomeDestination,
         PracticeDestination,
@@ -137,6 +140,7 @@ fun EngMasApp(
         containerColor = Color(0xFFF5F5F5)
     ) { contentPadding ->
         EngMasNavHost(
+            generalViewModel = generalViewModel,
             navController = navController,
             contentPadding = contentPadding,
             modifier = Modifier.padding(contentPadding)
