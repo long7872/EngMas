@@ -37,6 +37,9 @@
 <!--practice-->
     <string name="course1">Course 1</string>
     <string name="vocabulary">Vocabulary</string>
+    <string name="flashcard">Flashcard</string>
+    <string name="grammar">Grammar</string>
+    <string name="review">Review</string>
     <string name="moreoptions">More Options</string>
     <string name="foodicon">Food Icon</string>
     <string name="food">Food</string>
@@ -76,6 +79,7 @@
     <string name="user_id">User id: %1$s</string>
     <string name="general_option">General</string>
     <string name="notification_icon">Notification Icon</string>
+    <string name="goback_icon">Go Back Icon</string>
     <string name="notification_text">Notification settings</string>
     <string name="info_icon">Personal Icon</string>
     <string name="info_text">Personal information</string>
@@ -88,4 +92,8 @@
     <string name="sign_out_text">Sign out</string>
     <string name="delete_icon">Delete Icon</string>
     <string name="delete_text">Delete account</string>
+
+
+<!--API KEY-->
+    <string name="gemini_api_key">AIzaSyARZhj49ynYXFDRiChknpEzGXMWJSCubXs</string>
 </resources>

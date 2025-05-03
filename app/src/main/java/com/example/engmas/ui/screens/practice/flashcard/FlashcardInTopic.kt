@@ -1,4 +1,4 @@
-package com.example.engmas.ui.screens.practice.vocabulary
+package com.example.engmas.ui.screens.practice.flashcard
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -107,7 +107,7 @@ private fun Content(
                     )
             ) {
                 Text(
-                    text = "Mark as known",
+                    text = "Mark for review",
                     color = Color(0xFF757575),
                     fontFamily = KufamFont,
                     fontSize = 15.sp,
@@ -128,7 +128,7 @@ private fun Content(
                     )
             ) {
                 Text(
-                    text = "Practice",
+                    text = "Mark as known",
                     color = Color(0xFFFFFFFF),
                     fontFamily = KufamFont,
                     fontSize = 15.sp,

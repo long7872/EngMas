@@ -75,13 +75,21 @@ private fun Content(
                 onClick = {  }
             )
 
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.padding(20.dp))
+
+            Text(
+                text = "What is the meaning of this word?",
+                fontFamily = KufamFont,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF757575),
+                fontSize = 16.sp
+            )
 
             Column(
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.weight(0.8f)
+                modifier = Modifier.weight(0.5f)
             ) {
-                Flashcard(
+                WordCard(
                     text = R.string.vocabulary,
                     onClick = {},
                     itemColor = Color(0xFF2B4EA2),
@@ -93,52 +101,65 @@ private fun Content(
                 )
             }
 
-            OutlinedButton(
-                onClick = {},
-                border = BorderStroke(1.dp, Color(0xFFD3D3D3)),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = dimensionResource(R.dimen.padding_smaller_medium),
-                        start = dimensionResource(R.dimen.padding_smaller_medium),
-                        end = dimensionResource(R.dimen.padding_smaller_medium),
-                        bottom = 2.dp
-                    )
-            ) {
-                Text(
-                    text = "Mark as known",
-                    color = Color(0xFF757575),
-                    fontFamily = KufamFont,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+            Selection()
 
-            Button(
-                elevation = ButtonDefaults.buttonElevation(4.dp),
-                onClick = {},
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF24D3E3)) ,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = dimensionResource(R.dimen.padding_smaller_medium),
-                        end = dimensionResource(R.dimen.padding_smaller_medium)
-                    )
-            ) {
-                Text(
-                    text = "Practice",
-                    color = Color(0xFFFFFFFF),
-                    fontFamily = KufamFont,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
             Spacer(modifier = Modifier.padding(12.dp))
         }
     }
 }
+
+
+@Composable
+private fun Selection(
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        ItemCard(cardName = "Vocabulary", modifier = Modifier.weight(1f))
+        ItemCard(cardName = "Grammar", modifier = Modifier.weight(1f))
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        ItemCard(cardName = "Flashcard", modifier = Modifier.weight(1f))
+        ItemCard(cardName = "Review", modifier = Modifier.weight(1f))
+    }
+}
+
+@Composable
+private fun ItemCard(
+    cardName: String,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        elevation = CardDefaults.cardElevation(4.dp),
+        shape = MaterialTheme.shapes.small,
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = modifier
+            .size(150.dp)
+            .padding(4.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = modifier.fillMaxSize()
+        ) {
+            Text(
+                text = cardName,
+                fontFamily = KufamFont,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF757575),
+                fontSize = 16.sp
+            )
+        }
+    }
+}
+
 
 @Composable
 private fun TitleRow(
@@ -185,7 +206,7 @@ private fun TitleRow(
                         Icon(
                             painter = painterResource(R.drawable.goback_icon),
                             tint = itemColor,
-                            contentDescription = stringResource(R.string.notification_icon),
+                            contentDescription = stringResource(R.string.goback_icon),
                             modifier = Modifier
                                 .width(dimensionResource(R.dimen.goto_icon_size))
                                 .aspectRatio(1 / 2f)
@@ -207,7 +228,7 @@ private fun TitleRow(
 }
 
 @Composable
-private fun Flashcard(
+private fun WordCard(
     containerColor: Color,
     itemColor: Color,
     @DrawableRes iconRes: Int,
@@ -233,38 +254,21 @@ private fun Flashcard(
                 .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
-            // Hình ảnh
-            Image(
-                painter = painterResource(id = iconRes),
-                contentDescription = stringResource(iconDes),
-                modifier = Modifier
-                    .size(250.dp) // Điều chỉnh kích thước của hình ảnh
-                    .clip(RoundedCornerShape(15.dp)) // Bo tròn cho hình ảnh
-            )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             // Tên và phiên âm
             Text(
                 text = stringResource(text),
                 fontFamily = KufamFont,
                 fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
+                fontSize = 28.sp,
                 color = itemColor,
                 textAlign = TextAlign.Center,
             )
 
             Text(
                 text = stringResource(phonetic),
-                fontFamily = KufamFont,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                color = itemColor,
-                textAlign = TextAlign.Center,
-            )
-
-            Text(
-                text = stringResource(meaning),
                 fontFamily = KufamFont,
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
@@ -287,12 +291,14 @@ private fun Flashcard(
                     tint = itemColor
                 )
             }
+
+            Spacer(modifier = Modifier.height(22.dp))
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun CoursesPreview() {
+private fun VocabularyGame() {
     Content()
 }

@@ -15,11 +15,15 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,13 +50,13 @@ import com.example.engmas.R
 import com.example.engmas.ui.screens.practice.courses.fakedata.Items
 import com.example.engmas.ui.screens.practice.courses.fakedata.VocabularyItem
 import com.example.engmas.ui.theme.KufamFont
+import com.example.engmas.ui.utils.CustomProgressBar
 
 @Composable
-private fun VocabularyCard(
+fun VocabularyCard(
     modifier: Modifier = Modifier,
     items: List<VocabularyItem> = Items
 ) {
-
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.large,
@@ -68,82 +72,112 @@ private fun VocabularyCard(
             TitleRow(
                 containerColor = Color(0xFFE3F2FD),
                 itemColor = Color(0xFF757575),
-                text = R.string.course1,
+                text = R.string.vocabulary,
                 onClick = {  }
             )
 
             Spacer(modifier = Modifier.padding(4.dp))
 
-            ItemGrid(
-                items = items,
-                modifier = Modifier.weight(1f)
-            )
+            // Phân loại các item theo tiến độ (progress)
+            val inProgressItems = items.filter { it.progress > 0 }
+            val exploreItems = items.filter { it.progress == 0f }
 
-            OutlinedButton(
-                onClick = {},
-                border = BorderStroke(1.dp, Color(0xFFD3D3D3)),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = dimensionResource(R.dimen.padding_smaller_medium),
-                        start = dimensionResource(R.dimen.padding_smaller_medium),
-                        end = dimensionResource(R.dimen.padding_smaller_medium),
-                        bottom = 2.dp
-                    )
-            ) {
-                Text(
-                    text = "Mark all as known",
-                    color = Color(0xFF757575),
-                    fontFamily = KufamFont,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
+            // Hiển thị ContainerCard cho các item có tiến độ (InProgress)
+            if (inProgressItems.isNotEmpty()) {
+                ContainerCard(
+                    title = "In Progress",
+                    items = inProgressItems,
+                    showProgress = true
                 )
             }
 
-            Button(
-                elevation = ButtonDefaults.buttonElevation(4.dp),
-                onClick = {},
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF24D3E3)) ,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = dimensionResource(R.dimen.padding_smaller_medium),
-                        end = dimensionResource(R.dimen.padding_smaller_medium)
-                    )
-            ) {
-                Text(
-                    text = "Start Learning",
-                    color = Color(0xFFFFFFFF),
-                    fontFamily = KufamFont,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
+            // Thêm khoảng cách để phần Explore không bị đè lên
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Hiển thị ContainerCard cho các item chưa bắt đầu (Explore)
+            if (exploreItems.isNotEmpty()) {
+                ContainerCard(
+                    title = "Explore",
+                    items = exploreItems,
+                    showProgress = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                 )
             }
+
             Spacer(modifier = Modifier.padding(12.dp))
         }
     }
 }
 
 @Composable
-private fun ListItemGrid(
+private fun ContainerCard(
+    title: String,
     items: List<VocabularyItem>,
+    showProgress: Boolean,
     modifier: Modifier = Modifier
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
-        modifier = modifier.fillMaxSize()
+    Card(
+        border = BorderStroke(1.dp, color = Color(0xFFD3D3D3)),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(12.dp)
     ) {
-        items(items) { item ->
-            ContentRow(
-                containerColor = item.containerColor,
-                itemColor = item.itemColor,
-                iconRes = item.iconRes,
-                iconDes = item.iconDes,
-                text = item.text,
-                onClick = item.onClick
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp)
+        ) {
+            Text(
+                text = title,
+                fontFamily = KufamFont,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                color = Color(0xFF757575),
+                modifier = Modifier.padding(top = 10.dp, start = 10.dp, bottom = 10.dp)
             )
+
+            // Hiển thị các item trong LazyColumn
+            if (showProgress) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 300.dp),  // Giới hạn chiều cao tối đa
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(items) { item ->
+                        InProgressRow(
+                            containerColor = item.containerColor,
+                            itemColor = item.itemColor,
+                            iconRes = item.iconRes,
+                            iconDes = item.iconDes,
+                            text = item.text,
+                            onClick = item.onClick,
+                            progress = item.progress
+                        )
+                    }
+                }
+            } else {
+                // Hiển thị ExploreRow nếu không có tiến độ
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(items) { item ->
+                        ExploreRow(
+                            containerColor = item.containerColor,
+                            itemColor = item.itemColor,
+                            iconRes = item.iconRes,
+                            iconDes = item.iconDes,
+                            text = item.text,
+                            onClick = item.onClick
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -216,7 +250,89 @@ private fun TitleRow(
 }
 
 @Composable
-private fun ContentRow(
+private fun InProgressRow(
+    containerColor: Color,
+    itemColor: Color,
+    @DrawableRes iconRes: Int,
+    @StringRes iconDes: Int,
+    @StringRes text: Int,
+    onClick: () -> Unit,
+    progress: Float,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        elevation = CardDefaults.cardElevation(4.dp),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = containerColor),
+        modifier = modifier
+            .height(90.dp)
+            .padding(
+                top = 8.dp,
+                start = 12.dp,
+                end = 12.dp
+            )
+            .clickable { onClick() },
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(dimensionResource(R.dimen.padding_medium))
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        painter = painterResource(iconRes),
+                        tint = itemColor,
+                        contentDescription = stringResource(iconDes),
+                        modifier = Modifier
+                            .size(24.dp)
+                    )
+                    Text(
+                        text = stringResource(text),
+                        fontFamily = KufamFont,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp,
+                        color = itemColor,
+                    )
+                    Button(
+                        elevation = ButtonDefaults.buttonElevation(4.dp),
+                        onClick = {},
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF24D3E3)) ,
+                        modifier = Modifier
+                            .size(120.dp, 30.dp)
+                            .padding(start = 8.dp)
+                    ) {
+                        Text(
+                            text = "Continue",
+                            color = Color(0xFFFFFFFF),
+                            fontFamily = KufamFont,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                CustomProgressBar(
+                    progress = progress,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExploreRow(
     containerColor: Color,
     itemColor: Color,
     @DrawableRes iconRes: Int,
@@ -230,11 +346,11 @@ private fun ContentRow(
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = containerColor),
         modifier = modifier
-            .height(dimensionResource(R.dimen.option_row_size))
+            .height(80.dp)
             .padding(
-                top = dimensionResource(R.dimen.padding_smaller_medium),
-                start = dimensionResource(R.dimen.padding_smaller_medium),
-                end = dimensionResource(R.dimen.padding_smaller_medium)
+                top = 8.dp,
+                start = 12.dp,
+                end = 12.dp
             )
             .clickable { onClick() },
     ) {
@@ -243,7 +359,7 @@ private fun ContentRow(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(dimensionResource(R.dimen.padding_medium))
+                .padding(12.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -253,26 +369,34 @@ private fun ContentRow(
                     tint = itemColor,
                     contentDescription = stringResource(iconDes),
                     modifier = Modifier
-                        .fillMaxHeight()
+                        .size(20.dp)
                 )
-                Spacer(Modifier.width(dimensionResource(R.dimen.option_icon_text_gap)))
+                Spacer(Modifier.width(18.dp))
                 Text(
                     text = stringResource(text),
                     fontFamily = KufamFont,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
-                    textAlign = TextAlign.Center,
+                    fontSize = 14.sp,
                     color = itemColor,
                 )
             }
-            Icon(
-                painter = painterResource(R.drawable.more_options_icon),
-                tint = itemColor,
-                contentDescription = stringResource(R.string.moreoptions),
+            Button(
+                elevation = ButtonDefaults.buttonElevation(4.dp),
+                onClick = {},
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF24D3E3)) ,
                 modifier = Modifier
-                    .width(dimensionResource(R.dimen.goto_icon_size))
-                    .aspectRatio(1 / 2f)
-            )
+                    .size(120.dp, 30.dp)
+                    .padding(start = 8.dp)
+            ) {
+                Text(
+                    text = "Start",
+                    color = Color(0xFFFFFFFF),
+                    fontFamily = KufamFont,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
         }
     }
 }
@@ -280,5 +404,13 @@ private fun ContentRow(
 @Preview(showBackground = true)
 @Composable
 private fun CoursesPreview() {
-    Content()
+//    ExploreRow(
+//        containerColor = Color(0xFFE3F2FD),
+//        itemColor = Color(0xFF4DC5DD),
+//        iconRes = R.drawable.food_icon,
+//        iconDes = R.string.foodicon,
+//        text = R.string.food,
+//        onClick = {}
+//    )
+    VocabularyCard()
 }

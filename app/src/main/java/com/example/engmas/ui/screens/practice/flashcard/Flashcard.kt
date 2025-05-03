@@ -53,7 +53,7 @@ import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.CustomProgressBar
 
 @Composable
-fun VocabularyCard(
+private fun Flashcard(
     modifier: Modifier = Modifier,
     items: List<VocabularyItem> = Items
 ) {
@@ -72,7 +72,7 @@ fun VocabularyCard(
             TitleRow(
                 containerColor = Color(0xFFE3F2FD),
                 itemColor = Color(0xFF757575),
-                text = R.string.vocabulary,
+                text = R.string.flashcard,
                 onClick = {  }
             )
 
@@ -112,7 +112,7 @@ fun VocabularyCard(
 }
 
 @Composable
-fun ContainerCard(
+private fun ContainerCard(
     title: String,
     items: List<VocabularyItem>,
     showProgress: Boolean,
@@ -412,5 +412,5 @@ private fun CoursesPreview() {
 //        text = R.string.food,
 //        onClick = {}
 //    )
-    VocabularyCard()
+    Flashcard()
 }
