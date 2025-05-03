@@ -53,7 +53,7 @@ import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.CustomProgressBar
 
 @Composable
-fun VocabularyCard(
+private fun ReviewScreen(
     modifier: Modifier = Modifier,
     items: List<VocabularyItem> = Items
 ) {
@@ -72,7 +72,7 @@ fun VocabularyCard(
             TitleRow(
                 containerColor = Color(0xFFE3F2FD),
                 itemColor = Color(0xFF757575),
-                text = R.string.vocabulary,
+                text = R.string.review,
                 onClick = {  }
             )
 
@@ -85,21 +85,19 @@ fun VocabularyCard(
             // Hiển thị ContainerCard cho các item có tiến độ (InProgress)
             if (inProgressItems.isNotEmpty()) {
                 ContainerCard(
-                    title = "In Progress",
+                    title = "Vocabulary",
                     items = inProgressItems,
                     showProgress = true
                 )
             }
 
-            // Thêm khoảng cách để phần Explore không bị đè lên
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Hiển thị ContainerCard cho các item chưa bắt đầu (Explore)
             if (exploreItems.isNotEmpty()) {
                 ContainerCard(
-                    title = "Explore",
-                    items = exploreItems,
-                    showProgress = false,
+                    title = "Flashcard",
+                    items = inProgressItems,
+                    showProgress = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -149,7 +147,7 @@ private fun ContainerCard(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(items) { item ->
-                        InProgressRow(
+                        VocabularyRow(
                             containerColor = item.containerColor,
                             itemColor = item.itemColor,
                             iconRes = item.iconRes,
@@ -167,7 +165,7 @@ private fun ContainerCard(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(items) { item ->
-                        ExploreRow(
+                        FlashcardRow(
                             containerColor = item.containerColor,
                             itemColor = item.itemColor,
                             iconRes = item.iconRes,
@@ -250,7 +248,7 @@ private fun TitleRow(
 }
 
 @Composable
-private fun InProgressRow(
+private fun VocabularyRow(
     containerColor: Color,
     itemColor: Color,
     @DrawableRes iconRes: Int,
@@ -332,7 +330,7 @@ private fun InProgressRow(
 }
 
 @Composable
-private fun ExploreRow(
+private fun FlashcardRow(
     containerColor: Color,
     itemColor: Color,
     @DrawableRes iconRes: Int,
@@ -412,5 +410,5 @@ private fun CoursesPreview() {
 //        text = R.string.food,
 //        onClick = {}
 //    )
-    VocabularyCard()
+    ReviewScreen()
 }

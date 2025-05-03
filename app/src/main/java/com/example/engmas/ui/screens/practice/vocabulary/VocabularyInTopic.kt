@@ -1,4 +1,4 @@
-package com.example.engmas.ui.screens.practice.courses
+package com.example.engmas.ui.screens.practice.vocabulary
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -48,7 +48,7 @@ import com.example.engmas.ui.screens.practice.courses.fakedata.VocabularyItem
 import com.example.engmas.ui.theme.KufamFont
 
 @Composable
-fun Content(
+private fun Content(
     modifier: Modifier = Modifier,
     items: List<VocabularyItem> = Items
 ) {
@@ -127,7 +127,7 @@ fun Content(
 }
 
 @Composable
-fun ItemGrid(
+private fun ItemGrid(
     items: List<VocabularyItem>,
     modifier: Modifier = Modifier
 ) {

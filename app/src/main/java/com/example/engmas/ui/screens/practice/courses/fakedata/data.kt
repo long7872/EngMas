@@ -10,5 +10,6 @@ data class VocabularyItem(
     @DrawableRes val iconRes: Int,
     @StringRes val iconDes: Int,
     @StringRes val text: Int,
-    val onClick: () -> Unit
+    val onClick: () -> Unit,
+    val progress: Float
 )

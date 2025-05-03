@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.firebase.analytics)
+    implementation(libs.androidx.runtime.android)
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     implementation(libs.androidx.datastore.preferences)
