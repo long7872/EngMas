@@ -28,6 +28,9 @@ import androidx.compose.ui.unit.sp
 import com.example.engmas.R
 import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.theme.KufamFont
+import com.example.engmas.ui.utils.AnswerButtons
+import com.example.engmas.ui.utils.QuizHeader
+import com.example.engmas.ui.utils.ZoomableImageCard
 
 @Composable
 fun Part1(
@@ -47,25 +50,17 @@ fun Part1(
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(20.dp)
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "Part 1",
-                    fontFamily = KufamFont,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    fontSize = 24.sp,
-                    color = Color(0xFF2B4EA2),
-                    modifier = Modifier.fillMaxWidth()
+                QuizHeader(
+                    currentQuestion = 6,
+                    totalQuestions = 200,
+                    part = "1",
+                    timeLeft = 7200
                 )
-                Spacer(modifier = Modifier.height(30.dp))
-                Text(
-                    text = stringResource(R.string.part1_greeting),
-                    fontFamily = KufamFont,
-                    fontSize = 15.sp,
-                    color = Color(0xFF757575)
-                )
+
+                ZoomableImageCard("https://thptlqc-my.sharepoint.com/:i:/g/personal/trinhxuanhoa_thptlequangchi_edu_vn/EVekwTAe7UJPmTQJK3T9MOMBw0qPBWLDDHpgFv99OpLvhA?e=cKWblx")
+                AnswerButtons(modifier = Modifier.padding(start = 20.dp, end = 20.dp))
             }
             Button(
                 elevation = ButtonDefaults.buttonElevation(4.dp),
