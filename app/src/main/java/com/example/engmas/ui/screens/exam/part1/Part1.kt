@@ -1,5 +1,6 @@
 package com.example.engmas.ui.screens.exam.part1
 
+import android.widget.Space
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ShouldPauseCallback
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -59,25 +61,10 @@ fun Part1(
                     timeLeft = 7200
                 )
 
-                ZoomableImageCard("https://thptlqc-my.sharepoint.com/:i:/g/personal/trinhxuanhoa_thptlequangchi_edu_vn/EVekwTAe7UJPmTQJK3T9MOMBw0qPBWLDDHpgFv99OpLvhA?e=cKWblx")
+                ZoomableImageCard("https://drive.google.com/uc?export=view&id=1NP1x7xsto8TQpV524W3Dtrc3_v6jjaKK")
+
+                Spacer(modifier = Modifier.height(50.dp))
                 AnswerButtons(modifier = Modifier.padding(start = 20.dp, end = 20.dp))
-            }
-            Button(
-                elevation = ButtonDefaults.buttonElevation(4.dp),
-                onClick = {},
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF24D3E3)) ,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(50.dp)
-            ) {
-                Text(
-                    text = "Start",
-                    color = Color(0xFFFFFFFF),
-                    fontFamily = KufamFont,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
             }
         }
     }

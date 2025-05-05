@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -15,13 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.example.engmas.ui.theme.EngMasTheme
 
 @Composable
@@ -30,34 +31,37 @@ fun ZoomableImageCard(imageUrl: String) {
 
     // Function to handle pinch zoom (you can add more logic for touch-based zooming)
     val scaleGesture = Modifier.pointerInput(Unit) {
-        detectTransformGestures { _, pan, zoom, _ ->
+        detectTransformGestures { _, _, zoom, _ ->
             scale *= zoom // Apply zoom scale from gestures
             scale = scale.coerceIn(0.5f, 3f) // Set minimum and maximum zoom level
         }
     }
 
-    // Card Layout with Image inside
+    // Card Layout with fixed size
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .graphicsLayer(
-                scaleX = scale,
-                scaleY = scale,
-                // You can apply additional transformations if needed
-            ),
-        elevation = CardDefaults.cardElevation(4.dp)
+            .height(350.dp) // Fixed height for the card
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(Color(0xFFFFFFFF))
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .then(scaleGesture) // Apply zooming gesture modifier
         ) {
             Image(
                 painter = rememberAsyncImagePainter(imageUrl),
                 contentDescription = "Zoomable Image",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(scaleGesture) // Apply zooming gesture modifier only on image
+                    .graphicsLayer(
+                        scaleX = scale,
+                        scaleY = scale,
+                        // Only the image is scaled, not the card
+                    )
             )
         }
     }
