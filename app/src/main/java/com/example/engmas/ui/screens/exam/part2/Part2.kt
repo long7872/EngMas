@@ -1,4 +1,4 @@
-package com.example.engmas.ui.screens.exam.part1
+package com.example.engmas.ui.screens.exam.part2
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,12 +18,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
 import com.example.engmas.ui.theme.EngMasTheme
-import com.example.engmas.ui.utils.AnswerButtons
+import com.example.engmas.ui.utils.AnswerButtonsPart2
 import com.example.engmas.ui.utils.QuizHeader
-import com.example.engmas.ui.utils.ZoomableImageCard
 
 @Composable
-fun Part1(
+fun Part2(
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -43,16 +42,13 @@ fun Part1(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "6",
+                    currentQuestion = "10",
                     totalQuestions = "200",
-                    part = "1",
+                    part = "2",
                     timeLeft = 7200
                 )
-
-                ZoomableImageCard("https://drive.google.com/uc?export=view&id=1NP1x7xsto8TQpV524W3Dtrc3_v6jjaKK")
-
                 Spacer(modifier = Modifier.height(50.dp))
-                AnswerButtons(modifier = Modifier.padding(start = 20.dp, end = 20.dp))
+                AnswerButtonsPart2(modifier = Modifier.padding(start = 20.dp, end = 20.dp))
             }
         }
     }
@@ -60,8 +56,8 @@ fun Part1(
 
 @Preview(showBackground = true)
 @Composable
-private fun Part1Preview() {
+private fun Part2Preview() {
     EngMasTheme {
-        Part1()
+        Part2()
     }
 }

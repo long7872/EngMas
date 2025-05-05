@@ -27,8 +27,8 @@ import com.example.engmas.ui.theme.KufamFont
 
 @Composable
 fun QuizHeader(
-    currentQuestion: Int,
-    totalQuestions: Int,
+    currentQuestion: String,
+    totalQuestions: String,
     part: String,
     timeLeft: Long // in seconds
 ) {
@@ -46,7 +46,7 @@ fun QuizHeader(
             shape = MaterialTheme.shapes.extraSmall,
             colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
             modifier = Modifier
-                .size(110.dp, 60.dp)
+                .size(120.dp, 60.dp)
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             Text(
@@ -75,7 +75,7 @@ fun QuizHeader(
             shape = MaterialTheme.shapes.extraSmall,
             colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
             modifier = Modifier
-                .size(110.dp, 60.dp)
+                .size(120.dp, 60.dp)
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             Text(
@@ -103,8 +103,8 @@ fun formatTime(seconds: Long): String {
 fun QuizHeaderPreview() {
     EngMasTheme {
         QuizHeader(
-            currentQuestion = 6,
-            totalQuestions = 200,
+            currentQuestion = "6",
+            totalQuestions = "200",
             part = "1",
             timeLeft = 7200
         )

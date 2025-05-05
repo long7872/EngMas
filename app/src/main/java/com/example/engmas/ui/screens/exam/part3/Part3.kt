@@ -1,11 +1,10 @@
-package com.example.engmas.ui.screens.exam.part1
+package com.example.engmas.ui.screens.exam.part3
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -18,12 +17,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
 import com.example.engmas.ui.theme.EngMasTheme
-import com.example.engmas.ui.utils.AnswerButtons
+import com.example.engmas.ui.utils.QuestionWithAnswers
 import com.example.engmas.ui.utils.QuizHeader
-import com.example.engmas.ui.utils.ZoomableImageCard
 
 @Composable
-fun Part1(
+fun Part3(
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -43,16 +41,33 @@ fun Part1(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "6",
+                    currentQuestion = "38-40",
                     totalQuestions = "200",
-                    part = "1",
+                    part = "3",
                     timeLeft = 7200
                 )
 
-                ZoomableImageCard("https://drive.google.com/uc?export=view&id=1NP1x7xsto8TQpV524W3Dtrc3_v6jjaKK")
-
-                Spacer(modifier = Modifier.height(50.dp))
-                AnswerButtons(modifier = Modifier.padding(start = 20.dp, end = 20.dp))
+                // LazyColumn for scrolling the questions
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxSize().padding(16.dp)
+                ) {
+                    item {
+                        val question1 = "38. What event does the woman mention?"
+                        val options1 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
+                        QuestionWithAnswers(question = question1, options = options1)
+                    }
+                    item {
+                        val question2 = "39. What event does the woman mention?"
+                        val options2 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
+                        QuestionWithAnswers(question = question2, options = options2)
+                    }
+                    item {
+                        val question3 = "40. What event does the woman mention?"
+                        val options3 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
+                        QuestionWithAnswers(question = question3, options = options3)
+                    }
+                }
             }
         }
     }
@@ -60,8 +75,8 @@ fun Part1(
 
 @Preview(showBackground = true)
 @Composable
-private fun Part1Preview() {
+private fun Part3Preview() {
     EngMasTheme {
-        Part1()
+        Part3()
     }
 }
