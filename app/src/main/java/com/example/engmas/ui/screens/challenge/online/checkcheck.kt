@@ -21,6 +21,34 @@
 //import kotlinx.coroutines.launch
 //import kotlinx.coroutines.tasks.await
 //import kotlin.random.Random
+//import androidx.compose.foundation.Image
+//import androidx.compose.runtime.Composable
+//import androidx.compose.ui.tooling.preview.Preview
+//import androidx.compose.ui.layout.ContentScale
+//import coil.compose.AsyncImage
+//import coil.compose.rememberAsyncImagePainter
+//import coil.compose.rememberImagePainter
+//
+//@Composable
+//fun DisplayImageFromGoogleDrive() {
+//    val imageUrl = "https://drive.google.com/uc?export=view&id=1GUPPO1kPiGfecoIBePcCU0tbs4hKtkT2"
+//
+//    Image(
+//        painter = rememberAsyncImagePainter(imageUrl),
+//        contentDescription = "Image from Google Drive",
+//        contentScale = ContentScale.Crop
+//    )
+//    AsyncImage(
+//        model = imageUrl, null
+//    )
+//}
+//
+//@Preview
+//@Composable
+//fun PreviewImage() {
+//    DisplayImageFromGoogleDrive()
+//}
+//
 //
 //class Check: ViewModel() {
 //    private val auth = FirebaseAuth.getInstance()

@@ -10,14 +10,11 @@ import com.example.engmas.data.model.Privilege
 import com.example.engmas.data.model.User
 import com.example.engmas.data.model.UserStatus
 import com.example.engmas.data.repository.NetworkUserRepository
-import com.example.engmas.data.repository.UserRepository
 import com.example.engmas.network.RetrofitClient
-import com.example.engmas.network.UserApiService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.userProfileChangeRequest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import retrofit2.Retrofit
 
 enum class SignUpState {
     Idle,
@@ -27,7 +24,7 @@ enum class SignUpState {
 
 class SignUpViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
-    private val repository = NetworkUserRepository(RetrofitClient.userApi)
+    private val repository = NetworkUserRepository(RetrofitClient.api)
 
     var signUpState = mutableStateOf(SignUpState.Idle)
         private set

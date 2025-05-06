@@ -2,14 +2,14 @@ package com.example.engmas.data.repository
 
 import android.util.Log
 import com.example.engmas.data.model.Vocab
-import com.example.engmas.network.UserApiService
+import com.example.engmas.network.EngMasApiService
 
 interface WordRepository {
     suspend fun getRandomVocab(): Vocab
     suspend fun searchVocabs(query: String): List<Vocab>
 }
 
-class NetworkWordRepository(private val api: UserApiService): WordRepository {
+class NetworkWordRepository(private val api: EngMasApiService): WordRepository {
 
     override suspend fun getRandomVocab(): Vocab {
         val response = api.getRandomVocab()

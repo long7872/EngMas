@@ -9,4 +9,6 @@ data class Vocab (
     val id: Int,
     val word: String,
     val phonetic: String = "",
+    @SerialName(value = "word_vi")
+    val wordVi: String = ""
 )

@@ -405,7 +405,7 @@ private fun CoursesPreview() {
 //    ExploreRow(
 //        containerColor = Color(0xFFE3F2FD),
 //        itemColor = Color(0xFF4DC5DD),
-//        iconRes = R.drawable.food_icon,
+//        iconRes = R.drawable.item_icon,
 //        iconDes = R.string.foodicon,
 //        text = R.string.food,
 //        onClick = {}

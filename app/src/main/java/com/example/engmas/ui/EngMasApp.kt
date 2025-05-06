@@ -29,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -74,6 +75,11 @@ import com.example.engmas.ui.screens.exam.ExamDestination
 import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
+import com.example.engmas.ui.screens.practice.courses.PracticeFlashcardDestination
+import com.example.engmas.ui.screens.practice.flashcard.PracticeFlashCardInTopicDestination
+import com.example.engmas.ui.screens.practice.grammar.PracticeGrammarDestination
+import com.example.engmas.ui.screens.practice.grammar.PracticeGrammarsDestination
+import com.example.engmas.ui.screens.practice.vocabulary.PracticeVocabularyDestination
 import com.example.engmas.ui.theme.InterFont
 import com.example.engmas.ui.theme.KufamFont
 
@@ -88,6 +94,11 @@ fun EngMasApp(
     val allDestinations = listOf<NavigationDestination>(
         HomeDestination,
         PracticeDestination,
+        PracticeVocabularyDestination,
+        PracticeGrammarsDestination,
+        PracticeGrammarDestination,
+        PracticeFlashcardDestination,
+        PracticeFlashCardInTopicDestination,
         ExamDestination,
         ChallengeDestination,
         ChallengeOnlineDestination,
@@ -109,15 +120,23 @@ fun EngMasApp(
     val isAuthSubRoute by remember(currentEngMasScreen) {
         derivedStateOf { currentEngMasScreen.route.startsWith("auth") }
     }
-
-    when (currentEngMasScreen) {
-        is HomeDestination -> selectedIndex = 1
-        is PracticeDestination -> selectedIndex = 2
-        is ExamDestination -> selectedIndex = 3
-        is ChallengeDestination -> selectedIndex = 4
-        is AccountDestination -> selectedIndex = 5
-        else -> selectedIndex = 0
+    val isPracticeSubRoute by remember(currentEngMasScreen) {
+        derivedStateOf { currentEngMasScreen.route.startsWith(PracticeDestination.route) }
     }
+
+    LaunchedEffect(currentEngMasScreen) {
+        // Điều chỉnh selectedIndex khi currentEngMasScreen thay đổi
+        when (currentEngMasScreen) {
+            is HomeDestination -> selectedIndex = 1
+            is PracticeDestination -> selectedIndex = 2
+            is ExamDestination -> selectedIndex = 3
+            is ChallengeDestination -> selectedIndex = 4
+            is AccountDestination -> selectedIndex = 5
+            else -> selectedIndex = 0
+        }
+    }
+
+    if (isPracticeSubRoute) selectedIndex = 2
 
     Log.d(TAG, "$selectedIndex $currentEngMasScreen")
     Log.d(TAG, "isAuthSubRoute: $isAuthSubRoute")

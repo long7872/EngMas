@@ -2,7 +2,7 @@ package com.example.engmas.ui.navigation
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -10,11 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.engmas.coroutine.AppCoroutineScope
+import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.example.engmas.ui.GeneralViewModel
 import com.example.engmas.ui.screens.account.AccountDestination
 import com.example.engmas.ui.screens.account.AccountScreen
@@ -30,19 +31,28 @@ import com.example.engmas.ui.screens.challenge.offline.ChallengeOfflineDestinati
 import com.example.engmas.ui.screens.challenge.offline.Challenge_OfflineScreen
 import com.example.engmas.ui.screens.challenge.online.ChallengeOnlineDestination
 import com.example.engmas.ui.screens.challenge.online.Challenge_OnlineScreen
-import com.example.engmas.ui.screens.challenge.online.Challenge_OnlineUiState
-import com.example.engmas.ui.screens.challenge.online.Challenge_PlayOnlineScreen
-import com.example.engmas.ui.screens.challenge.online.ResultState
 import com.example.engmas.ui.screens.challenge.scoreboard.ChallengeScoreBoardDestination
 import com.example.engmas.ui.screens.challenge.scoreboard.Challenge_ScoreBoardScreen
 import com.example.engmas.ui.screens.exam.ExamDestination
 import com.example.engmas.ui.screens.exam.ExamScreen
-import com.example.engmas.ui.screens.exam.Exam_SelectScreen
 import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
 import com.example.engmas.ui.screens.practice.PracticeScreen
-import kotlinx.coroutines.cancel
+import com.example.engmas.ui.screens.practice.courses.FlashcardScreen
+import com.example.engmas.ui.screens.practice.courses.PracticeFlashcardDestination
+import com.example.engmas.ui.screens.practice.courses.data.GrammarItems
+import com.example.engmas.ui.screens.practice.flashcard.FlashcardInTopic
+import com.example.engmas.ui.screens.practice.flashcard.PracticeFlashCardInTopicDestination
+import com.example.engmas.ui.screens.practice.grammar.GrammarContent
+import com.example.engmas.ui.screens.practice.grammar.GrammarScreen
+import com.example.engmas.ui.screens.practice.grammar.PracticeGrammarDestination
+import com.example.engmas.ui.screens.practice.grammar.PracticeGrammarsDestination
+import com.example.engmas.ui.screens.practice.vocabulary.PracticeVocabularyDestination
+import com.example.engmas.ui.screens.practice.vocabulary.PracticeVocabularyLearningDestination
+import com.example.engmas.ui.screens.practice.vocabulary.VocabularyProcessing
+import com.example.engmas.ui.screens.practice.vocabulary.VocabularyScreen
+import com.example.engmas.ui.screens.practice.vocabulary.VocabularyViewModel
 
 @Composable
 fun EngMasNavHost(
@@ -69,7 +79,98 @@ fun EngMasNavHost(
         }
 
         composable(route = PracticeDestination.route) {
-            PracticeScreen()
+            PracticeScreen(
+                onVocabularyClicked = { navController.navigate(PracticeVocabularyDestination.route) },
+                onGrammarClicked = { navController.navigate(PracticeGrammarsDestination.route) },
+                onFlashCardClicked = { navController.navigate(PracticeFlashcardDestination.route) },
+                onReviewClicked = {}
+            )
+        }
+
+        composable(route = PracticeVocabularyDestination.route) {
+            VocabularyScreen(
+                onClick = { navController.navigate(
+                    "${PracticeVocabularyLearningDestination.route}/$it"
+                    )
+                },
+                onBackClicked = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            route = PracticeVocabularyLearningDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(PracticeVocabularyLearningDestination.ITEM_ARGS)
+                    { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val topicId = backStackEntry.arguments?.getInt(
+                PracticeVocabularyLearningDestination.ITEM_ARGS
+            )
+            if (topicId != null) {
+                VocabularyProcessing(
+                    topicId = topicId,
+                    onBackClicked = { navController.navigateUp() }
+                )
+            } else {
+                navController.navigate(HomeDestination.route)
+            }
+        }
+
+        composable(route = PracticeGrammarsDestination.route) {
+            GrammarScreen(
+                onClick = { navController.navigate("${PracticeGrammarDestination.route}/${it.grammarLink}") },
+                navigateUp = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            route = PracticeGrammarDestination.routeWithArgs,
+            arguments = listOf(navArgument(PracticeGrammarDestination.ITEM_ARGS) { type = NavType.StringType })
+        ) { backStackEntry ->
+            val grammarLink = backStackEntry.arguments?.getString(PracticeGrammarDestination.ITEM_ARGS)
+
+            val grammarItem = GrammarItems.firstOrNull { it.grammarLink == grammarLink }
+
+            if (grammarItem != null) {
+                GrammarContent(
+                    item = grammarItem,
+                    navigateUp = { navController.navigateUp() }
+                )
+            } else {
+                navController.navigate(HomeDestination.route)
+            }
+        }
+
+        composable(route = PracticeFlashcardDestination.route) {
+            FlashcardScreen(
+                onClick = { navController.navigate(
+                    "${PracticeFlashCardInTopicDestination.route}/$it"
+                    )
+                },
+                onBackClicked = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            route = PracticeFlashCardInTopicDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(PracticeVocabularyLearningDestination.ITEM_ARGS)
+                { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val topicId = backStackEntry.arguments?.getInt(
+                PracticeVocabularyLearningDestination.ITEM_ARGS
+            )
+            if (topicId != null) {
+                FlashcardInTopic(
+                    topicId = topicId,
+                    onBackClicked = { navController.navigateUp() }
+                )
+            } else {
+                navController.navigate(HomeDestination.route)
+            }
+
         }
 
         composable(route = ExamDestination.route) {

@@ -2,6 +2,7 @@ package com.example.engmas.ui.screens.practice
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -48,6 +51,10 @@ object PracticeDestination: NavigationDestination {
 
 @Composable
 fun PracticeScreen(
+    onVocabularyClicked: () -> Unit,
+    onGrammarClicked: () -> Unit,
+    onFlashCardClicked: () -> Unit,
+    onReviewClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -60,7 +67,9 @@ fun PracticeScreen(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth().padding(top = 20.dp)
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 20.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             Courses(
                 items = listOf(
@@ -74,7 +83,12 @@ fun PracticeScreen(
                 )
             )
 
-            Selection()
+            Selection(
+                onVocabularyClicked = onVocabularyClicked,
+                onGrammarClicked = onGrammarClicked,
+                onFlashCardClicked = onFlashCardClicked,
+                onReviewClicked = onReviewClicked
+            )
             Pronunciation()
         }
     }
@@ -154,14 +168,26 @@ private fun Course(
 
 @Composable
 private fun Selection(
+    onVocabularyClicked: () -> Unit,
+    onGrammarClicked: () -> Unit,
+    onFlashCardClicked: () -> Unit,
+    onReviewClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(start = 12.dp, end = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        ItemCard(cardName = "Vocabulary", itemRes = R.drawable.vocabulary_icon, modifier = Modifier.weight(1f))
-        ItemCard(cardName = "Grammar", itemRes = R.drawable.grammar_icon, modifier = Modifier.weight(1f))
+        ItemCard(
+            cardName = "Vocabulary",
+            itemRes = R.drawable.vocabulary_icon,
+            onClick = onVocabularyClicked,
+            modifier = Modifier.weight(1f))
+        ItemCard(
+            cardName = "Grammar",
+            itemRes = R.drawable.grammar_icon,
+            onClick = onGrammarClicked,
+            modifier = Modifier.weight(1f))
     }
     Row(
         modifier = Modifier
@@ -169,8 +195,16 @@ private fun Selection(
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        ItemCard(cardName = "Flashcard", itemRes = R.drawable.flashcard_icon, modifier = Modifier.weight(1f))
-        ItemCard(cardName = "Review", itemRes = R.drawable.review_icon, modifier = Modifier.weight(1f))
+        ItemCard(
+            cardName = "Flashcard",
+            itemRes = R.drawable.flashcard_icon,
+            onClick = onFlashCardClicked,
+            modifier = Modifier.weight(1f))
+        ItemCard(
+            cardName = "Review",
+            itemRes = R.drawable.review_icon,
+            onClick = onReviewClicked,
+            modifier = Modifier.weight(1f))
     }
 }
 
@@ -178,6 +212,7 @@ private fun Selection(
 private fun ItemCard(
     cardName: String,
     itemRes: Int,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -187,6 +222,7 @@ private fun ItemCard(
         modifier = modifier
             .size(150.dp)
             .padding(4.dp)
+            .clickable { onClick() }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -289,6 +325,11 @@ private fun Pronunciation(
 @Composable
 private fun PracticeScreenPreview() {
     EngMasTheme {
-        PracticeScreen()
+        PracticeScreen(
+            onVocabularyClicked = {},
+            onGrammarClicked = {},
+            onFlashCardClicked = {},
+            onReviewClicked = {}
+        )
     }
 }

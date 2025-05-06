@@ -6,7 +6,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 
 object RetrofitClient {
-    private const val BASE_URL = "https://engmasserver-production.up.railway.app/"
+//    private const val BASE_URL = "https://engmasserver-production.up.railway.app/"
+    private const val BASE_URL = "http://10.0.2.2:3000/"
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -19,7 +20,7 @@ object RetrofitClient {
         .baseUrl(BASE_URL)
         .build()
 
-    val userApi: UserApiService by lazy {
-        retrofit.create(UserApiService::class.java)
+    val api: EngMasApiService by lazy {
+        retrofit.create(EngMasApiService::class.java)
     }
 }

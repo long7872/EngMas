@@ -77,6 +77,9 @@ dependencies {
     ksp(libs.room.compiler)
     implementation(libs.room.ktx)
     implementation(libs.androidx.datastore.preferences)
+    implementation (libs.barteksc.androidpdfviewer) {
+        exclude(group = "com.android.support")
+    }
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)

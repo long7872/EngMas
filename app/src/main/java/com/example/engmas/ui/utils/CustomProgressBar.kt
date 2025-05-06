@@ -3,6 +3,7 @@ package com.example.engmas.ui.utils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -12,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -39,9 +41,21 @@ fun CustomProgressBar(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .width((progress.coerceIn(0f, 1f) * 100).dp)  // Chiều rộng thay đổi theo progress
+                .fillMaxWidth(fraction = (progress.coerceIn(0f, 100f) / 100f)) // Đặt tỷ lệ chiều rộng theo progress
                 .clip(RoundedCornerShape(50))  // Bo tròn góc cho thanh tiến trình
                 .background(progressColor)  // Màu xanh lá
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun CustomProgressBarPreview() {
+    CustomProgressBar(
+        progress = 50f,  // 100% progress
+        modifier = Modifier.fillMaxWidth()  // Làm cho thanh chiếm toàn bộ chiều rộng
+    )
+}
+
+
+

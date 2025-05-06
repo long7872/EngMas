@@ -5,9 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.engmas.ui.EngMasApp
-import com.example.engmas.ui.screens.home.ChatInterface
-import com.example.engmas.ui.screens.practice.courses.Content
-import com.example.engmas.ui.screens.practice.courses.VocabularyCard
+import com.example.engmas.ui.screens.practice.PracticeScreen
+import com.example.engmas.ui.screens.practice.grammar.GrammarScreen
 import com.example.engmas.ui.theme.EngMasTheme
 import com.google.firebase.FirebaseApp
 
@@ -18,7 +17,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EngMasTheme {
-                ChatInterface()
+//                ChatInterface()
+                EngMasApp()
             }
         }
     }

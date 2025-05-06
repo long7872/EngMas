@@ -35,6 +35,12 @@
     <string name="analysis_review">words to review this week</string>
 
 <!--practice-->
+    <string name="tab_grammars">Grammars</string>
+    <string name="tab_grammar">Grammar</string>
+    <string name="tab_vocabulary">Vocabulary Topic</string>
+    <string name="tab_flashcard">Flashcard Topic</string>
+    <string name="tab_vocabulary_learning">Vocabulary Learning</string>
+    <string name="tab_flashcard_learning">Flashcard Learning</string>
     <string name="course1">Course 1</string>
     <string name="vocabulary">Vocabulary</string>
     <string name="flashcard">Flashcard</string>
@@ -42,6 +48,7 @@
     <string name="review">Review</string>
     <string name="moreoptions">More Options</string>
     <string name="foodicon">Food Icon</string>
+    <string name="item_icon">Items Icon</string>
     <string name="food">Food</string>
 
 <!--exam-->

@@ -13,9 +13,6 @@ import com.example.engmas.data.repository.NetworkWordRepository
 import com.example.engmas.network.RetrofitClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,8 +25,8 @@ import kotlin.random.Random
 class Challenge_OnlineViewModel: ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
-    private val userRepository = NetworkUserRepository(RetrofitClient.userApi)
-    private val wordRepository = NetworkWordRepository(RetrofitClient.userApi)
+    private val userRepository = NetworkUserRepository(RetrofitClient.api)
+    private val wordRepository = NetworkWordRepository(RetrofitClient.api)
     private val challengeRepository = ChallengeRepository()
     private val userScoreRepository = NetworkUserScoreRepository()
 
@@ -57,6 +54,8 @@ class Challenge_OnlineViewModel: ViewModel() {
                         thisUser = thisUser
                     )
                 }
+                delay(500)
+                startMatching(userId)
             } catch (e: Exception) {
                 Log.e(null , "enterMatching: ${e.message}")
             }

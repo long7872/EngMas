@@ -19,8 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
-import java.time.LocalDate
 import java.util.Calendar
 import java.util.Locale
 import kotlin.math.abs
@@ -28,8 +26,8 @@ import kotlin.math.abs
 class HomeViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
-    private val userRepository = NetworkUserRepository(RetrofitClient.userApi)
-    private val wordRepository = NetworkWordRepository(RetrofitClient.userApi)
+    private val userRepository = NetworkUserRepository(RetrofitClient.api)
+    private val wordRepository = NetworkWordRepository(RetrofitClient.api)
     private val userScoreRepository = NetworkUserScoreRepository()
 
     private val _uiState = MutableStateFlow(HomeUiState())

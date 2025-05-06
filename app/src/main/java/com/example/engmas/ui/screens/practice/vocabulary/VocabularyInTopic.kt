@@ -3,10 +3,8 @@ package com.example.engmas.ui.screens.practice.vocabulary
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,9 +28,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -42,15 +41,25 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
+import com.example.engmas.data.model.Topic
+import com.example.engmas.data.model.Vocab
 import com.example.engmas.ui.screens.practice.courses.fakedata.Items
 import com.example.engmas.ui.screens.practice.courses.fakedata.VocabularyItem
+import com.example.engmas.ui.screens.practice.vocabulary.model.VocabLearningInTopic
 import com.example.engmas.ui.theme.KufamFont
+import com.example.engmas.ui.utils.TitleRow
 
 @Composable
-private fun Content(
+fun VocabularyInTopic(
+    selectedTopic: Topic,
+    listVocab: List<VocabLearningInTopic>,
+    onVocabClicked: (VocabLearningInTopic) -> Unit,
+    onMarkAllClicked: () -> Unit,
+    onStartLearningClicked: () -> Unit,
+    onBackClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    items: List<VocabularyItem> = Items
 ) {
 
     Card(
@@ -68,19 +77,20 @@ private fun Content(
             TitleRow(
                 containerColor = Color(0xFFE3F2FD),
                 itemColor = Color(0xFF757575),
-                text = R.string.course1,
-                onClick = {  }
+                text = "${selectedTopic.topicName} - ${selectedTopic.topicNameVi}",
+                onClick = onBackClicked
             )
 
             Spacer(modifier = Modifier.padding(4.dp))
 
             ItemGrid(
-                items = items,
+                items = listVocab,
+                onRowClick = onVocabClicked,
                 modifier = Modifier.weight(1f)
             )
 
             OutlinedButton(
-                onClick = {},
+                onClick = onMarkAllClicked,
                 border = BorderStroke(1.dp, Color(0xFFD3D3D3)),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
@@ -103,7 +113,7 @@ private fun Content(
 
             Button(
                 elevation = ButtonDefaults.buttonElevation(4.dp),
-                onClick = {},
+                onClick = onStartLearningClicked,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF24D3E3)) ,
                 modifier = Modifier
@@ -128,7 +138,8 @@ private fun Content(
 
 @Composable
 private fun ItemGrid(
-    items: List<VocabularyItem>,
+    items: List<VocabLearningInTopic>,
+    onRowClick: (VocabLearningInTopic) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -136,99 +147,25 @@ private fun ItemGrid(
         modifier = modifier.fillMaxSize()
     ) {
         items(items) { item ->
+            val formattedWord = item.word.replaceFirstChar { it.uppercase() }
             ContentRow(
-                containerColor = item.containerColor,
-                itemColor = item.itemColor,
-                iconRes = item.iconRes,
-                iconDes = item.iconDes,
-                text = item.text,
-                onClick = item.onClick
+                text = formattedWord,
+                onClick = { onRowClick(item) }
             )
-        }
-    }
-}
-
-
-@Composable
-private fun TitleRow(
-    containerColor: Color,
-    itemColor: Color,
-    @StringRes text: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF)),
-        modifier = modifier
-            .fillMaxWidth()
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(dimensionResource(R.dimen.row_card_size))
-                    .background(Color(0xFF49C1D9), MaterialTheme.shapes.medium)
-                    .clip(MaterialTheme.shapes.medium)
-            ) {
-                Card(
-                    elevation = CardDefaults.cardElevation(4.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    colors = CardDefaults.cardColors(containerColor = containerColor),
-                    modifier = modifier
-                        .fillMaxSize()
-                        .height(dimensionResource(R.dimen.option_row_size))
-                        .padding(bottom = dimensionResource(R.dimen.padding_smaller))
-                        .clickable { onClick() },
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(dimensionResource(R.dimen.padding_medium))
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.goback_icon),
-                            tint = itemColor,
-                            contentDescription = stringResource(R.string.notification_icon),
-                            modifier = Modifier
-                                .width(dimensionResource(R.dimen.goto_icon_size))
-                                .aspectRatio(1 / 2f)
-                        )
-                        Spacer(Modifier.width(dimensionResource(R.dimen.option_icon_text_gap)))
-                        Text(
-                            text = stringResource(text),
-                            fontFamily = KufamFont,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 17.sp,
-                            textAlign = TextAlign.Center,
-                            color = itemColor,
-                        )
-                    }
-                }
-            }
         }
     }
 }
 
 @Composable
 private fun ContentRow(
-    containerColor: Color,
-    itemColor: Color,
-    @DrawableRes iconRes: Int,
-    @StringRes iconDes: Int,
-    @StringRes text: Int,
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = containerColor),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
         modifier = modifier
             .height(dimensionResource(R.dimen.option_row_size))
             .padding(
@@ -249,30 +186,30 @@ private fun ContentRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(iconRes),
-                    tint = itemColor,
-                    contentDescription = stringResource(iconDes),
+                    painter = painterResource(R.drawable.item_icon),
+                    tint = Color(0xFF4DC5DD),
+                    contentDescription = stringResource(R.string.item_icon),
                     modifier = Modifier
                         .fillMaxHeight()
                 )
                 Spacer(Modifier.width(dimensionResource(R.dimen.option_icon_text_gap)))
                 Text(
-                    text = stringResource(text),
+                    text = text,
                     fontFamily = KufamFont,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 15.sp,
                     textAlign = TextAlign.Center,
-                    color = itemColor,
+                    color = Color(0xFF4DC5DD),
                 )
             }
-            Icon(
-                painter = painterResource(R.drawable.more_options_icon),
-                tint = itemColor,
-                contentDescription = stringResource(R.string.moreoptions),
-                modifier = Modifier
-                    .width(dimensionResource(R.dimen.goto_icon_size))
-                    .aspectRatio(1 / 2f)
-            )
+//            Icon(
+//                painter = painterResource(R.drawable.more_options_icon),
+//                tint = Color(0xFF4DC5DD),
+//                contentDescription = stringResource(R.string.moreoptions),
+//                modifier = Modifier
+//                    .width(dimensionResource(R.dimen.goto_icon_size))
+//                    .aspectRatio(1 / 2f)
+//            )
         }
     }
 }
@@ -280,5 +217,5 @@ private fun ContentRow(
 @Preview(showBackground = true)
 @Composable
 private fun CoursesPreview() {
-    Content()
+
 }

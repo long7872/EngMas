@@ -27,11 +27,11 @@ fun Challenge_OnlineScreen(
 ) {
     val auth = FirebaseAuth.getInstance()
     val uiState by viewModel.uiState.collectAsState()
-    val userId = auth.currentUser?.uid ?: ""
+//    val userId = auth.currentUser?.uid ?: ""
 
-    LaunchedEffect(userId) {
-        viewModel.startMatching(userId)
-    }
+//    LaunchedEffect(userId) {
+//        viewModel.startMatching(userId)
+//    }
     Challenge_MatchScreen(
         onFinishTimeBar = { viewModel.nextQuestion() },
         onSkipButton = { viewModel.nextQuestion() },

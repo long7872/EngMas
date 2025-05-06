@@ -1,7 +1,7 @@
 package com.example.engmas.data.repository
 
 import com.example.engmas.data.model.User
-import com.example.engmas.network.UserApiService
+import com.example.engmas.network.EngMasApiService
 
 interface UserRepository {
     suspend fun createUser(user: User): Result<Unit>
@@ -9,7 +9,7 @@ interface UserRepository {
     suspend fun getAllUsers(): List<User>
 }
 
-class NetworkUserRepository(private val api: UserApiService): UserRepository {
+class NetworkUserRepository(private val api: EngMasApiService): UserRepository {
 
     override suspend fun createUser(user: User): Result<Unit> {
         return try {
