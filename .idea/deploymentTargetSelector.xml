@@ -13,19 +13,19 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="Part1Preview">
+      <SelectionState runConfigName="Part4WithoutImage_ResultPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ZoomableImageCardPreview">
+      <SelectionState runConfigName="Part4WithImage_ResultPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Part3Preview">
+      <SelectionState runConfigName="Part5_ResultPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Part4WithImagePreview">
+      <SelectionState runConfigName="Part6_ResultPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="Part6Preview">
+      <SelectionState runConfigName="Part7_ResultPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

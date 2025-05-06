@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.example.engmas.R
 import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.theme.KufamFont
+import com.example.engmas.ui.utils.Previous_Next_Button
 import com.example.engmas.ui.utils.QuestionWithAnswers
 import com.example.engmas.ui.utils.QuizHeader
 import com.example.engmas.ui.utils.ZoomableImageCard
@@ -100,44 +101,7 @@ fun Part7(
                         QuestionWithAnswers(question = question5, options = options5)
                     }
                     item {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp)
-                        ) {
-                            OutlinedButton(
-                                onClick = {},
-                                border = BorderStroke(1.dp, Color(0xFFD3D3D3)),
-                                shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier
-                                    .padding(20.dp)
-                                    .size(130.dp, 40.dp)
-                            ) {
-                                Text(
-                                    text = "Previous",
-                                    color = Color(0xFF757575),
-                                    fontFamily = KufamFont,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                )
-                            }
-
-                            Button(
-                                onClick = {},
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF24D3E3)) ,
-                                modifier = Modifier
-                                    .padding(20.dp)
-                                    .size(130.dp, 40.dp)
-                            ) {
-                                Text(
-                                    text = "Next",
-                                    color = Color(0xFFFFFFFF),
-                                    fontFamily = KufamFont,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                )
-                            }
-                        }
+                        Previous_Next_Button()
                     }
                 }
             }
