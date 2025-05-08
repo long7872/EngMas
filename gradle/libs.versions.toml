@@ -50,6 +50,9 @@ espressoCore = "3.6.1"
 kotlinxCoroutinesTest = "1.7.3"
 lifecycleProcess = "2.8.7"
 
+# Zip 4
+zip4j = "2.9.1"
+
 [libraries]
 
 # --- AndroidX Core ---
@@ -118,6 +121,9 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "lifecycleProcess" }
+
+# --- Zip 4 ---
+zip4j = { module = "net.lingala.zip4j:zip4j", version.ref = "zip4j" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
