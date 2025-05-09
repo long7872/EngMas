@@ -8,6 +8,7 @@ import com.example.engmas.data.model.Streak
 import com.example.engmas.data.model.Today
 import com.example.engmas.data.model.UserScore
 import com.example.engmas.data.model.UserStatus
+import com.example.engmas.data.repository.NetworkCourseRepository
 import com.example.engmas.data.repository.NetworkUserRepository
 import com.example.engmas.data.repository.NetworkUserScoreRepository
 import com.example.engmas.data.repository.NetworkWordRepository
@@ -25,9 +26,11 @@ import kotlin.math.abs
 
 class HomeViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
+    private val userId = auth.currentUser?.uid ?: ""
     private val firestore = FirebaseFirestore.getInstance()
     private val userRepository = NetworkUserRepository(RetrofitClient.api)
     private val wordRepository = NetworkWordRepository(RetrofitClient.api)
+    private val courseRepository = NetworkCourseRepository(RetrofitClient.api)
     private val userScoreRepository = NetworkUserScoreRepository()
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -50,6 +53,7 @@ class HomeViewModel : ViewModel() {
             }
         }
         loadUserScore()
+        getUserCourse()
     }
 
     fun searchVocab(query: String) {
@@ -156,6 +160,15 @@ class HomeViewModel : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    private fun getUserCourse() {
+        viewModelScope.launch {
+            val result = courseRepository.getUserCourse(userId)
+
+            Log.d("Home View Model", "function getUserCourse result: $result")
+            _uiState.update { it.copy(courseList = result) }
         }
     }
 
@@ -273,7 +286,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun getCurrentDayOfWeek(): String {
+    private fun getCurrentDayOfWeek(): String {
         val days = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat") // Thứ tự của Calendar
         val calendar = java.util.Calendar.getInstance()
         val dayIndex = calendar.get(java.util.Calendar.DAY_OF_WEEK) - 1 // Calendar: Sunday=1

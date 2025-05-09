@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.engmas.R
 import com.example.engmas.ui.navigation.NavigationDestination
-import com.example.engmas.ui.screens.practice.courses.data.GrammarItem
-import com.example.engmas.ui.screens.practice.courses.data.GrammarItems
+import com.example.engmas.ui.screens.practice.grammar.data.GrammarItem
+import com.example.engmas.ui.screens.practice.grammar.data.GrammarItems
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.TitleRow
 

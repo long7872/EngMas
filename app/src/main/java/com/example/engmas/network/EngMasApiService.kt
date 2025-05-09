@@ -1,10 +1,16 @@
 package com.example.engmas.network
 
+import com.example.engmas.data.model.Course
 import com.example.engmas.data.model.User
+import com.example.engmas.data.model.UserCourse
 import com.example.engmas.data.model.UserLearning
 import com.example.engmas.data.model.Vocab
+import com.example.engmas.ui.screens.home.data.CourseLearning
+import com.example.engmas.ui.screens.practice.courses.data.QuestionInCourse
+import com.example.engmas.ui.screens.practice.courses.data.UpdateStatusRequest
 import com.example.engmas.ui.screens.practice.vocabulary.model.TopicProgress
 import com.example.engmas.ui.screens.practice.vocabulary.model.VocabsInTopic
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -44,4 +50,16 @@ interface EngMasApiService {
         @Path("topic_id") topicId: Int,
         @Query("user_id") userId: String
     ): Response<VocabsInTopic>
+
+    @GET("courses")
+    suspend fun getAllCourses(): Response<List<Course>>
+    @GET("courses/learning/{course_id}")
+    suspend fun getCourseLearning(
+        @Path("course_id") courseId: Int,
+        @Query("user_id") userId: String
+    ): Response<QuestionInCourse>
+    @POST("courses/learning/update_status")
+    suspend fun updatesUserLearningStatus(@Body request: UpdateStatusRequest): Response<ResponseBody>
+    @GET("courses/user_course/{user_id}")
+    suspend fun getUserCourses(@Path("user_id") userId: String): Response<List<CourseLearning>>
 }

@@ -2,7 +2,6 @@ package com.example.engmas.ui.navigation
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,7 +13,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.example.engmas.ui.GeneralViewModel
 import com.example.engmas.ui.screens.account.AccountDestination
@@ -39,20 +37,24 @@ import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
 import com.example.engmas.ui.screens.practice.PracticeScreen
+import com.example.engmas.ui.screens.practice.courses.CourseProcessing
+import com.example.engmas.ui.screens.practice.courses.CourseScreen
 import com.example.engmas.ui.screens.practice.courses.FlashcardScreen
+import com.example.engmas.ui.screens.practice.courses.PracticeCourseDestination
 import com.example.engmas.ui.screens.practice.courses.PracticeFlashcardDestination
-import com.example.engmas.ui.screens.practice.courses.data.GrammarItems
+import com.example.engmas.ui.screens.practice.courses.PracticeReviewDestination
+import com.example.engmas.ui.screens.practice.courses.ReviewScreen
 import com.example.engmas.ui.screens.practice.flashcard.FlashcardInTopic
 import com.example.engmas.ui.screens.practice.flashcard.PracticeFlashCardInTopicDestination
 import com.example.engmas.ui.screens.practice.grammar.GrammarContent
 import com.example.engmas.ui.screens.practice.grammar.GrammarScreen
 import com.example.engmas.ui.screens.practice.grammar.PracticeGrammarDestination
 import com.example.engmas.ui.screens.practice.grammar.PracticeGrammarsDestination
+import com.example.engmas.ui.screens.practice.grammar.data.GrammarItems
 import com.example.engmas.ui.screens.practice.vocabulary.PracticeVocabularyDestination
 import com.example.engmas.ui.screens.practice.vocabulary.PracticeVocabularyLearningDestination
 import com.example.engmas.ui.screens.practice.vocabulary.VocabularyProcessing
 import com.example.engmas.ui.screens.practice.vocabulary.VocabularyScreen
-import com.example.engmas.ui.screens.practice.vocabulary.VocabularyViewModel
 
 @Composable
 fun EngMasNavHost(
@@ -74,7 +76,8 @@ fun EngMasNavHost(
     ) {
         composable(route = HomeDestination.route) {
             HomeScreen(
-                timerViewModel = generalViewModel
+                timerViewModel = generalViewModel,
+                onCourseClicked = { navController.navigate("${PracticeCourseDestination.route}/$it") }
             )
         }
 
@@ -83,16 +86,37 @@ fun EngMasNavHost(
                 onVocabularyClicked = { navController.navigate(PracticeVocabularyDestination.route) },
                 onGrammarClicked = { navController.navigate(PracticeGrammarsDestination.route) },
                 onFlashCardClicked = { navController.navigate(PracticeFlashcardDestination.route) },
-                onReviewClicked = {}
+                onReviewClicked = { navController.navigate(PracticeReviewDestination.route) },
+                onCourseClicked = { navController.navigate("${PracticeCourseDestination.route}/$it") }
             )
+        }
+
+        composable(
+            route = PracticeCourseDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(PracticeCourseDestination.ITEM_ARGS)
+                { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val courseId = backStackEntry.arguments?.getInt(
+                PracticeCourseDestination.ITEM_ARGS
+            )
+            if (courseId != null) {
+                CourseProcessing(
+                    courseId = courseId,
+                    onBackClicked = { navController.navigateUp() }
+                )
+            } else {
+                navController.navigate(HomeDestination.route)
+            }
+
         }
 
         composable(route = PracticeVocabularyDestination.route) {
             VocabularyScreen(
                 onClick = { navController.navigate(
                     "${PracticeVocabularyLearningDestination.route}/$it"
-                    )
-                },
+                ) },
                 onBackClicked = { navController.navigateUp() }
             )
         }
@@ -146,8 +170,7 @@ fun EngMasNavHost(
             FlashcardScreen(
                 onClick = { navController.navigate(
                     "${PracticeFlashCardInTopicDestination.route}/$it"
-                    )
-                },
+                ) },
                 onBackClicked = { navController.navigateUp() }
             )
         }
@@ -171,6 +194,18 @@ fun EngMasNavHost(
                 navController.navigate(HomeDestination.route)
             }
 
+        }
+
+        composable(route = PracticeReviewDestination.route) {
+            ReviewScreen(
+                onVocabularyClick = { navController.navigate(
+                    "${PracticeVocabularyLearningDestination.route}/$it"
+                ) },
+                onFlashcardClick = { navController.navigate(
+                    "${PracticeFlashCardInTopicDestination.route}/$it"
+                ) },
+                onBackClicked = { navController.navigateUp() }
+            )
         }
 
         composable(route = ExamDestination.route) {

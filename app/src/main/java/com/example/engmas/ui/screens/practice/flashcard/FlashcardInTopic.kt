@@ -184,7 +184,6 @@ fun FlashcardInTopicScreen(
             ) {
                 Flashcard(
                     text = item.word,
-                    partOfSpeech = item.partOfSpeech,
                     phonetic = item.phonetic,
                     meaning = item.wordVi,
                     onAudioClick = {
@@ -256,7 +255,6 @@ fun FlashcardInTopicScreen(
 @Composable
 private fun Flashcard(
     text: String,
-    partOfSpeech: String,
     phonetic: String,
     meaning: String,
     onAudioClick: () -> Unit,
@@ -289,7 +287,7 @@ private fun Flashcard(
 
             // Tên và phiên âm
             Text(
-                text = "$text ($partOfSpeech)",
+                text = "$text",
                 fontFamily = KufamFont,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
