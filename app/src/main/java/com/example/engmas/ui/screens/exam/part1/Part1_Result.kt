@@ -1,5 +1,6 @@
 package com.example.engmas.ui.screens.exam.part1
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,17 +8,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
+import com.example.engmas.data.QuestionData
 import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.utils.AnswerButtons
 import com.example.engmas.ui.utils.AudioPlayer
@@ -28,8 +34,14 @@ import com.example.engmas.ui.utils.ZoomableImageCard
 
 @Composable
 fun Part1_Result(
+    part1ViewModel: Part1ViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
+    val uiState by part1ViewModel.uiState.collectAsState()
+
+    // Tính điểm
+    val totalPoints = calculateTotalPoints(uiState.questionsPart1)
+
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -47,8 +59,8 @@ fun Part1_Result(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "6",
-                    totalQuestions = "200",
+                    currentQuestion = (uiState.currentQuestionIndex + 1).toString(),
+                    totalQuestions = uiState.questionsPart1.size.toString(),
                     part = "1",
                     timeLeft = 7200
                 )
@@ -57,28 +69,19 @@ fun Part1_Result(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
-                    item {
-                        ZoomableImageCard("https://drive.google.com/uc?export=view&id=1NP1x7xsto8TQpV524W3Dtrc3_v6jjaKK")
-                    }
-                    item {
-                        AudioPlayer(url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
-                    }
-                    item {
-                        val question = null
-                        val options = listOf(
-                            "A.  Potted plants have been suspended from a ceiling.",
-                            "B.  Chairs have been stacked in front of an entryway.",
-                            "C.  A computer station has been set up on a desk.",
-                            "D.  A rug has been rolled up against a wall."
-                        )
-                        val correctAnswer = "C.  A computer station has been set up on a desk."
-                        val userAnswer = "A.  Potted plants have been suspended from a ceiling."
+                    itemsIndexed(uiState.questionsPart1) { index, questionData ->
+                        // Hiển thị hình ảnh nếu có
+                        ZoomableImageCard(questionData.imageFile?.toURI().toString())
 
+                        // Hiển thị audio nếu có
+                        AudioPlayer(questionData.audioFile?.toURI().toString())
+
+                        // Hiển thị câu hỏi và các đáp án
                         QuestionWithAnswerFeedback(
-                            question = question,
-                            options = options,
-                            correctAnswer = correctAnswer,
-                            userAnswer = userAnswer
+                            question = questionData.question,
+                            options = questionData.options,
+                            correctAnswer = questionData.correctAnswer,
+                            userAnswer = questionData.userAnswer ?: "No Answer"
                         )
                     }
                     item {
@@ -88,6 +91,17 @@ fun Part1_Result(
             }
         }
     }
+    Log.d("Total point part 1", "$totalPoints")
+}
+
+fun calculateTotalPoints(questions: List<QuestionData>): Int {
+    var totalPoints = 0
+    questions.forEach { question ->
+        if (question.userAnswer == question.correctAnswer) {
+            totalPoints += 5  // Mỗi câu đúng được 5 điểm
+        }
+    }
+    return totalPoints
 }
 
 @Preview(showBackground = true)

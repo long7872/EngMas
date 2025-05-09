@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -80,6 +81,7 @@ dependencies {
     implementation (libs.barteksc.androidpdfviewer) {
         exclude(group = "com.android.support")
     }
+    implementation(libs.zip4j)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)

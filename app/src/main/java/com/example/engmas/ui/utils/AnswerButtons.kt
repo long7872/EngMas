@@ -13,10 +13,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -27,10 +23,12 @@ import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.theme.KufamFont
 
 @Composable
-fun AnswerButtons(modifier: Modifier = Modifier) {
-    // Mutable state to track the selected button
-    var selectedAnswer by remember { mutableStateOf<String?>(null) }
-
+fun AnswerButtons(
+    modifier: Modifier = Modifier,
+    selectedAnswer: String?, // Truyền selectedAnswer từ bên ngoài vào
+    options: List<String>,
+    onAnswerSelected: (String) -> Unit
+) {
     // Button color based on selection state
     val buttonColor = Color(0xFF8FE8FA) // Light blue (used for selected buttons)
 
@@ -43,75 +41,25 @@ fun AnswerButtons(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier
     ) {
-        // Option A
-        Button(
-            onClick = { selectedAnswer = "A" },
-            modifier = Modifier.size(350.dp, 60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getButtonColor("A")),
-            border = BorderStroke(2.dp, Color(0xFFD4D2D2)),
-            elevation = ButtonDefaults.buttonElevation(2.dp),
-            shape = MaterialTheme.shapes.small,
-        ) {
-            Text(
-                text = "A",
-                fontSize = 20.sp,
-                color = Color(0xFF757575),
-                fontFamily = KufamFont,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        // Option B
-        Button(
-            onClick = { selectedAnswer = "B" },
-            modifier = Modifier.size(350.dp, 60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getButtonColor("B")),
-            border = BorderStroke(2.dp, Color(0xFFD4D2D2)),
-            elevation = ButtonDefaults.buttonElevation(2.dp),
-            shape = MaterialTheme.shapes.small,
-        ) {
-            Text(
-                text = "B",
-                fontSize = 20.sp,
-                color = Color(0xFF757575),
-                fontFamily = KufamFont,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        // Option C
-        Button(
-            onClick = { selectedAnswer = "C" },
-            modifier = Modifier.size(350.dp, 60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getButtonColor("C")),
-            border = BorderStroke(2.dp, Color(0xFFD4D2D2)),
-            elevation = ButtonDefaults.buttonElevation(2.dp),
-            shape = MaterialTheme.shapes.small,
-        ) {
-            Text(
-                text = "C",
-                fontSize = 20.sp,
-                color = Color(0xFF757575),
-                fontFamily = KufamFont,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        // Option D
-        Button(
-            onClick = { selectedAnswer = "D" },
-            modifier = Modifier.size(350.dp, 60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = getButtonColor("D")),
-            border = BorderStroke(2.dp, Color(0xFFD4D2D2)),
-            elevation = ButtonDefaults.buttonElevation(2.dp),
-            shape = MaterialTheme.shapes.small,
-        ) {
-            Text(
-                text = "D",
-                fontSize = 20.sp,
-                color = Color(0xFF757575),
-                fontFamily = KufamFont,
-                fontWeight = FontWeight.Bold
-            )
+        options.forEachIndexed { index, option ->
+            Button(
+                onClick = {
+                    onAnswerSelected(option) // Gọi hàm callback khi người dùng chọn đáp án
+                },
+                modifier = Modifier.size(350.dp, 60.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = if (selectedAnswer == option) Color(0xFF8FE8FA) else Color(0xFFE3F2FD)),
+                border = BorderStroke(2.dp, Color(0xFFD4D2D2)),
+                elevation = ButtonDefaults.buttonElevation(2.dp),
+                shape = MaterialTheme.shapes.small,
+            ) {
+                Text(
+                    text = option,
+                    fontSize = 20.sp,
+                    color = Color(0xFF757575),
+                    fontFamily = KufamFont,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
@@ -120,6 +68,14 @@ fun AnswerButtons(modifier: Modifier = Modifier) {
 @Composable
 fun AnswerButtonsPreview() {
     EngMasTheme {
-        AnswerButtons(modifier = Modifier.padding(start = 50.dp, end = 50.dp))
+        val options = listOf("A", "B", "C", "D") // Chỉ hiển thị các nút A, B, C, D
+        AnswerButtons(
+            modifier = Modifier.padding(start = 50.dp, end = 50.dp),
+            selectedAnswer = null,
+            options = options,
+            onAnswerSelected = { answer ->
+                println("Selected answer: $answer")
+            }
+        )
     }
 }
