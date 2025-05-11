@@ -1,5 +1,7 @@
 package com.example.engmas.ui.screens.exam.part2
 
+import android.media.MediaPlayer
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,14 +24,52 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
+import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.theme.EngMasTheme
+import com.example.engmas.ui.utils.AnswerButtons
 import com.example.engmas.ui.utils.AnswerButtonsPart2
+import com.example.engmas.ui.utils.Previous_Next_Button
 import com.example.engmas.ui.utils.QuizHeader
+import java.io.File
 
 @Composable
 fun Part2(
+    currentQuestion: String,
+    audioFile: File?,
+    question: Question,
+    onAnswerSelected: (String) -> Unit,
+    onCompleted: () -> Unit,
+    isDebug: Boolean = false,
+    onPreviousClicked: () -> Unit,
+    onNextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var selectedAnswer by remember { mutableStateOf("") }
+    val fullOptions = question.options
+    val displayOptions = fullOptions.map { it.first().toString() }
+    val mediaPlayer = remember { MediaPlayer() }
+    Log.d("Part 2 Screen", "current question name: $currentQuestion")
+    LaunchedEffect(currentQuestion) {
+        selectedAnswer = ""
+        // Kiểm tra nếu audioFile không null và là một tệp hợp lệ
+        if (audioFile != null && audioFile.exists()) {
+            // Reset MediaPlayer và chuẩn bị phát tệp mới
+            mediaPlayer.setDataSource(audioFile.absolutePath)  // Sử dụng đường dẫn tuyệt đối của tệp
+            Log.d("Part 2 Screen", "audio FilePath: ${audioFile.absolutePath}")
+            mediaPlayer.prepare()  // Chuẩn bị phát tệp âm thanh
+            mediaPlayer.setVolume(1.0f, 1.0f)  // Đặt âm lượng
+
+            // Phát âm thanh
+            mediaPlayer.start()
+
+            // Đặt OnCompletionListener để thực hiện hành động khi âm thanh kết thúc
+            mediaPlayer.setOnCompletionListener {
+                mediaPlayer.stop()
+                mediaPlayer.reset()
+                onCompleted()
+            }
+        }
+    }
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -42,13 +87,41 @@ fun Part2(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "10",
-                    totalQuestions = "200",
+                    currentQuestion = currentQuestion,
                     part = "2",
                     timeLeft = 7200
                 )
                 Spacer(modifier = Modifier.height(50.dp))
-                AnswerButtonsPart2(modifier = Modifier.padding(start = 20.dp, end = 20.dp))
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    AnswerButtons(
+                        options = displayOptions,
+                        selectedAnswer = selectedAnswer,
+                        onAnswerSelected = { shortAnswer ->
+                            selectedAnswer = shortAnswer
+
+                            val fullAnswer = fullOptions.find { it.startsWith(shortAnswer) }
+                            if (fullAnswer != null) {
+                                // Trả về đáp án đầy đủ khi người dùng chọn
+                                onAnswerSelected(fullAnswer)
+                            }
+                        },
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                    )
+                    if (isDebug) {
+                        Previous_Next_Button(
+                            onPreviousClicked = onPreviousClicked,
+                            onNextClicked = {
+                                mediaPlayer.stop()
+                                mediaPlayer.reset()
+                                onNextClicked()
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -58,6 +131,6 @@ fun Part2(
 @Composable
 private fun Part2Preview() {
     EngMasTheme {
-        Part2()
+//        Part2()
     }
 }

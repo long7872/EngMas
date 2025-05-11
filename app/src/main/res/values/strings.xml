@@ -55,6 +55,7 @@
     <string name="food">Food</string>
 
 <!--exam-->
+    <string name="tab_exam_start">Exam Start</string>
     <string name="toeic_logo">TOEIC Logo</string>
     <string name="test_title">Test %1$d - ETS %2$d</string>
     <string name="completed_count">%1$d completed</string>

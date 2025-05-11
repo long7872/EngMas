@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
-import com.example.engmas.data.QuestionData
+import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.utils.AnswerButtons
 import com.example.engmas.ui.utils.AudioPlayer
@@ -31,17 +33,19 @@ import com.example.engmas.ui.utils.Previous_Next_Button
 import com.example.engmas.ui.utils.QuestionWithAnswerFeedback
 import com.example.engmas.ui.utils.QuizHeader
 import com.example.engmas.ui.utils.ZoomableImageCard
+import java.io.File
 
 @Composable
 fun Part1_Result(
-    part1ViewModel: Part1ViewModel = viewModel(),
+    currentQuestion: String,
+    audioFile: File?,
+    imageFiles: List<File>,
+    question: Question,
+    selectedAnswer: String?,
+    onPreviousClicked: () -> Unit,
+    onNextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val uiState by part1ViewModel.uiState.collectAsState()
-
-    // Tính điểm
-    val totalPoints = calculateTotalPoints(uiState.questionsPart1)
-
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -54,60 +58,54 @@ fun Part1_Result(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
             Column(
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 QuizHeader(
-                    currentQuestion = (uiState.currentQuestionIndex + 1).toString(),
-                    totalQuestions = uiState.questionsPart1.size.toString(),
+                    currentQuestion = currentQuestion,
                     part = "1",
                     timeLeft = 7200
                 )
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
-                ) {
-                    itemsIndexed(uiState.questionsPart1) { index, questionData ->
-                        // Hiển thị hình ảnh nếu có
-                        ZoomableImageCard(questionData.imageFile?.toURI().toString())
-
-                        // Hiển thị audio nếu có
-                        AudioPlayer(questionData.audioFile?.toURI().toString())
-
-                        // Hiển thị câu hỏi và các đáp án
-                        QuestionWithAnswerFeedback(
-                            question = questionData.question,
-                            options = questionData.options,
-                            correctAnswer = questionData.correctAnswer,
-                            userAnswer = questionData.userAnswer ?: "No Answer"
-                        )
-                    }
-                    item {
-                        Previous_Next_Button()
+                imageFiles.forEach { imageFile ->
+                    imageFile.let {
+                        Log.d("Part1", "Loading image: ${it.toURI()}")
+                        ZoomableImageCard(imageUrl = it.toURI().toString())
                     }
                 }
+                AudioPlayer(audioFile?.toURI().toString())
+                QuestionWithAnswerFeedback(
+                    question = question.question,
+                    options = question.options,
+                    correctAnswer = question.correctAnswer,
+                    userAnswer = selectedAnswer ?: "No Answer"
+                )
+                Previous_Next_Button(
+                    onPreviousClicked = onPreviousClicked,
+                    onNextClicked = onNextClicked
+                )
             }
         }
     }
-    Log.d("Total point part 1", "$totalPoints")
 }
 
-fun calculateTotalPoints(questions: List<QuestionData>): Int {
-    var totalPoints = 0
-    questions.forEach { question ->
-        if (question.userAnswer == question.correctAnswer) {
-            totalPoints += 5  // Mỗi câu đúng được 5 điểm
-        }
-    }
-    return totalPoints
-}
+//fun calculateTotalPoints(questions: List<QuestionData>): Int {
+//    var totalPoints = 0
+//    questions.forEach { question ->
+//        if (question.userAnswer == question.correctAnswer) {
+//            totalPoints += 5  // Mỗi câu đúng được 5 điểm
+//        }
+//    }
+//    return totalPoints
+//}
 
 @Preview(showBackground = true)
 @Composable
 private fun Part1_ResultPreview() {
     EngMasTheme {
-        Part1_Result()
+//        Part1_Result()
     }
 }

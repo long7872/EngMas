@@ -32,7 +32,9 @@ import com.example.engmas.ui.screens.challenge.online.Challenge_OnlineScreen
 import com.example.engmas.ui.screens.challenge.scoreboard.ChallengeScoreBoardDestination
 import com.example.engmas.ui.screens.challenge.scoreboard.Challenge_ScoreBoardScreen
 import com.example.engmas.ui.screens.exam.ExamDestination
+import com.example.engmas.ui.screens.exam.ExamProcessing
 import com.example.engmas.ui.screens.exam.ExamScreen
+import com.example.engmas.ui.screens.exam.ExamStartDestination
 import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
@@ -193,7 +195,6 @@ fun EngMasNavHost(
             } else {
                 navController.navigate(HomeDestination.route)
             }
-
         }
 
         composable(route = PracticeReviewDestination.route) {
@@ -209,9 +210,28 @@ fun EngMasNavHost(
         }
 
         composable(route = ExamDestination.route) {
-            ExamScreen()
-//            Exam_SelectScreen()
-//            Challenge_MatchingScreen()
+            ExamScreen(
+                onClicked = { navController.navigate("${ExamStartDestination.route}/$it") }
+            )
+        }
+
+        composable(
+            route = ExamStartDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(ExamStartDestination.ITEM_ARGS)
+                { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val examId = backStackEntry.arguments?.getInt(
+                PracticeVocabularyLearningDestination.ITEM_ARGS
+            )
+            if (examId != null) {
+                ExamProcessing(
+                    examId = examId
+                )
+            } else {
+                navController.navigate(HomeDestination.route)
+            }
         }
 
         // main-route: challenge

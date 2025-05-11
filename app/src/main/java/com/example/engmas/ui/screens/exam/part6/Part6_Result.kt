@@ -1,5 +1,6 @@
 package com.example.engmas.ui.screens.exam.part6
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -7,10 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,17 +22,26 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
+import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.utils.AnswerButtons
 import com.example.engmas.ui.utils.AudioPlayer
 import com.example.engmas.ui.utils.Previous_Next_Button
 import com.example.engmas.ui.utils.QuestionWithAnswerFeedback
+import com.example.engmas.ui.utils.QuestionWithAnswers
 import com.example.engmas.ui.utils.QuizHeader
 import com.example.engmas.ui.utils.Reading
 import com.example.engmas.ui.utils.ZoomableImageCard
+import java.io.File
 
 @Composable
 fun Part6_Result(
+    currentQuestion: String,
+    imageFiles: List<File>,
+    questions: List<Question>,
+    selectedAnswer: List<String>,
+    onPreviousClicked: () -> Unit,
+    onNextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -48,8 +61,7 @@ fun Part6_Result(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "150-153",
-                    totalQuestions = "200",
+                    currentQuestion = currentQuestion,
                     part = "6",
                     timeLeft = 7200
                 )
@@ -58,63 +70,27 @@ fun Part6_Result(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
-                    item {
-                        ZoomableImageCard("https://drive.google.com/uc?export=view&id=1NP1x7xsto8TQpV524W3Dtrc3_v6jjaKK")
+                    items(imageFiles) { file ->
+                        file.let {
+                            Log.d("Part6", "Loading image: ${it.toURI()}")
+                            ZoomableImageCard(imageUrl = it.toURI().toString())
+                        }
                     }
-                    item {
-                        val question = "30. What event does the woman mention?"
-                        val options = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        val correctAnswer = "C. A fund-raiser"
-                        val userAnswer = "D. A company picnic"
 
+                    itemsIndexed(questions) { index, item ->
+                        val answer = selectedAnswer.getOrElse(index) { "" }
                         QuestionWithAnswerFeedback(
-                            question = question,
-                            options = options,
-                            correctAnswer = correctAnswer,
-                            userAnswer = userAnswer
+                            question = item.question,
+                            options = item.options,
+                            correctAnswer = item.correctAnswer,
+                            userAnswer = answer
                         )
                     }
                     item {
-                        val question = "30. What event does the woman mention?"
-                        val options = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        val correctAnswer = "C. A fund-raiser"
-                        val userAnswer = "D. A company picnic"
-
-                        QuestionWithAnswerFeedback(
-                            question = question,
-                            options = options,
-                            correctAnswer = correctAnswer,
-                            userAnswer = userAnswer
+                        Previous_Next_Button(
+                            onPreviousClicked = onPreviousClicked,
+                            onNextClicked = onNextClicked
                         )
-                    }
-                    item {
-                        val question = "30. What event does the woman mention?"
-                        val options = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        val correctAnswer = "C. A fund-raiser"
-                        val userAnswer = "D. A company picnic"
-
-                        QuestionWithAnswerFeedback(
-                            question = question,
-                            options = options,
-                            correctAnswer = correctAnswer,
-                            userAnswer = userAnswer
-                        )
-                    }
-                    item {
-                        val question = "30. What event does the woman mention?"
-                        val options = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        val correctAnswer = "C. A fund-raiser"
-                        val userAnswer = "D. A company picnic"
-
-                        QuestionWithAnswerFeedback(
-                            question = question,
-                            options = options,
-                            correctAnswer = correctAnswer,
-                            userAnswer = userAnswer
-                        )
-                    }
-                    item {
-                        Previous_Next_Button()
                     }
                 }
             }
@@ -126,6 +102,6 @@ fun Part6_Result(
 @Composable
 private fun Part6_ResultPreview() {
     EngMasTheme {
-        Part6_Result()
+//        Part6_Result()
     }
 }
