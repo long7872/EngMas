@@ -1,5 +1,6 @@
 package com.example.engmas.ui.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engmas.network.*
@@ -23,6 +24,7 @@ class ChatViewModel : ViewModel() {
 
             try {
                 val response = RetrofitClientGemini.geminiApi.generateChatResponse(request).execute()
+                Log.d("chat viewmodel", "$response")
                 val botReply = response.body()?.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
                     ?: "No response"
 
