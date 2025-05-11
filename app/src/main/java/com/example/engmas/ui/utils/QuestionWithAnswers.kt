@@ -27,9 +27,14 @@ import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.theme.KufamFont
 
 @Composable
-fun QuestionWithAnswers(question: String, options: List<String>) {
-    var selectedAnswer by remember { mutableStateOf<String?>(null) } // Track selected answer
-
+fun QuestionWithAnswers(
+    question: String,
+    options: List<String>,
+    selected: String = "",
+    onClicked: (String) -> Unit = {},
+) {
+    var selectedAnswer by remember { mutableStateOf("") } // Track selected answer
+    selectedAnswer = selected
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,7 +60,10 @@ fun QuestionWithAnswers(question: String, options: List<String>) {
             }
 
             Button(
-                onClick = { selectedAnswer = option },
+                onClick = {
+                    selectedAnswer = option
+                    onClicked(option)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp),
@@ -83,6 +91,6 @@ fun QuestionWithAnswersPreview() {
     val question = "38. What event does the woman mention?"
     val options = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
     EngMasTheme {
-        QuestionWithAnswers(question = question, options = options)
+        QuestionWithAnswers(question = question, options = options, onClicked = {})
     }
 }

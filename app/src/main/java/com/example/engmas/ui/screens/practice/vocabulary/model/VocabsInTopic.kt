@@ -18,9 +18,6 @@ data class VocabLearningInTopic(
     @SerialName(value = "word_vi")
     val wordVi: String = "",
     val phonetic: String = "",
-    @SerialName(value = "part_of_speech")
-    val partOfSpeech: String = "",
-    val definition: String = "",
     val status: VocabLearningStatus = VocabLearningStatus.Explore,
     val audio: String = ""
 )

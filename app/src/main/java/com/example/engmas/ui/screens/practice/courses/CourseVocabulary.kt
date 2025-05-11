@@ -1,4 +1,5 @@
-package com.example.engmas.ui.screens.practice.vocabulary
+package com.example.engmas.ui.screens.practice.courses
+
 
 import android.media.MediaPlayer
 import android.widget.Toast
@@ -55,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.engmas.R
 import com.example.engmas.data.model.Topic
+import com.example.engmas.ui.screens.practice.courses.data.QuestionVocabItem
 import com.example.engmas.ui.screens.practice.courses.fakedata.Items
 import com.example.engmas.ui.screens.practice.courses.fakedata.VocabularyItem
 import com.example.engmas.ui.screens.practice.vocabulary.model.VocabLearningInTopic
@@ -62,11 +64,11 @@ import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.TitleRow
 
 @Composable
-fun VocabularyGame(
+fun CourseVocabulary(
     title: String,
-    item: VocabLearningInTopic,
+    item: QuestionVocabItem,
     answerList: List<String>,
-    onCorrect: (Boolean) -> Unit,
+    onCorrect: (QuestionVocabItem ,Boolean) -> Unit,
     onBackClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -149,9 +151,9 @@ fun VocabularyGame(
                         selectedAnswer = answer
                         isAnswered = true
                         if (answer == item.wordVi) {
-                            onCorrect(true)
+                            onCorrect(item, true)
                         } else {
-                            onCorrect(false)
+                            onCorrect(item, false)
                         }
                     }
                 }

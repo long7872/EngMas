@@ -91,7 +91,7 @@ fun VocabularyProcessing(
         }
         VocabularyScreenState.Game -> {
             VocabularyGame(
-                selectedTopic = selectedTopic,
+                title = "${selectedTopic.topicName} - ${selectedTopic.topicNameVi}",
                 item = uiState.selectedVocab,
                 answerList = uiState.answerList,
                 onCorrect = { isCorrect ->

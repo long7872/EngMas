@@ -18,6 +18,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
+import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.utils.AnswerButtons
 import com.example.engmas.ui.utils.AudioPlayer
@@ -25,9 +26,16 @@ import com.example.engmas.ui.utils.Previous_Next_Button
 import com.example.engmas.ui.utils.QuestionWithAnswerFeedback
 import com.example.engmas.ui.utils.QuizHeader
 import com.example.engmas.ui.utils.ZoomableImageCard
+import java.io.File
 
 @Composable
 fun Part2_Result(
+    currentQuestion: String,
+    audioFile: File?,
+    question: Question,
+    selectedAnswer: String?,
+    onPreviousClicked: () -> Unit,
+    onNextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -47,33 +55,26 @@ fun Part2_Result(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "7",
-                    totalQuestions = "200",
+                    currentQuestion = currentQuestion,
                     part = "2",
                     timeLeft = 7200
                 )
                 Column(
                     modifier = Modifier.weight(0.5f)
                 ) {
-                    AudioPlayer(url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
-
-                    val question = "7. Which apartment submitted a work order?"
-                    val options = listOf(
-                        "A.  It's what you did for a living.",
-                        "B.  Submit your assignment here.",
-                        "C.  It came from the tenants in B23."
-                    )
-                    val correctAnswer = "C.  It came from the tenants in B23."
-                    val userAnswer = "B.  Submit your assignment here."
+                    AudioPlayer(audioFile?.toURI().toString())
 
                     QuestionWithAnswerFeedback(
-                        question = question,
-                        options = options,
-                        correctAnswer = correctAnswer,
-                        userAnswer = userAnswer
+                        question = question.question,
+                        options = question.options,
+                        correctAnswer = question.correctAnswer,
+                        userAnswer = selectedAnswer ?: "No Answer"
                     )
                 }
-                Previous_Next_Button()
+                Previous_Next_Button(
+                    onPreviousClicked = onPreviousClicked,
+                    onNextClicked = onNextClicked
+                )
             }
         }
     }
@@ -83,6 +84,6 @@ fun Part2_Result(
 @Composable
 private fun Part2_ResultPreview() {
     EngMasTheme {
-        Part2_Result()
+//        Part2_Result()
     }
 }

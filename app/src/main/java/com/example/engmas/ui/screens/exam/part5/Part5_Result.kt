@@ -18,6 +18,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
+import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.utils.AnswerButtons
 import com.example.engmas.ui.utils.AudioPlayer
@@ -25,9 +26,15 @@ import com.example.engmas.ui.utils.Previous_Next_Button
 import com.example.engmas.ui.utils.QuestionWithAnswerFeedback
 import com.example.engmas.ui.utils.QuizHeader
 import com.example.engmas.ui.utils.ZoomableImageCard
+import java.io.File
 
 @Composable
 fun Part5_Result(
+    currentQuestion: String,
+    question: Question,
+    selectedAnswer: String?,
+    onPreviousClicked: () -> Unit,
+    onNextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -47,29 +54,24 @@ fun Part5_Result(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "130",
-                    totalQuestions = "200",
+                    currentQuestion = currentQuestion,
                     part = "5",
                     timeLeft = 7200
                 )
                 Column(
                     modifier = Modifier.weight(0.5f)
                 ) {
-                    val question = "130. The_______information provided by Uniss Bank’s brochure helps applicants understand the terms of their loans."
-                    val options = listOf(
-                        "A. arbitrary", "B. supplemental", "C. superfluous", "D. potential"
-                    )
-                    val correctAnswer = "B. supplemental"
-                    val userAnswer = "C. superfluous"
-
                     QuestionWithAnswerFeedback(
-                        question = question,
-                        options = options,
-                        correctAnswer = correctAnswer,
-                        userAnswer = userAnswer
+                        question = question.question,
+                        options = question.options,
+                        correctAnswer = question.correctAnswer,
+                        userAnswer = selectedAnswer
                     )
                 }
-                Previous_Next_Button()
+                Previous_Next_Button(
+                    onPreviousClicked = onPreviousClicked,
+                    onNextClicked = onNextClicked
+                )
             }
         }
     }
@@ -79,6 +81,6 @@ fun Part5_Result(
 @Composable
 private fun Part5_ResultPreview() {
     EngMasTheme {
-        Part5_Result()
+//        Part5_Result()
     }
 }

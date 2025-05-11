@@ -28,7 +28,7 @@ import com.example.engmas.ui.theme.KufamFont
 @Composable
 fun QuizHeader(
     currentQuestion: String,
-    totalQuestions: String,
+    totalQuestions: String = "200",
     part: String,
     timeLeft: Long // in seconds
 ) {
@@ -50,7 +50,7 @@ fun QuizHeader(
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             Text(
-                text = "$currentQuestion/$totalQuestions",
+                text = "$currentQuestion",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Light,
                 fontFamily = KufamFont,
@@ -104,7 +104,7 @@ fun QuizHeaderPreview() {
     EngMasTheme {
         QuizHeader(
             currentQuestion = "6",
-            totalQuestions = "200",
+//            totalQuestions = "200",
             part = "1",
             timeLeft = 7200
         )

@@ -33,12 +33,15 @@
     <string name="analysis_down">down</string>
     <string name="analysis_learned">words learned this week</string>
     <string name="analysis_review">words to review this week</string>
+    <string name="my_course">My Course</string>
 
 <!--practice-->
+    <string name="tab_course">Course</string>
     <string name="tab_grammars">Grammars</string>
     <string name="tab_grammar">Grammar</string>
     <string name="tab_vocabulary">Vocabulary Topic</string>
     <string name="tab_flashcard">Flashcard Topic</string>
+    <string name="tab_review">Review Topic</string>
     <string name="tab_vocabulary_learning">Vocabulary Learning</string>
     <string name="tab_flashcard_learning">Flashcard Learning</string>
     <string name="course1">Course 1</string>
@@ -52,6 +55,7 @@
     <string name="food">Food</string>
 
 <!--exam-->
+    <string name="tab_exam_start">Exam Start</string>
     <string name="toeic_logo">TOEIC Logo</string>
     <string name="test_title">Test %1$d - ETS %2$d</string>
     <string name="completed_count">%1$d completed</string>

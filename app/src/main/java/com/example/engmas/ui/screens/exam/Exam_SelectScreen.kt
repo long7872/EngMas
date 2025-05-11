@@ -47,8 +47,15 @@ import com.example.engmas.ui.utils.CustomButton
 
 @Composable
 fun Exam_SelectScreen(
+    title: String,
+    onStartClicked: (List<Boolean>) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val partStates = remember { mutableStateOf(List(7) { true }) }
+    val updatePartState: (Int, Boolean) -> Unit = { index, isChecked ->
+        partStates.value = partStates.value.toMutableList().apply { this[index] = isChecked }
+    }
+
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -63,17 +70,17 @@ fun Exam_SelectScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Title_Subtitle(
+                title = title,
                 modifier = Modifier.fillMaxWidth()
             )
 
-//            Spacer(modifier = Modifier)
-
             ChoosePart(
-//                modifier = Modifier.fillMaxWidth()
+                partStates = partStates.value,
+                onPartStateChange = updatePartState
             )
 
             StartButton(
-                onClick = {},
+                onClick = { onStartClicked(partStates.value) },
 
             )
         }
@@ -82,6 +89,7 @@ fun Exam_SelectScreen(
 
 @Composable
 private fun Title_Subtitle(
+    title: String,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -89,26 +97,28 @@ private fun Title_Subtitle(
         modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.test_title, 1, 2024),
+            text = title,
             fontFamily = KufamFont,
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp,
             color = Color(0xFF757575),
 //                modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_smaller))
         )
-        Text(
-            text = stringResource(R.string.completed_count, 1000),
-            fontFamily = KufamFont,
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.sp,
-            color = Color(0xFF757575),
-//                modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_smaller))
-        )
+//        Text(
+//            text = stringResource(R.string.completed_count, 1000),
+//            fontFamily = KufamFont,
+//            fontWeight = FontWeight.Medium,
+//            fontSize = 14.sp,
+//            color = Color(0xFF757575),
+////                modifier = Modifier.padding(vertical = dimensionResource(R.dimen.padding_smaller))
+//        )
     }
 }
 
 @Composable
 private fun ChoosePart(
+    partStates: List<Boolean>,
+    onPartStateChange: (Int, Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -137,10 +147,18 @@ private fun ChoosePart(
             modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium))
                 .align(Alignment.Start)
         )
-        PartRow(partNumber = 1, numOfQuestion = 6)
-        PartRow(partNumber = 2, numOfQuestion = 25)
-        PartRow(partNumber = 3, numOfQuestion = 39)
-        PartRow(partNumber = 4, numOfQuestion = 30)
+        PartRow(partNumber = 1, numOfQuestion = 6, checked = partStates[0]) { isChecked ->
+            onPartStateChange(0, isChecked)
+        }
+        PartRow(partNumber = 2, numOfQuestion = 25, checked = partStates[1]) { isChecked ->
+            onPartStateChange(1, isChecked)
+        }
+        PartRow(partNumber = 3, numOfQuestion = 39, checked = partStates[2]) { isChecked ->
+            onPartStateChange(2, isChecked)
+        }
+        PartRow(partNumber = 4, numOfQuestion = 30, checked = partStates[3]) { isChecked ->
+            onPartStateChange(3, isChecked)
+        }
 
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_larger)))
 
@@ -155,26 +173,33 @@ private fun ChoosePart(
             modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium))
                 .align(Alignment.Start)
         )
-        PartRow(partNumber = 5, numOfQuestion = 30)
-        PartRow(partNumber = 6, numOfQuestion = 16)
-        PartRow(partNumber = 7, numOfQuestion = 54)
+        PartRow(partNumber = 5, numOfQuestion = 30, checked = partStates[4]) { isChecked ->
+            onPartStateChange(4, isChecked)
+        }
+        PartRow(partNumber = 6, numOfQuestion = 16, checked = partStates[5]) { isChecked ->
+            onPartStateChange(5, isChecked)
+        }
+        PartRow(partNumber = 7, numOfQuestion = 54, checked = partStates[6]) { isChecked ->
+            onPartStateChange(6, isChecked)
+        }
     }
 }
 
 @Composable
 private fun PartRow(
-    partNumber: Int, numOfQuestion: Int,
-    modifier: Modifier = Modifier
+    partNumber: Int,
+    numOfQuestion: Int,
+    checked: Boolean,
+    modifier: Modifier = Modifier,
+    onCheckedChange: (Boolean) -> Unit,
 ) {
-    var checked by remember { mutableStateOf(true) }
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
         IconToggleButton(
             checked = checked,
-            onCheckedChange = { checked = it }
+            onCheckedChange = onCheckedChange
         ) {
             Icon(
                 imageVector = if (checked) Icons.Default.Check else Icons.Default.Close,
@@ -227,5 +252,5 @@ private fun StartButton(
 @Preview(showBackground = true)
 @Composable
 private fun Exam_SelectScreenPreview() {
-    Exam_SelectScreen()
+//    Exam_SelectScreen()
 }

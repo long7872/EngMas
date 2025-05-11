@@ -1,10 +1,13 @@
 package com.example.engmas.ui.screens.exam.part4
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -16,13 +19,25 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
+import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.theme.EngMasTheme
-import com.example.engmas.ui.utils.QuestionWithAnswers
+import com.example.engmas.ui.utils.AudioPlayer
+import com.example.engmas.ui.utils.Previous_Next_Button
+import com.example.engmas.ui.utils.QuestionWithAnswerFeedback
 import com.example.engmas.ui.utils.QuizHeader
+import com.example.engmas.ui.utils.Reading
 import com.example.engmas.ui.utils.ZoomableImageCard
+import java.io.File
 
 @Composable
-fun Part4WithImage(
+fun Part4_Result(
+    currentQuestion: String,
+    audioFile: File?,
+    imageFiles: List<File>,
+    questions: List<Question>,
+    selectedAnswer: List<String>,
+    onPreviousClicked: () -> Unit,
+    onNextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -42,34 +57,38 @@ fun Part4WithImage(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "71-73",
-                    totalQuestions = "200",
+                    currentQuestion = currentQuestion,
                     part = "4",
                     timeLeft = 7200
                 )
 
-                // LazyColumn for scrolling the questions
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
-                    item {
-                        ZoomableImageCard("https://drive.google.com/uc?export=view&id=1NP1x7xsto8TQpV524W3Dtrc3_v6jjaKK")
+                    items(imageFiles) { file ->
+                        file.let {
+                            Log.d("Part3", "Loading image: ${it.toURI()}")
+                            ZoomableImageCard(imageUrl = it.toURI().toString())
+                        }
                     }
                     item {
-                        val question1 = "71. What event does the woman mention?"
-                        val options1 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        QuestionWithAnswers(question = question1, options = options1)
+                        AudioPlayer(audioFile?.toURI().toString())
+                    }
+                    itemsIndexed(questions) { index, item ->
+                        val answer = selectedAnswer.getOrElse(index) { "" }
+                        QuestionWithAnswerFeedback(
+                            question = item.question,
+                            options = item.options,
+                            correctAnswer = item.correctAnswer,
+                            userAnswer = answer
+                        )
                     }
                     item {
-                        val question2 = "72. What event does the woman mention?"
-                        val options2 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        QuestionWithAnswers(question = question2, options = options2)
-                    }
-                    item {
-                        val question3 = "73. What event does the woman mention?"
-                        val options3 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        QuestionWithAnswers(question = question3, options = options3)
+                        Previous_Next_Button(
+                            onPreviousClicked = onPreviousClicked,
+                            onNextClicked = onNextClicked
+                        )
                     }
                 }
             }
@@ -79,8 +98,8 @@ fun Part4WithImage(
 
 @Preview(showBackground = true)
 @Composable
-private fun Part4WithImagePreview() {
+private fun Part4_ResultPreview() {
     EngMasTheme {
-        Part4WithImage()
+//        Part4_Result()
     }
 }

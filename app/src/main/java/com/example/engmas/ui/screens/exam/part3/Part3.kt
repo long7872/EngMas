@@ -1,14 +1,21 @@
 package com.example.engmas.ui.screens.exam.part3
 
+import android.media.MediaPlayer
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,14 +23,52 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.engmas.R
+import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.theme.EngMasTheme
+import com.example.engmas.ui.utils.Previous_Next_Button
 import com.example.engmas.ui.utils.QuestionWithAnswers
 import com.example.engmas.ui.utils.QuizHeader
+import com.example.engmas.ui.utils.ZoomableImageCard
+import java.io.File
 
 @Composable
 fun Part3(
+    currentQuestion: String,
+    audioFile: File?,
+    imageFiles: List<File>,
+    questions: List<Question>,
+    onAnswerSelected: (List<String>) -> Unit,
+    onCompleted: () -> Unit,
+    isDebug: Boolean = false,
+    onPreviousClicked: () -> Unit,
+    onNextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val selectedAnswer = remember(questions.size) { mutableStateListOf(*Array(questions.size) { "" }) }
+    val mediaPlayer = remember { MediaPlayer() }
+    LaunchedEffect(currentQuestion) {
+        selectedAnswer.forEachIndexed { index, _ ->
+            selectedAnswer[index] = ""  // Thiết lập lại giá trị của mỗi phần tử trong danh sách
+        }
+        // Kiểm tra nếu audioFile không null và là một tệp hợp lệ
+        if (audioFile != null && audioFile.exists()) {
+            // Reset MediaPlayer và chuẩn bị phát tệp mới
+            mediaPlayer.setDataSource(audioFile.absolutePath)  // Sử dụng đường dẫn tuyệt đối của tệp
+            Log.d("Part 3 Screen", "audio FilePath: ${audioFile.absolutePath}")
+            mediaPlayer.prepare()  // Chuẩn bị phát tệp âm thanh
+            mediaPlayer.setVolume(1.0f, 1.0f)  // Đặt âm lượng
+
+            // Phát âm thanh
+            mediaPlayer.start()
+
+            // Đặt OnCompletionListener để thực hiện hành động khi âm thanh kết thúc
+            mediaPlayer.setOnCompletionListener {
+                mediaPlayer.stop()
+                mediaPlayer.reset()
+                onCompleted()
+            }
+        }
+    }
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -41,8 +86,7 @@ fun Part3(
                 verticalArrangement = Arrangement.Center
             ) {
                 QuizHeader(
-                    currentQuestion = "38-40",
-                    totalQuestions = "200",
+                    currentQuestion = currentQuestion,
                     part = "3",
                     timeLeft = 7200
                 )
@@ -52,20 +96,34 @@ fun Part3(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
-                    item {
-                        val question1 = "38. What event does the woman mention?"
-                        val options1 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        QuestionWithAnswers(question = question1, options = options1)
+                    items(imageFiles) { file ->
+                        file.let {
+                            Log.d("Part3", "Loading image: ${it.toURI()}")
+                            ZoomableImageCard(imageUrl = it.toURI().toString())
+                        }
+                    }
+                    itemsIndexed(questions) { index, item ->
+                        QuestionWithAnswers(
+                            question = item.question.toString(),
+                            options = item.options,
+                            selected = selectedAnswer[index],
+                            onClicked = {
+                                selectedAnswer[index] = it
+                                onAnswerSelected(selectedAnswer.toList())
+                            }
+                        )
                     }
                     item {
-                        val question2 = "39. What event does the woman mention?"
-                        val options2 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        QuestionWithAnswers(question = question2, options = options2)
-                    }
-                    item {
-                        val question3 = "40. What event does the woman mention?"
-                        val options3 = listOf("A. A job fair", "B. A cooking class", "C. A fund-raiser", "D. A company picnic")
-                        QuestionWithAnswers(question = question3, options = options3)
+                        if (isDebug) {
+                            Previous_Next_Button(
+                                onPreviousClicked = onPreviousClicked,
+                                onNextClicked = {
+                                    mediaPlayer.stop()
+                                    mediaPlayer.reset()
+                                    onNextClicked()
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -75,8 +133,8 @@ fun Part3(
 
 @Preview(showBackground = true)
 @Composable
-private fun Part3Preview() {
+private fun Part3WithImagePreview() {
     EngMasTheme {
-        Part3()
+//        Part3()
     }
 }

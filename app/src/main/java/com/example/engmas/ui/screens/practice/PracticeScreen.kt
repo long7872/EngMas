@@ -2,6 +2,7 @@ package com.example.engmas.ui.screens.practice
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,9 +41,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
+import com.example.engmas.data.model.Course
 import com.example.engmas.ui.navigation.NavigationDestination
-import com.example.engmas.ui.screens.practice.courses.fakedata.CourseItem
 import com.example.engmas.ui.theme.EngMasTheme
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.CourseFrame
@@ -55,8 +60,16 @@ fun PracticeScreen(
     onGrammarClicked: () -> Unit,
     onFlashCardClicked: () -> Unit,
     onReviewClicked: () -> Unit,
+    onCourseClicked: (Int) -> Unit,
+    viewModel: PracticeViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.getCourses()
+    }
+    val courseList = uiState.courseList
+
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -72,15 +85,8 @@ fun PracticeScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             Courses(
-                items = listOf(
-                    CourseItem("Course 1"),
-                    CourseItem("Course 2"),
-                    CourseItem("Course 3"),
-                    CourseItem("Course 4"),
-                    CourseItem("Course 3"),
-                    CourseItem("Course 3"),
-                    CourseItem("Course 3"),
-                )
+                items = courseList,
+                onCourseClicked = onCourseClicked
             )
 
             Selection(
@@ -98,7 +104,8 @@ fun PracticeScreen(
 
 @Composable
 private fun Courses(
-    items: List<CourseItem>,
+    items: List<Course>,
+    onCourseClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -131,7 +138,10 @@ private fun Courses(
                 modifier = Modifier.padding(top = 8.dp, end = 28.dp)
             ) {
                 items(items) { item ->
-                    Course(courseItem = item)
+                    CourseButton(
+                        courseItem = item,
+                        onCourseClicked = onCourseClicked
+                    )
                 }
             }
         }
@@ -139,8 +149,9 @@ private fun Courses(
 }
 
 @Composable
-private fun Course(
-    courseItem: CourseItem,
+private fun CourseButton(
+    courseItem: Course,
+    onCourseClicked: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -148,10 +159,11 @@ private fun Course(
         modifier = modifier.padding(
             start = 8.dp,
             end = 8.dp
-        )
+        ).size(80.dp, 100.dp)
+            .clickable { onCourseClicked(courseItem.id) }
     ) {
         CourseFrame(
-            avatarRes = courseItem.avatarRes,
+            avatarRes = R.drawable.course_pic,
             frameSize = 80.dp
         )
         Text(
@@ -159,7 +171,15 @@ private fun Course(
             fontFamily = KufamFont,
             fontWeight = FontWeight.Medium,
             color = Color(0xFF757575),
-            fontSize = 10.sp
+            fontSize = 10.sp,
+            modifier = Modifier
+                .fillMaxWidth() // hoặc dùng weight nếu có sibling
+                .basicMarquee(
+                    iterations = Int.MAX_VALUE,
+                    repeatDelayMillis = 3000,
+                    initialDelayMillis = 0,
+                    velocity = 30.dp
+                )
         )
     }
 }
@@ -329,7 +349,8 @@ private fun PracticeScreenPreview() {
             onVocabularyClicked = {},
             onGrammarClicked = {},
             onFlashCardClicked = {},
-            onReviewClicked = {}
+            onReviewClicked = {},
+            onCourseClicked = {}
         )
     }
 }

@@ -1,5 +1,6 @@
-package com.example.engmas.ui.screens.exam.part3
+package com.example.engmas.ui.screens.exam.part4
 
+import android.media.MediaPlayer
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,25 +25,50 @@ import androidx.compose.ui.unit.dp
 import com.example.engmas.R
 import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.theme.EngMasTheme
-import com.example.engmas.ui.utils.AudioPlayer
 import com.example.engmas.ui.utils.Previous_Next_Button
-import com.example.engmas.ui.utils.QuestionWithAnswerFeedback
+import com.example.engmas.ui.utils.QuestionWithAnswers
 import com.example.engmas.ui.utils.QuizHeader
-import com.example.engmas.ui.utils.Reading
 import com.example.engmas.ui.utils.ZoomableImageCard
 import java.io.File
 
 @Composable
-fun Part3_Result(
+fun Part4(
     currentQuestion: String,
     audioFile: File?,
     imageFiles: List<File>,
     questions: List<Question>,
-    selectedAnswer: List<String>,
+    onAnswerSelected: (List<String>) -> Unit,
+    onCompleted: () -> Unit,
+    isDebug: Boolean = false,
     onPreviousClicked: () -> Unit,
     onNextClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val selectedAnswer = remember(questions.size) { mutableStateListOf(*Array(questions.size) { "" }) }
+    val mediaPlayer = remember { MediaPlayer() }
+    LaunchedEffect(currentQuestion) {
+        selectedAnswer.forEachIndexed { index, _ ->
+            selectedAnswer[index] = ""  // Thiết lập lại giá trị của mỗi phần tử trong danh sách
+        }
+        // Kiểm tra nếu audioFile không null và là một tệp hợp lệ
+        if (audioFile != null && audioFile.exists()) {
+            // Reset MediaPlayer và chuẩn bị phát tệp mới
+            mediaPlayer.setDataSource(audioFile.absolutePath)  // Sử dụng đường dẫn tuyệt đối của tệp
+            Log.d("Part 4 Screen", "audio FilePath: ${audioFile.absolutePath}")
+            mediaPlayer.prepare()  // Chuẩn bị phát tệp âm thanh
+            mediaPlayer.setVolume(1.0f, 1.0f)  // Đặt âm lượng
+
+            // Phát âm thanh
+            mediaPlayer.start()
+
+            // Đặt OnCompletionListener để thực hiện hành động khi âm thanh kết thúc
+            mediaPlayer.setOnCompletionListener {
+                mediaPlayer.stop()
+                mediaPlayer.reset()
+                onCompleted()
+            }
+        }
+    }
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         shape = MaterialTheme.shapes.medium,
@@ -58,37 +87,43 @@ fun Part3_Result(
             ) {
                 QuizHeader(
                     currentQuestion = currentQuestion,
-                    part = "3",
+                    part = "4",
                     timeLeft = 7200
                 )
 
+                // LazyColumn for scrolling the questions
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxSize().padding(16.dp)
                 ) {
                     items(imageFiles) { file ->
                         file.let {
-                            Log.d("Part3", "Loading image: ${it.toURI()}")
+                            Log.d("Part4", "Loading image: ${it.toURI()}")
                             ZoomableImageCard(imageUrl = it.toURI().toString())
                         }
                     }
-                    item {
-                        AudioPlayer(audioFile?.toURI().toString())
-                    }
                     itemsIndexed(questions) { index, item ->
-                        val answer = selectedAnswer.getOrElse(index) { "" }
-                        QuestionWithAnswerFeedback(
-                            question = item.question,
+                        QuestionWithAnswers(
+                            question = item.question.toString(),
                             options = item.options,
-                            correctAnswer = item.correctAnswer,
-                            userAnswer = answer
+                            selected = selectedAnswer[index],
+                            onClicked = {
+                                selectedAnswer[index] = it
+                                onAnswerSelected(selectedAnswer.toList())
+                            }
                         )
                     }
                     item {
-                        Previous_Next_Button(
-                            onPreviousClicked = onPreviousClicked,
-                            onNextClicked = onNextClicked
-                        )
+                        if (isDebug) {
+                            Previous_Next_Button(
+                                onPreviousClicked = onPreviousClicked,
+                                onNextClicked = {
+                                    mediaPlayer.stop()
+                                    mediaPlayer.reset()
+                                    onNextClicked()
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -98,8 +133,8 @@ fun Part3_Result(
 
 @Preview(showBackground = true)
 @Composable
-private fun Part3_ResultPreview() {
+private fun Part4Preview() {
     EngMasTheme {
-//        Part3_Result()
+//        Part4()
     }
 }

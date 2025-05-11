@@ -1,4 +1,4 @@
-package com.example.engmas.ui.screens.practice.courses.data
+package com.example.engmas.ui.screens.practice.grammar.data
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

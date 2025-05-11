@@ -23,22 +23,28 @@ import com.example.engmas.R
 import com.example.engmas.ui.theme.KufamFont
 
 @Composable
-fun TestResultCard(
+fun ExamResult(
     testName: String = "Test 1 - ETS 2024",
     score: String = "990",
-    listeningScores: List<Pair<String, String>> = listOf(
-        "Part 1" to "06/06",
-        "Part 2" to "25/25",
-        "Part 3" to "39/39",
-        "Part 4" to "30/30"
-    ),
-    readingScores: List<Pair<String, String>> = listOf(
-        "Part 5" to "30/30",
-        "Part 6" to "16/16",
-        "Part 7" to "54/54"
-    ),
+    correctInParts: List<Int>,
+    onDetailsButton: () -> Unit,
+    onRetakeButton: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val listeningScores = correctInParts.take(4)
+    val readingScores = correctInParts.drop(4)
+    val allQuestionCounts = listOf("06", "25", "39", "30", "30", "16", "54")
+//    listeningScores: List<Pair<String, String>> = listOf(
+//    "Part 1" to "06/06",
+//    "Part 2" to "25/25",
+//    "Part 3" to "39/39",
+//    "Part 4" to "30/30"
+//    ),
+//    readingScores: List<Pair<String, String>> = listOf(
+//    "Part 5" to "30/30",
+//    "Part 6" to "16/16",
+//    "Part 7" to "54/54"
+//    ),
     Card(
         elevation = CardDefaults.cardElevation(8.dp),
         shape = MaterialTheme.shapes.medium,
@@ -125,9 +131,11 @@ fun TestResultCard(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    listeningScores.forEach { (part, result) ->
+                    listeningScores.forEachIndexed() { index, item ->
+                        val format = if (item < 10) "0$item" else "$item"
+                        val partIndex = index + 1
                         Text(
-                            text = "$part: $result",
+                            text = "Part $partIndex: $format/${allQuestionCounts[partIndex-1]}",
                             fontFamily = KufamFont,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
@@ -162,9 +170,11 @@ fun TestResultCard(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    readingScores.forEach { (part, result) ->
+                    readingScores.forEachIndexed() { index, item ->
+                        val format = if (item < 10) "0$item" else "$item"
+                        val partIndex = index + 5
                         Text(
-                            text = "$part: $result",
+                            text = "Part $partIndex: $format/${allQuestionCounts[partIndex-1]}",
                             fontFamily = KufamFont,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
@@ -180,7 +190,7 @@ fun TestResultCard(
                 modifier = Modifier.fillMaxWidth().padding(top = 20.dp)
             ) {
                 OutlinedButton(
-                    onClick = {},
+                    onClick = onDetailsButton,
                     border = BorderStroke(1.dp, Color(0xFFD3D3D3)),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
@@ -196,7 +206,7 @@ fun TestResultCard(
                 }
 
                 Button(
-                    onClick = {},
+                    onClick = onRetakeButton,
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF24D3E3)),
                     modifier = Modifier
@@ -217,6 +227,10 @@ fun TestResultCard(
 
 @Preview(showBackground = true)
 @Composable
-fun TestResultCardPreview() {
-    TestResultCard()
+fun ExamResultPreview() {
+    ExamResult(
+        correctInParts = listOf(6, 25, 39, 30, 30, 16, 54),
+        onDetailsButton = {},
+        onRetakeButton = {}
+    )
 }
