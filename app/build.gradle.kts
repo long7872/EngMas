@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.retrofit)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.convertergson)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.coil.compose)
@@ -81,6 +82,7 @@ dependencies {
     implementation (libs.barteksc.androidpdfviewer) {
         exclude(group = "com.android.support")
     }
+    implementation (libs.androidx.runtime.livedata)
     implementation(libs.zip4j)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
@@ -91,5 +93,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
+    implementation("com.google.ai.client.generativeai:generativeai:0.4.0")
 }
