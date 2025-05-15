@@ -4,6 +4,7 @@ import com.example.engmas.ui.screens.exam.data.ToeicQuestion
 import java.io.File
 
 data class ExamUiState(
+    val url: String = "",
     val rootFolder: File? = null,
     val listName: List<String> = emptyList(),
     val selectedExam: String = "",

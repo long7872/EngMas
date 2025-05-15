@@ -1,5 +1,6 @@
 package com.example.engmas.ui.navigation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
@@ -15,8 +16,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.engmas.ui.GeneralViewModel
+import com.example.engmas.ui.screens.account.AccountAchievementDestination
 import com.example.engmas.ui.screens.account.AccountDestination
+import com.example.engmas.ui.screens.account.AccountFriendDestination
+import com.example.engmas.ui.screens.account.AccountInformationDestination
 import com.example.engmas.ui.screens.account.AccountScreen
+import com.example.engmas.ui.screens.account.AchievementScreen
+import com.example.engmas.ui.screens.account.FriendScreen
+import com.example.engmas.ui.screens.account.InformationScreen
 import com.example.engmas.ui.screens.auth.login.AuthLoginDestination
 import com.example.engmas.ui.screens.auth.login.LoginScreen
 import com.example.engmas.ui.screens.auth.login.LoginState
@@ -37,6 +44,8 @@ import com.example.engmas.ui.screens.exam.ExamScreen
 import com.example.engmas.ui.screens.exam.ExamStartDestination
 import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
+import com.example.engmas.ui.screens.home.HomeSearchDestination
+import com.example.engmas.ui.screens.home.SearchScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
 import com.example.engmas.ui.screens.practice.PracticeScreen
 import com.example.engmas.ui.screens.practice.courses.CourseProcessing
@@ -79,8 +88,33 @@ fun EngMasNavHost(
         composable(route = HomeDestination.route) {
             HomeScreen(
                 timerViewModel = generalViewModel,
-                onCourseClicked = { navController.navigate("${PracticeCourseDestination.route}/$it") }
+                onCourseClicked = {
+                    navController.navigate("${PracticeCourseDestination.route}/$it")
+                    Log.d("Eng Mas Nav Host", "Home on course click: ${PracticeCourseDestination.route}/$it")
+                },
+                onSearchItemClicked = {
+                    navController.navigate("${HomeSearchDestination.route}/$it")
+                }
             )
+        }
+
+        composable(
+            route = HomeSearchDestination.routeWithArgs,
+            arguments = listOf(
+                navArgument(HomeSearchDestination.ITEM_ARGS)
+                { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val vocabId = backStackEntry.arguments?.getInt(
+                HomeSearchDestination.ITEM_ARGS
+            )
+            if (vocabId != null) {
+                SearchScreen(
+                    vocabId = vocabId
+                )
+            } else {
+                navController.navigate(HomeDestination.route)
+            }
         }
 
         composable(route = PracticeDestination.route) {
@@ -89,7 +123,10 @@ fun EngMasNavHost(
                 onGrammarClicked = { navController.navigate(PracticeGrammarsDestination.route) },
                 onFlashCardClicked = { navController.navigate(PracticeFlashcardDestination.route) },
                 onReviewClicked = { navController.navigate(PracticeReviewDestination.route) },
-                onCourseClicked = { navController.navigate("${PracticeCourseDestination.route}/$it") }
+                onCourseClicked = {
+                    navController.navigate("${PracticeCourseDestination.route}/$it")
+                    Log.d("Eng Mas Nav Host", "Practice on course click: ${PracticeCourseDestination.route}/$it")
+                }
             )
         }
 
@@ -111,7 +148,6 @@ fun EngMasNavHost(
             } else {
                 navController.navigate(HomeDestination.route)
             }
-
         }
 
         composable(route = PracticeVocabularyDestination.route) {
@@ -223,11 +259,12 @@ fun EngMasNavHost(
             )
         ) { backStackEntry ->
             val examId = backStackEntry.arguments?.getInt(
-                PracticeVocabularyLearningDestination.ITEM_ARGS
+                ExamStartDestination.ITEM_ARGS
             )
             if (examId != null) {
                 ExamProcessing(
-                    examId = examId
+                    examId = examId,
+                    navigateUp = { navController.navigate(ExamDestination.route) }
                 )
             } else {
                 navController.navigate(HomeDestination.route)
@@ -245,29 +282,14 @@ fun EngMasNavHost(
         // sub-route: challenge/online
         composable(route = ChallengeOnlineDestination.route) {
             Challenge_OnlineScreen(
-                exitToChallenge = { navController.navigate(ChallengeDestination.route) },
-                exitToOnline = {
-                    navController.navigate(ChallengeOnlineDestination.route) {
-                        popUpTo(ChallengeOnlineDestination.route) {
-                            inclusive = false
-                        }
-                    }
-                }
+                onExitButton = { navController.navigate(ChallengeDestination.route) }
             )
-//            Challenge_PlayOnlineScreen(
-//                uiState = Challenge_OnlineUiState(
-//                    resultState = ResultState.Win
-//                ),
-//                contentPadding = contentPadding,
-//                onSkipButton = {},
-//                onSubmitButton = {},
-//                onExitButton = {},
-//                onPlayAgainButton = {}
-//            )
         }
         // sub-route: challenge/offline
         composable(route = ChallengeOfflineDestination.route) {
-            Challenge_OfflineScreen()
+            Challenge_OfflineScreen(
+                onExit = { navController.navigate(ChallengeDestination.route) }
+            )
         }
         // sub-route: challenge/scoreboard
         composable(route = ChallengeScoreBoardDestination.route) {
@@ -275,7 +297,31 @@ fun EngMasNavHost(
         }
 
         composable(route = AccountDestination.route) {
-            AccountScreen()
+            AccountScreen(
+                onInfoClicked = { navController.navigate(AccountInformationDestination.route) },
+                onAchievementClicked = { navController.navigate(AccountAchievementDestination.route) },
+                onFriendClicked = { navController.navigate(AccountFriendDestination.route) },
+                onSignOutClicked = { loginViewModel.logout() },
+                onDeleteAccount = { loginViewModel.deleteAccount() }
+            )
+        }
+
+        composable(route = AccountInformationDestination.route) {
+            InformationScreen(
+                onBackClicked = { navController.navigateUp() }
+            )
+        }
+
+        composable(route = AccountAchievementDestination.route) {
+            AchievementScreen(
+                onBackClicked = { navController.navigateUp() }
+            )
+        }
+
+        composable(route = AccountFriendDestination.route) {
+            FriendScreen(
+                onBackClicked = { navController.navigateUp() }
+            )
         }
 
         composable(route = AuthLoginDestination.route) {

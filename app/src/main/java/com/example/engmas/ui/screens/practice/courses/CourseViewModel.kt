@@ -85,6 +85,7 @@ class CourseViewModel: ViewModel() {
                 delay(10)
                 changeScreenState(CourseScreenState.Grammar)
             } else {
+                Log.d("Course View Model", "Done Course")
                 changeScreenState(CourseScreenState.List)
             }
         }
@@ -118,10 +119,10 @@ class CourseViewModel: ViewModel() {
         return _uiState.value.grammarQuestions.any { it.status == QuestionStatus.Learning }
     }
 
-    fun checkVocabHasReviewStatus(): Boolean {
+    private fun checkVocabHasReviewStatus(): Boolean {
         return _uiState.value.vocabQuestions.any { it.status == QuestionStatus.Review }
     }
-    fun checkGrammarHasReviewStatus(): Boolean {
+    private fun checkGrammarHasReviewStatus(): Boolean {
         return _uiState.value.grammarQuestions.any { it.status == QuestionStatus.Review }
     }
 

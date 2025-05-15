@@ -1,7 +1,5 @@
 package com.example.engmas.ui.screens.practice.vocabulary
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,7 +10,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
 import com.example.engmas.data.model.UserLearningStatus
 import com.example.engmas.ui.navigation.NavigationDestination
-import com.example.engmas.ui.screens.practice.vocabulary.model.VocabLearningStatus
+import com.example.engmas.ui.screens.practice.courses.data.QuestionStatus
 
 object PracticeVocabularyLearningDestination: NavigationDestination {
     override val route = "practice/vocabulary/learning"
@@ -37,10 +35,6 @@ fun VocabularyProcessing(
     val listVocabs = uiState.listVocabsInTopic
     val screenState = uiState.screenState
 
-    val groupedVocabs = listVocabs.groupBy { it.status }
-    val exploreGroup = groupedVocabs[VocabLearningStatus.Explore] ?: emptyList()
-    val doneGroup = groupedVocabs[VocabLearningStatus.Done] ?: emptyList()
-
     when (screenState) {
         VocabularyScreenState.ChooseTopic -> {
         }
@@ -51,24 +45,14 @@ fun VocabularyProcessing(
                 onVocabClicked = {
                     viewModel.setSelectedVocab(it)
                     viewModel.changeScreenState(VocabularyScreenState.Flashcard)
-                    viewModel.insertVocabLearning(vocabId = it.id)
-                    Log.d("Vocabulary Processing", "call insert ${uiState.selectedVocab.id} ${uiState.selectedVocab.word}")
                 },
                 onMarkAllClicked = {
-                    exploreGroup.forEach { viewModel.insertVocabLearning(it.id, status = UserLearningStatus.Known) }
+                    viewModel.updateStatusForAllItems(QuestionStatus.Known)
                 },
                 onStartLearningClicked = {
-                    if (exploreGroup.isEmpty()) {
-                        Toast.makeText(context, "All vocabularies are learned", Toast.LENGTH_SHORT).show()
-                    } else {
-                        val selected = exploreGroup.first()
-                        viewModel.setSelectedVocab(selected)
-                        viewModel.changeScreenState(VocabularyScreenState.Flashcard)
-                        viewModel.insertVocabLearning(vocabId = selected.id)
-                        Log.d("Vocabulary Processing", "call insert on click start button: " +
-                                "${uiState.selectedVocab.id} ${uiState.selectedVocab.word} check: " +
-                                "${exploreGroup.first().id} ${exploreGroup.first().word}")
-                    }
+                    viewModel.setSelectedVocab(uiState.listVocabsInTopic[0])
+                    viewModel.setupGame()
+                    viewModel.changeScreenState(VocabularyScreenState.Flashcard)
                 },
                 onBackClicked = onBackClicked
             )
@@ -78,7 +62,8 @@ fun VocabularyProcessing(
                 selectedTopic = selectedTopic,
                 item = uiState.selectedVocab,
                 onMarkButtonClicked = {
-                    viewModel.updateVocabLearning(uiState.selectedVocab.id, status = UserLearningStatus.Known)
+                    viewModel.updateStatusForVocabItem(it, QuestionStatus.Known)
+                    viewModel.nextQuestion(hasGame = true, hasDelay = false)
                 },
                 onPracticeButtonClicked = {
                     viewModel.setupGame()
@@ -96,10 +81,11 @@ fun VocabularyProcessing(
                 answerList = uiState.answerList,
                 onCorrect = { isCorrect ->
                     if (isCorrect) {
-                        viewModel.updateVocabLearning(vocabId = uiState.selectedVocab.id, status = UserLearningStatus.Known)
+                        viewModel.updateStatusForVocabItem(item = uiState.selectedVocab, newStatus = QuestionStatus.Known)
                     } else {
-                        viewModel.updateVocabLearning(vocabId = uiState.selectedVocab.id, status = UserLearningStatus.Review)
+                        viewModel.updateStatusForVocabItem(item = uiState.selectedVocab, newStatus = QuestionStatus.Review)
                     }
+                    viewModel.nextQuestion(hasGame = true)
                 },
                 onBackClicked = {
                     viewModel.changeScreenState(VocabularyScreenState.InTopic)

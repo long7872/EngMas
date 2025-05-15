@@ -160,73 +160,77 @@ fun CustomSearchBar(
     onActiveChange: (Boolean) -> Unit,
     onClearButton: () -> Unit,
     queryItems: List<Vocab>,
-    onItemClicked: () -> Unit,
+    onItemClicked: (Vocab) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    SearchBar(
-        query = query,
-        onQueryChange = onQueryChange,
-        onSearch = {},
-        active = isActive,
-        onActiveChange = { onActiveChange(it) },
-        placeholder = { Text("Search...") },
-        leadingIcon = {
-//            Icon(
-//                Icons.Default.Search,
-//                contentDescription = stringResource(R.string.search)
-//            )
-            Icon(
-                painter = painterResource(R.drawable.find_icon),
-                contentDescription = stringResource(R.string.search),
-                tint = Color(0xFF1E88E5),
-                modifier = Modifier
-                    .padding(horizontal = dimensionResource(R.dimen.padding_smaller))
-                    .size(dimensionResource(R.dimen.search_icon_size))
-            )
-        },
-        trailingIcon = {
-            if (query.isEmpty()) {
-                Icon(Icons.Default.Mic, "stringResource(R.string.micro)")
-            } else {
-                IconButton(onClick = {
-                    onClearButton()
-                    onActiveChange(false)
-                }) {
-                    Icon(Icons.Default.Clear, "stringResource(R.string.clear)")
-                }
-            }
-        },
-        colors = SearchBarDefaults.colors(
-            containerColor = Color(0xFFDDE7F3), // Luôn giữ màu nền ô nhập
-            dividerColor = Color.Transparent
-        ),
-        windowInsets = WindowInsets(0.dp),
-        tonalElevation = 0.dp, // Xóa màu nền của phần gợi ý
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.padding_medium))
-            .clip(MaterialTheme.shapes.large)
+            .heightIn(max = 500.dp) // ✅ Giới hạn chiều cao tổng thể
     ) {
-        LazyColumn(
-            modifier = Modifier.padding(dimensionResource(R.dimen.padding_medium))
-        ) {
-            items(queryItems) { item ->
-                QueryRow(
-                    iataCode = item.word,
-                    name = item.phonetic,
+        SearchBar(
+            query = query,
+            onQueryChange = onQueryChange,
+            onSearch = {},
+            active = isActive,
+            onActiveChange = onActiveChange,
+            placeholder = { Text("Search...") },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.find_icon),
+                    contentDescription = stringResource(R.string.search),
+                    tint = Color(0xFF1E88E5),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            // Gán query = item nếu cần, rồi tắt active
-                            onQueryChange(item.word)
-                            onItemClicked()
-                            onActiveChange(false)
-                        }
-                        .padding(dimensionResource(R.dimen.padding_smaller))
+                        .padding(horizontal = dimensionResource(R.dimen.padding_smaller))
+                        .size(dimensionResource(R.dimen.search_icon_size))
                 )
+            },
+            trailingIcon = {
+                if (query.isEmpty()) {
+                    Icon(Icons.Default.Mic, "stringResource(R.string.micro)")
+                } else {
+                    IconButton(onClick = {
+                        onClearButton()
+                        onActiveChange(false)
+                    }) {
+                        Icon(Icons.Default.Clear, "stringResource(R.string.clear)")
+                    }
+                }
+            },
+            colors = SearchBarDefaults.colors(
+                containerColor = Color(0xFFDDE7F3),
+                dividerColor = Color.Transparent
+            ),
+            windowInsets = WindowInsets(0.dp),
+            tonalElevation = 0.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.large)
+        ) {
+            // ✅ Giới hạn chiều cao gợi ý
+            LazyColumn(
+                modifier = Modifier
+                    .padding(dimensionResource(R.dimen.padding_medium))
+                    .heightIn(max = 300.dp) // giới hạn gợi ý
+            ) {
+                items(queryItems) { item ->
+                    QueryRow(
+                        iataCode = item.word,
+                        name = item.phonetic,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onQueryChange("")
+                                onItemClicked(item)
+                                onActiveChange(false)
+                            }
+                            .padding(dimensionResource(R.dimen.padding_smaller))
+                    )
+                }
             }
         }
     }
+
 }
 
 @Composable

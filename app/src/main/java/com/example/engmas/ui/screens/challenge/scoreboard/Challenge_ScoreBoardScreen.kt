@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -31,8 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -44,6 +47,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.engmas.R
 import com.example.engmas.data.model.UserScore
 import com.example.engmas.ui.navigation.NavigationDestination
@@ -62,6 +66,7 @@ fun Challenge_ScoreBoardScreen(
     modifier: Modifier = Modifier
 ) {
     val players by viewModel.players.collectAsState()
+    val image by viewModel.image.collectAsState()
     val userScore by viewModel.currentUser.collectAsState()
 
     var topPlayers by remember { mutableStateOf<List<UserScore>>(emptyList()) }
@@ -70,6 +75,7 @@ fun Challenge_ScoreBoardScreen(
     LaunchedEffect(players) {
         if (players.isNotEmpty()) {
             topPlayers = viewModel.getTopPlayers()
+            viewModel.getImage(topPlayers.firstOrNull()?.id ?: "")
         }
         viewModel.fetchCurrentUser()
     }
@@ -98,6 +104,7 @@ fun Challenge_ScoreBoardScreen(
             )
 
             ScoreCard(
+                userImage = image,
                 players = topPlayers,
                 userScore = userScore
             )
@@ -107,13 +114,13 @@ fun Challenge_ScoreBoardScreen(
 
 @Composable
 private fun ScoreCard(
+    userImage: String,
     players: List<UserScore>,
     userScore: UserScore,
     modifier: Modifier = Modifier
 ) {
     val topPlayer = players.firstOrNull()
     val otherPlayers = players.drop(1)
-
 //    val players = listOf(
 //        Triple(2, "longquynh", 126),
 //        Triple(3, "hahahaha", 89),
@@ -141,7 +148,7 @@ private fun ScoreCard(
             ) {
                 topPlayer?.let {
                     WinnerFrame(
-                        avatarRes = R.drawable.avatar1_test,
+                        userImage = userImage,
                         frameSize = dimensionResource(R.dimen.avatar_frame_size)
                     )
                     Text(
@@ -174,7 +181,7 @@ private fun ScoreCard(
 
 @Composable
 private fun WinnerFrame(
-    @DrawableRes avatarRes: Int,
+    userImage: String,
     frameSize: Dp,
     modifier: Modifier = Modifier
 ) {
@@ -201,11 +208,13 @@ private fun WinnerFrame(
                 .background(Color.Transparent)
         ) {
             Image(
-                painter = painterResource(avatarRes),
+                painter = if (userImage == "") painterResource(R.drawable.avatardefault)
+                else rememberAsyncImagePainter(userImage),
                 contentDescription = stringResource(R.string.avatar),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
+                    .size(dimensionResource(R.dimen.avatar_frame_size))
+                    .clip(CircleShape)
                     .padding(dimensionResource(R.dimen.frame_gap_size))
             )
         }

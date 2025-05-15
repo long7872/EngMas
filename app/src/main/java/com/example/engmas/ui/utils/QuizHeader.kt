@@ -50,7 +50,7 @@ fun QuizHeader(
                 .padding(dimensionResource(R.dimen.padding_medium))
         ) {
             Text(
-                text = "$currentQuestion",
+                text = currentQuestion,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Light,
                 fontFamily = KufamFont,

@@ -1,8 +1,6 @@
 package com.example.engmas.ui.screens.practice.courses.data
 
 import com.example.engmas.data.model.Course
-import com.example.engmas.data.model.Topic
-import com.example.engmas.ui.screens.practice.vocabulary.model.VocabLearningStatus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

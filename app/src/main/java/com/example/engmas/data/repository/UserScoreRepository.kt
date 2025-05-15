@@ -53,7 +53,9 @@ class NetworkUserScoreRepository : UserScoreRepository {
             firestore.collection("users").document(userId)
                 .update("name", userScore.name,
                     "score", userScore.score,
-                    "streak", userScore.streak)
+                    "streak", userScore.streak,
+                    "currentWeekStats", userScore.currentWeekStats,
+                    "previousWeekStats", userScore.previousWeekStats)
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {

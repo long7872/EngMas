@@ -46,4 +46,29 @@ class LoginViewModel : ViewModel() {
         auth.signOut()
         loginState.value = LoginState.Idle
     }
+
+    fun deleteAccount() {
+        viewModelScope.launch {
+            try {
+                // Kiểm tra người dùng đã đăng nhập
+                val user = auth.currentUser
+                if (user != null) {
+                    // Xóa tài khoản người dùng trong Firebase Authentication
+                    user.delete().await()
+
+                    // Sau khi xóa tài khoản Firebase, có thể xóa dữ liệu người dùng từ Firestore hoặc Realtime Database nếu cần
+
+                    // Đăng xuất và cập nhật trạng thái
+                    auth.signOut()
+                    loginState.value = LoginState.Idle
+                } else {
+                    loginState.value = LoginState.Error
+                    errorMessage = "No user is logged in."
+                }
+            } catch (e: Exception) {
+                loginState.value = LoginState.Error
+                errorMessage = e.message ?: "Failed to delete account."
+            }
+        }
+    }
 }

@@ -43,6 +43,7 @@ import java.io.File
 
 @Composable
 fun Part5(
+    timeLeft: Long,
     currentQuestion: String,
     question: Question,
     selectedAnswer: String,
@@ -75,7 +76,7 @@ fun Part5(
                 QuizHeader(
                     currentQuestion = currentQuestion,
                     part = "5",
-                    timeLeft = 7200
+                    timeLeft = timeLeft
                 )
 
                 QuestionWithAnswers(

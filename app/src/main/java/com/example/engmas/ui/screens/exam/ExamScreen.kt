@@ -1,5 +1,6 @@
 package com.example.engmas.ui.screens.exam
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -112,7 +113,10 @@ fun ExamScreen(
             if (screenState == ExamScreenState.Main) {
                 ItemGrid(
                     items = itemList,
-                    onClicked = { onClicked(itemList.indexOf(it)) },
+                    onClicked = {
+                        onClicked(itemList.indexOf(it))
+                        Log.d("Exam Screen", "clicked on Item: ${itemList.indexOf(it)}")
+                    },
                     modifier = Modifier.weight(bodyWeight)
                 )
             } else if (screenState == ExamScreenState.Loading) {

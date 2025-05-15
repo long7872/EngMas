@@ -31,6 +31,7 @@ import java.io.File
 
 @Composable
 fun Part4_Result(
+    timeLeft: Long,
     currentQuestion: String,
     audioFile: File?,
     imageFiles: List<File>,
@@ -59,7 +60,7 @@ fun Part4_Result(
                 QuizHeader(
                     currentQuestion = currentQuestion,
                     part = "4",
-                    timeLeft = 7200
+                    timeLeft = timeLeft
                 )
 
                 LazyColumn(

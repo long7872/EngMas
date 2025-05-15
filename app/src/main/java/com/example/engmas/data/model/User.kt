@@ -13,10 +13,12 @@ data class User (
     val facebook: String = "",
     @SerialName(value = "photo_url")
     val photoUrl: String = "",
-    /*
-     *  Use UserStatus enum class
-     */
-    val status: String = UserStatus.Online.name
+    val status: String = UserStatus.Online.name,
+    val name: String = "",
+    @SerialName(value = "date_of_birth")
+    val doB: String = "",
+    @SerialName(value = "phone_number")
+    val phoneNumber:String = ""
 )
 
 @Serializable

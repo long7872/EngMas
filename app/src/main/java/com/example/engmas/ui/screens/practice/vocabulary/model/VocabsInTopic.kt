@@ -1,28 +1,11 @@
 package com.example.engmas.ui.screens.practice.vocabulary.model
 
 import com.example.engmas.data.model.Topic
-import kotlinx.serialization.SerialName
+import com.example.engmas.ui.screens.practice.courses.data.QuestionVocabItem
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class VocabsInTopic(
     val topic: Topic = Topic(),
-    val vocabs: List<VocabLearningInTopic> = emptyList()
+    val vocabs: List<QuestionVocabItem> = emptyList()
 )
-
-@Serializable
-data class VocabLearningInTopic(
-    @SerialName(value = "api_id")
-    val id: Int = -1,
-    val word: String = "",
-    @SerialName(value = "word_vi")
-    val wordVi: String = "",
-    val phonetic: String = "",
-    val status: VocabLearningStatus = VocabLearningStatus.Explore,
-    val audio: String = ""
-)
-
-enum class VocabLearningStatus {
-    Done,
-    Explore
-}

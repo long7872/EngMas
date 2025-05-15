@@ -1,14 +1,11 @@
 package com.example.engmas.ui.screens.practice.vocabulary
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,8 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,21 +36,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
 import com.example.engmas.data.model.Topic
-import com.example.engmas.data.model.Vocab
-import com.example.engmas.ui.screens.practice.courses.fakedata.Items
-import com.example.engmas.ui.screens.practice.courses.fakedata.VocabularyItem
-import com.example.engmas.ui.screens.practice.vocabulary.model.VocabLearningInTopic
+import com.example.engmas.ui.screens.practice.courses.data.QuestionVocabItem
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.TitleRow
 
 @Composable
 fun VocabularyInTopic(
     selectedTopic: Topic,
-    listVocab: List<VocabLearningInTopic>,
-    onVocabClicked: (VocabLearningInTopic) -> Unit,
+    listVocab: List<QuestionVocabItem>,
+    onVocabClicked: (QuestionVocabItem) -> Unit,
     onMarkAllClicked: () -> Unit,
     onStartLearningClicked: () -> Unit,
     onBackClicked: () -> Unit,
@@ -138,8 +129,8 @@ fun VocabularyInTopic(
 
 @Composable
 private fun ItemGrid(
-    items: List<VocabLearningInTopic>,
-    onRowClick: (VocabLearningInTopic) -> Unit,
+    items: List<QuestionVocabItem>,
+    onRowClick: (QuestionVocabItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(

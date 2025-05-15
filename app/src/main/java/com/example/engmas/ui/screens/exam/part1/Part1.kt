@@ -14,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,6 +42,7 @@ import java.io.File
 
 @Composable
 fun Part1(
+    timeLeft: Long,
     currentQuestion: String,
     audioFile: File?,
     imageFiles: List<File>,
@@ -56,6 +58,22 @@ fun Part1(
     val fullOptions = question.options
     val displayOptions = fullOptions.map { it.first().toString() }
     val mediaPlayer = remember { MediaPlayer() }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            try {
+                mediaPlayer.setOnCompletionListener(null) // <- Ngắt listener trước khi release
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.stop()
+                }
+                mediaPlayer.release()
+                Log.d("Part 1 Screen", "MediaPlayer released")
+            } catch (e: Exception) {
+                Log.e("Part 1 Screen", "Error releasing MediaPlayer: ${e.message}")
+            }
+        }
+    }
+
     LaunchedEffect(currentQuestion) {
         selectedAnswer = ""
         // Kiểm tra nếu audioFile không null và là một tệp hợp lệ
@@ -99,7 +117,7 @@ fun Part1(
                 QuizHeader(
                     currentQuestion = currentQuestion,
                     part = "1",
-                    timeLeft = 7200
+                    timeLeft = timeLeft
                 )
 
                 imageFiles.forEach { imageFile ->

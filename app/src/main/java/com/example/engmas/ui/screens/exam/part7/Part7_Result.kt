@@ -42,6 +42,7 @@ import java.io.File
 
 @Composable
 fun Part7_Result(
+    timeLeft: Long,
     currentQuestion: String,
     imageFiles: List<File>,
     questions: List<Question>,
@@ -69,7 +70,7 @@ fun Part7_Result(
                 QuizHeader(
                     currentQuestion = currentQuestion,
                     part = "7",
-                    timeLeft = 7200
+                    timeLeft = timeLeft
                 )
 
                 // LazyColumn for scrolling the questions

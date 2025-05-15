@@ -6,13 +6,13 @@ data class Challenge_OnlineUiState(
     val matchingState: MatchingState = MatchingState.Matching,
     val resultState: ResultState = ResultState.None,
     val thisUser: User = User(),
-    val matchedUser: User = User(),
+    val opponentUser: User = User(),
     val originalList: List<String> = emptyList(),
-    val unscrambleList: List<String> = emptyList(),
+    val scrambledList: List<String> = emptyList(),
     val thisUserCurrentQuestion: Int = 0,
-    val otherUserCurrentQuestion: Int = 0,
+    val opponentUserCurrentQuestion: Int = 0,
     val thisUserScore: Int = 0,
-    val otherUserScore: Int = 0,
+    val opponentUserScore: Int = 0,
     val isGameStarted: Boolean = false,
 )
 

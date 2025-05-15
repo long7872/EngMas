@@ -15,7 +15,16 @@ object RetrofitClient {
         coerceInputValues = true
     }
 
+    private val logging = okhttp3.logging.HttpLoggingInterceptor().apply {
+        level = okhttp3.logging.HttpLoggingInterceptor.Level.BODY
+    }
+
+    private val client = okhttp3.OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .build()
+
     private val retrofit = Retrofit.Builder()
+        .client(client)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(BASE_URL)
         .build()

@@ -16,6 +16,9 @@ object SessionPreferences {
     private val IS_COMPLETED = booleanPreferencesKey("is_completed")
     private val ELAPSED_MILLIS = longPreferencesKey("elapsed_millis")
 
+    private val DOWNLOAD_URL = stringPreferencesKey("download_url")
+    private val IS_DOWNLOADED = booleanPreferencesKey("is_downloaded")
+
     suspend fun saveTrackingCompleted(context: Context, day: String) {
         context.dataStore.edit { prefs ->
             prefs[LAST_TRACKED_DAY] = day
@@ -47,7 +50,35 @@ object SessionPreferences {
         return context.dataStore.data.first()[LAST_TRACKED_DAY]
     }
 
+    suspend fun saveDownloadUrl(context: Context, url: String) {
+        context.dataStore.edit { prefs ->
+            prefs[DOWNLOAD_URL] = url
+            prefs[IS_DOWNLOADED] = false // reset trạng thái nếu URL thay đổi
+        }
+    }
+
+    suspend fun markDownloadCompleted(context: Context) {
+        context.dataStore.edit { prefs ->
+            prefs[IS_DOWNLOADED] = true
+        }
+    }
+
+    suspend fun isDownloaded(context: Context): Boolean {
+        return context.dataStore.data.first()[IS_DOWNLOADED] ?: false
+    }
+
+    suspend fun getDownloadUrl(context: Context): String? {
+        return context.dataStore.data.first()[DOWNLOAD_URL]
+    }
+
     suspend fun clear(context: Context) {
-        context.dataStore.edit { it.clear() }
+        context.dataStore.edit { prefs ->
+            val preservedUrl = prefs[DOWNLOAD_URL]
+            val preservedStatus = prefs[IS_DOWNLOADED]
+
+            prefs.clear() // xóa hết
+            if (preservedUrl != null) prefs[DOWNLOAD_URL] = preservedUrl
+            if (preservedStatus != null) prefs[IS_DOWNLOADED] = preservedStatus
+        }
     }
 }

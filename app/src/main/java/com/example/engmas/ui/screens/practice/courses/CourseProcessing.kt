@@ -56,14 +56,14 @@ fun CourseProcessing(
                     if (isVocabListHasLearningStatus) {
                         viewModel.setSelectedVocab(uiState.vocabQuestions[0])
                         viewModel.setupGame()
-                        viewModel.changeScreenState(CourseScreenState.Grammar)
+                        viewModel.changeScreenState(CourseScreenState.Vocabulary)
                     } else if (isGrammarListHasLearningStatus) {
                         viewModel.setSelectedGrammar(uiState.grammarQuestions[0])
                         viewModel.changeScreenState(CourseScreenState.Grammar)
                     } else {
                         viewModel.setSelectedVocab(uiState.vocabQuestions[0])
                         viewModel.setupGame()
-                        viewModel.changeScreenState(CourseScreenState.Grammar)
+                        viewModel.changeScreenState(CourseScreenState.Vocabulary)
                     }
                 },
                 onBackClicked = onBackClicked

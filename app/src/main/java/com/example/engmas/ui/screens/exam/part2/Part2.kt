@@ -12,6 +12,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +35,7 @@ import java.io.File
 
 @Composable
 fun Part2(
+    timeLeft: Long,
     currentQuestion: String,
     audioFile: File?,
     question: Question,
@@ -49,6 +51,22 @@ fun Part2(
     val displayOptions = fullOptions.map { it.first().toString() }
     val mediaPlayer = remember { MediaPlayer() }
     Log.d("Part 2 Screen", "current question name: $currentQuestion")
+
+    DisposableEffect(Unit) {
+        onDispose {
+            try {
+                mediaPlayer.setOnCompletionListener(null) // <- Ngắt listener trước khi release
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.stop()
+                }
+                mediaPlayer.release()
+                Log.d("Part 1 Screen", "MediaPlayer released")
+            } catch (e: Exception) {
+                Log.e("Part 1 Screen", "Error releasing MediaPlayer: ${e.message}")
+            }
+        }
+    }
+
     LaunchedEffect(currentQuestion) {
         selectedAnswer = ""
         // Kiểm tra nếu audioFile không null và là một tệp hợp lệ
@@ -89,7 +107,7 @@ fun Part2(
                 QuizHeader(
                     currentQuestion = currentQuestion,
                     part = "2",
-                    timeLeft = 7200
+                    timeLeft = timeLeft
                 )
                 Spacer(modifier = Modifier.height(50.dp))
                 Column(

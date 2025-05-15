@@ -11,7 +11,7 @@ import com.example.engmas.data.model.UserStatus
 import com.example.engmas.data.repository.NetworkCourseRepository
 import com.example.engmas.data.repository.NetworkUserRepository
 import com.example.engmas.data.repository.NetworkUserScoreRepository
-import com.example.engmas.data.repository.NetworkWordRepository
+import com.example.engmas.data.repository.NetworkVocabRepository
 import com.example.engmas.network.RetrofitClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,7 +29,7 @@ class HomeViewModel : ViewModel() {
     private val userId = auth.currentUser?.uid ?: ""
     private val firestore = FirebaseFirestore.getInstance()
     private val userRepository = NetworkUserRepository(RetrofitClient.api)
-    private val wordRepository = NetworkWordRepository(RetrofitClient.api)
+    private val vocabRepository = NetworkVocabRepository(RetrofitClient.api)
     private val courseRepository = NetworkCourseRepository(RetrofitClient.api)
     private val userScoreRepository = NetworkUserScoreRepository()
 
@@ -59,7 +59,7 @@ class HomeViewModel : ViewModel() {
     fun searchVocab(query: String) {
         _uiState.update { it.copy(query = query) }
         viewModelScope.launch {
-            val result = wordRepository.searchVocabs(query)
+            val result = vocabRepository.searchVocabs(query)
             _uiState.update {
                 it.copy(searchResults = result)
             }

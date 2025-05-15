@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -33,6 +34,7 @@ import java.io.File
 
 @Composable
 fun Part4(
+    timeLeft: Long,
     currentQuestion: String,
     audioFile: File?,
     imageFiles: List<File>,
@@ -46,6 +48,22 @@ fun Part4(
 ) {
     val selectedAnswer = remember(questions.size) { mutableStateListOf(*Array(questions.size) { "" }) }
     val mediaPlayer = remember { MediaPlayer() }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            try {
+                mediaPlayer.setOnCompletionListener(null) // <- Ngắt listener trước khi release
+                if (mediaPlayer.isPlaying) {
+                    mediaPlayer.stop()
+                }
+                mediaPlayer.release()
+                Log.d("Part 1 Screen", "MediaPlayer released")
+            } catch (e: Exception) {
+                Log.e("Part 1 Screen", "Error releasing MediaPlayer: ${e.message}")
+            }
+        }
+    }
+
     LaunchedEffect(currentQuestion) {
         selectedAnswer.forEachIndexed { index, _ ->
             selectedAnswer[index] = ""  // Thiết lập lại giá trị của mỗi phần tử trong danh sách
@@ -88,7 +106,7 @@ fun Part4(
                 QuizHeader(
                     currentQuestion = currentQuestion,
                     part = "4",
-                    timeLeft = 7200
+                    timeLeft = timeLeft
                 )
 
                 // LazyColumn for scrolling the questions

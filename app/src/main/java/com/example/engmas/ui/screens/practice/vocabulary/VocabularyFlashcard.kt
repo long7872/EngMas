@@ -37,15 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.engmas.R
 import com.example.engmas.data.model.Topic
-import com.example.engmas.ui.screens.practice.vocabulary.model.VocabLearningInTopic
+import com.example.engmas.ui.screens.practice.courses.data.QuestionVocabItem
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.TitleRow
 
 @Composable
 fun VocabularyFlashcardScreen(
     selectedTopic: Topic,
-    item: VocabLearningInTopic,
-    onMarkButtonClicked: () -> Unit,
+    item: QuestionVocabItem,
+    onMarkButtonClicked: (QuestionVocabItem) -> Unit,
     onPracticeButtonClicked: () -> Unit,
     onBackClicked: () -> Unit,
     modifier: Modifier = Modifier,
@@ -111,7 +111,7 @@ fun VocabularyFlashcardScreen(
             }
 
             OutlinedButton(
-                onClick = onMarkButtonClicked,
+                onClick = { onMarkButtonClicked(item) },
                 border = BorderStroke(1.dp, Color(0xFFD3D3D3)),
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier

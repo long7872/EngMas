@@ -2,6 +2,7 @@
     <string name="app_name">EngMas</string>
 
     <string name="chat">Chat</string>
+    <string name="submit">Submit</string>
 
 <!--login/signup-->
     <string name="tab_auth_login">Login</string>
@@ -20,6 +21,7 @@
     <string name="tab_account">Account</string>
 
 <!--home-->
+    <string name="tab_home_search">Home Search</string>
     <string name="search">Search Icon</string>
     <string name="search_placeholder">Search your words today…</string>
     <string name="streak_title">Learning streak</string>
@@ -85,6 +87,9 @@
     <string name="tab_challenge_scoreboard">Score Board</string>
 
 <!--account-->
+    <string name="tab_account_information">Account Information</string>
+    <string name="tab_account_achievement">Account Achievement</string>
+    <string name="tab_account_friend">Account Friend</string>
     <string name="user_tag">\@%1$s</string>
     <string name="user_email">Email: %1$s</string>
     <string name="user_id">User id: %1$s</string>

@@ -30,6 +30,7 @@ import java.io.File
 
 @Composable
 fun Part2_Result(
+    timeLeft: Long,
     currentQuestion: String,
     audioFile: File?,
     question: Question,
@@ -57,7 +58,7 @@ fun Part2_Result(
                 QuizHeader(
                     currentQuestion = currentQuestion,
                     part = "2",
-                    timeLeft = 7200
+                    timeLeft = timeLeft
                 )
                 Column(
                     modifier = Modifier.weight(0.5f)

@@ -28,12 +28,18 @@ import com.example.engmas.ui.theme.EngMasTheme
 @Composable
 fun ZoomableImageCard(imageUrl: String) {
     var scale by remember { mutableStateOf(1f) } // To hold the zoom level
+    var offsetX by remember { mutableStateOf(0f) } // To hold the horizontal offset
+    var offsetY by remember { mutableStateOf(0f) } // To hold the vertical offset
 
-    // Function to handle pinch zoom (you can add more logic for touch-based zooming)
+    // Function to handle pinch zoom and dragging (pan)
     val scaleGesture = Modifier.pointerInput(Unit) {
-        detectTransformGestures { _, _, zoom, _ ->
+        detectTransformGestures { _, pan, zoom, _ ->
             scale *= zoom // Apply zoom scale from gestures
             scale = scale.coerceIn(0.5f, 3f) // Set minimum and maximum zoom level
+
+            // Apply panning
+            offsetX += pan.x
+            offsetY += pan.y
         }
     }
 
@@ -60,7 +66,8 @@ fun ZoomableImageCard(imageUrl: String) {
                     .graphicsLayer(
                         scaleX = scale,
                         scaleY = scale,
-                        // Only the image is scaled, not the card
+                        translationX = offsetX,
+                        translationY = offsetY
                     )
             )
         }

@@ -86,20 +86,22 @@ fun Challenge_PlayOnlineScreen(
                 .clip(MaterialTheme.shapes.medium)
         ) {
             PlayerDuelCard(
+                thisUserImage = uiState.thisUser.photoUrl,
                 thisUserName = uiState.thisUser.username,
                 thisUserQuestionCompleted = uiState.thisUserCurrentQuestion + 1,
-                otherUserName = uiState.matchedUser.username,
-                otherUserQuestionCompleted = uiState.otherUserCurrentQuestion + 1,
+                otherUserImage = uiState.opponentUser.photoUrl,
+                otherUserName = uiState.opponentUser.username,
+                otherUserQuestionCompleted = uiState.opponentUserCurrentQuestion + 1,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(bottom = dimensionResource(R.dimen.padding_small)),
             )
         }
 
-        if (uiState.unscrambleList.isNotEmpty()) {
-            if ((uiState.thisUserCurrentQuestion < uiState.unscrambleList.size-1)) {
+        if (uiState.scrambledList.isNotEmpty()) {
+            if ((uiState.thisUserCurrentQuestion < uiState.scrambledList.size-1)) {
                 UnscrambleGameContent(
-                    unscrambleWord = uiState.unscrambleList[uiState.thisUserCurrentQuestion],
+                    unscrambleWord = uiState.scrambledList[uiState.thisUserCurrentQuestion],
                     resultState = uiState.resultState,
                     onFinishTimeBar = onFinishTimeBar,
                     onSkipButton = onSkipButton,
@@ -132,10 +134,12 @@ fun Challenge_PlayOnlineScreen(
     }
     if (uiState.resultState != ResultState.None) {
         WinnerOverlay(
+            thisUserImage = uiState.thisUser.photoUrl,
             thisUserName = uiState.thisUser.username,
             thisUserQuestionCompleted = uiState.thisUserScore,
-            otherUserName = uiState.matchedUser.username,
-            otherUserQuestionCompleted = uiState.otherUserScore,
+            otherUserImage = uiState.opponentUser.photoUrl,
+            otherUserName = uiState.opponentUser.username,
+            otherUserQuestionCompleted = uiState.opponentUserScore,
             onExit = onExitButton,
             onPlayAgain = onPlayAgainButton,
             isWinner = uiState.resultState == ResultState.Win,
@@ -146,8 +150,10 @@ fun Challenge_PlayOnlineScreen(
 
 @Composable
 fun WinnerOverlay(
+    thisUserImage: String,
     thisUserName: String,
     thisUserQuestionCompleted: Int,
+    otherUserImage: String,
     otherUserName: String,
     otherUserQuestionCompleted: Int,
     onExit: () -> Unit,
@@ -182,8 +188,10 @@ fun WinnerOverlay(
                         .clip(MaterialTheme.shapes.medium)
                 ) {
                     PlayerDuelCard(
+                        thisUserImage = thisUserImage,
                         thisUserName = thisUserName,
                         thisUserQuestionCompleted = thisUserQuestionCompleted + 1,
+                        otherUserImage = otherUserImage,
                         otherUserName = otherUserName,
                         otherUserQuestionCompleted = otherUserQuestionCompleted + 1,
                         modifier = Modifier

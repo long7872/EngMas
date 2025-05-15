@@ -46,6 +46,7 @@ fun UnscrambleGameContent(
             .imePadding()
     ) {
         TimeBar(
+            question = unscrambleWord,
             onFinish = onFinishTimeBar,
             durationMillis = 30_000,
             modifier = Modifier.fillMaxWidth()

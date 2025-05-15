@@ -4,9 +4,13 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.engmas.data.store.SessionPreferences
 import com.example.engmas.ui.screens.exam.data.Question
 import com.example.engmas.ui.screens.exam.data.ToeicQuestion
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +21,6 @@ import kotlinx.serialization.json.Json
 import net.lingala.zip4j.ZipFile
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
@@ -26,8 +29,33 @@ class ExamViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ExamUiState())
     val uiState: StateFlow<ExamUiState> = _uiState.asStateFlow()
 
-    private val url =
-        "https://www.dropbox.com/scl/fi/k1ugbo4q76pfi1s4uf1rv/Test-1-ETS-2024.zip?rlkey=0vwo199t6sg3glpurkembx0qr&st=v55vjqdi&dl=1"
+    // 7200
+    private val _time = MutableStateFlow(7200L)
+    val time: StateFlow<Long> = _time.asStateFlow()
+
+    private var countingJob: Job? = null
+
+    fun startCounting() {
+        if (countingJob?.isActive == true) return // tránh khởi chạy lại
+
+        countingJob = viewModelScope.launch {
+            while (_time.value > 0) {
+                delay(1000L)
+                _time.value -= 1
+            }
+            countingJob?.cancel()
+            changeScreenState(ExamScreenState.Result)
+        }
+    }
+
+    fun resetCounting(to: Long = 7200L) {
+        countingJob?.cancel()
+        _time.value = to
+    }
+
+    init {
+        fetchDownloadUrlFromFirestore()
+    }
 
     fun getListNameToeic(context: Context) {
         // Lấy tất cả thư mục con trong destinationFolder
@@ -53,13 +81,33 @@ class ExamViewModel : ViewModel() {
         _uiState.update { it.copy(selectedExam = exam) }
     }
 
+    fun fetchDownloadUrlFromFirestore() {
+        val docRef = FirebaseFirestore.getInstance()
+            .collection("settings")
+            .document("config")
+
+        docRef.get().addOnSuccessListener { snapshot ->
+            val url = snapshot.getString("download_url") ?: ""
+            _uiState.update { it.copy(url = url) }
+        }.addOnFailureListener {
+            Log.e("Exam View Model", "Error fetch download url: ${it.message}")
+        }
+    }
+
     fun loadExams(context: Context) {
         viewModelScope.launch {
             changeScreenState(ExamScreenState.Loading)
+            delay(2000)
+            val savedUrl = SessionPreferences.getDownloadUrl(context)
+            val alreadyDownloaded = SessionPreferences.isDownloaded(context)
             val destinationFile = File(context.dataDir, "toeic.zip")
-//            downloadFileFromDrive(url, destinationFile)
             val destinationFolder = File(context.dataDir, "toeic")
-//            unzipFile(destinationFile, destinationFolder)
+            if (savedUrl != _uiState.value.url || !alreadyDownloaded) {
+                SessionPreferences.saveDownloadUrl(context, _uiState.value.url)
+                downloadFileFromDrive(_uiState.value.url, destinationFile)
+                unzipFile(destinationFile, destinationFolder)
+                SessionPreferences.markDownloadCompleted(context)
+            }
 
             getListNameToeic(context)
 
@@ -161,6 +209,7 @@ class ExamViewModel : ViewModel() {
         }
 
         if (nextPart < _uiState.value.checkList.size) {  // Kiểm tra nếu tìm thấy phần tử true
+            _uiState.update { it.copy(questionIndexInPart = 0) }
             when (nextPart) {
                 0 -> {
                     changeScreenState(ExamScreenState.Part1)
@@ -192,9 +241,6 @@ class ExamViewModel : ViewModel() {
                 }
             }
             updateSelectedParts(nextPart)
-        } else {
-            changeScreenState(ExamScreenState.Result)
-            calculateScore()
         }
     }
 
@@ -208,6 +254,8 @@ class ExamViewModel : ViewModel() {
         }
 
         if (previousPart >= 0) {  // Kiểm tra nếu tìm thấy phần tử true
+            val questionsPart: List<ToeicQuestion> = _uiState.value.questionParts[previousPart+1]?: emptyList()
+            _uiState.update { it.copy(questionIndexInPart = questionsPart.size - 1) }
             when (previousPart) {
                 0 -> {
                     changeScreenState(ExamScreenState.Part1)
@@ -239,8 +287,6 @@ class ExamViewModel : ViewModel() {
                 }
             }
             updateSelectedParts(previousPart)
-        } else {
-            changeScreenState(ExamScreenState.Result)
         }
     }
 
@@ -251,7 +297,6 @@ class ExamViewModel : ViewModel() {
             _uiState.update { it.copy(questionIndexInPart = it.questionIndexInPart + 1) }
         } else {
             nextPart()
-            _uiState.update { it.copy(questionIndexInPart = 0) }
         }
     }
 
@@ -267,9 +312,7 @@ class ExamViewModel : ViewModel() {
                 while (previousPart >= 0 && !_uiState.value.checkList[previousPart]) {
                     previousPart--  // Bỏ qua phần chưa được check
                 }
-                val questionsPart: List<ToeicQuestion> = _uiState.value.questionParts[previousPart+1]?: emptyList()
                 previousPart()
-                _uiState.update { it.copy(questionIndexInPart = questionsPart.size - 1) }
             }
         }
     }

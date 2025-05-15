@@ -1,10 +1,13 @@
 package com.example.engmas.ui.screens.challenge.scoreboard
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.engmas.data.model.UserScore
+import com.example.engmas.data.repository.NetworkUserRepository
 import com.example.engmas.data.repository.NetworkUserScoreRepository
 import com.example.engmas.data.repository.UserScoreRepository
+import com.example.engmas.network.RetrofitClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -12,6 +15,7 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ScoreBoardViewModel : ViewModel() {
@@ -19,6 +23,7 @@ class ScoreBoardViewModel : ViewModel() {
     private val userScoreRepository: UserScoreRepository = NetworkUserScoreRepository()
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val userRepository = NetworkUserRepository(RetrofitClient.api)
 
     private val _players = MutableStateFlow<List<UserScore>>(emptyList())
     val players: StateFlow<List<UserScore>> = _players.asStateFlow()
@@ -26,10 +31,21 @@ class ScoreBoardViewModel : ViewModel() {
     private val _currentUser = MutableStateFlow(UserScore())
     val currentUser: StateFlow<UserScore> = _currentUser.asStateFlow()
 
+    private val _image = MutableStateFlow("")
+    val image: StateFlow<String> = _image.asStateFlow()
+
     private var topPlayersListener: ListenerRegistration? = null
 
     init {
         loadTopPlayers()
+    }
+
+    fun getImage(id: String) {
+        viewModelScope.launch {
+            val result = userRepository.getUser(id)
+            Log.d("ScoreBoard View Model", "get Image user: $result")
+            _image.value = result.photoUrl
+        }
     }
 
     private fun loadTopPlayers() {

@@ -1,6 +1,7 @@
 package com.example.engmas.ui.screens.practice.flashcard
 
 import android.media.MediaPlayer
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -42,11 +43,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
 import com.example.engmas.data.model.Topic
-import com.example.engmas.data.model.UserLearningStatus
 import com.example.engmas.ui.navigation.NavigationDestination
+import com.example.engmas.ui.screens.practice.courses.data.QuestionStatus
+import com.example.engmas.ui.screens.practice.courses.data.QuestionVocabItem
 import com.example.engmas.ui.screens.practice.vocabulary.VocabularyViewModel
-import com.example.engmas.ui.screens.practice.vocabulary.model.VocabLearningInTopic
-import com.example.engmas.ui.screens.practice.vocabulary.model.VocabLearningStatus
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.TitleRow
 
@@ -65,67 +65,36 @@ fun FlashcardInTopic(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     LaunchedEffect(topicId) {
         viewModel.getVocabsInTopic(topicId)
     }
     val selectedTopic = uiState.selectedTopic
-    val listVocabs = uiState.listVocabsInTopic
-    val screenState = uiState.screenState
+    val vocabs = uiState.listVocabsInTopic
 
-    val groupedVocabs = listVocabs.groupBy { it.status }
-    val exploreGroup = groupedVocabs[VocabLearningStatus.Explore] ?: emptyList()
-    val doneGroup = groupedVocabs[VocabLearningStatus.Done] ?: emptyList()
-
-    var isNotify by remember { mutableStateOf(false) }
-//    var isEmpty by remember { mutableStateOf(false) }
-
-    // Đảm bảo rằng Toast chỉ hiển thị sau khi các phần tử đã được cập nhật
-    LaunchedEffect(exploreGroup.size) {
-        if (exploreGroup.size == 1 && !isNotify) {
-            Toast.makeText(context, "All vocabularies are learned", Toast.LENGTH_SHORT).show()
-            isNotify = true  // Đảm bảo Toast chỉ hiển thị một lần
-        }
+    LaunchedEffect(selectedTopic) {
+        viewModel.setSelectedVocab(vocabs.firstOrNull() ?: QuestionVocabItem())
     }
 
-    // Chọn phần tử đầu tiên từ nhóm explore hoặc done
-    val item = if (exploreGroup.isEmpty()) {
-        doneGroup.firstOrNull()
-    } else {
-        exploreGroup.firstOrNull()
-    }
-
-    // Kiểm tra nếu có phần tử thì setSelectedVocab
-    item?.let {
-        viewModel.setSelectedVocab(it)
-    }
-
-//    if (isEmpty) {
-//        onBackClicked()
-//    }
     val selectedItem = uiState.selectedVocab
+    val isDone = uiState.isDone
+    Log.d("Flashcard UI", "isDone status: $isDone")
 
     FlashcardInTopicScreen(
         selectedTopic = selectedTopic,
         item = selectedItem,
-        onInit = {
-            if (selectedItem.id != -1) {
-                viewModel.insertVocabLearning(selectedItem.id)
-            }
-        },
         onMarkReviewClicked = {
-            viewModel.updateVocabLearning(selectedItem.id, status = UserLearningStatus.Review)
-            viewModel.deleteVocab(selectedItem)
-            if (listVocabs.isEmpty()) {
-                Toast.makeText(context, "All vocabularies are learned", Toast.LENGTH_SHORT).show()
+            if (!isDone) {
+                viewModel.updateStatusForVocabItem(selectedItem, QuestionStatus.Review)
+                viewModel.nextFlashcard()
+            } else {
                 onBackClicked()
             }
         },
         onMarkKnownClicked = {
-            viewModel.updateVocabLearning(selectedItem.id, status = UserLearningStatus.Known)
-            viewModel.deleteVocab(selectedItem)
-            if (listVocabs.isEmpty()) {
-                Toast.makeText(context, "All vocabularies are learned", Toast.LENGTH_SHORT).show()
+            if (!isDone) {
+                viewModel.updateStatusForVocabItem(selectedItem, QuestionStatus.Known)
+                viewModel.nextFlashcard()
+            } else {
                 onBackClicked()
             }
         },
@@ -136,8 +105,7 @@ fun FlashcardInTopic(
 @Composable
 fun FlashcardInTopicScreen(
     selectedTopic: Topic,
-    item: VocabLearningInTopic,
-    onInit: () -> Unit,
+    item: QuestionVocabItem,
     onMarkReviewClicked: () -> Unit,
     onMarkKnownClicked: () -> Unit,
     onBackClicked: () -> Unit,
@@ -148,7 +116,6 @@ fun FlashcardInTopicScreen(
     val isPlay = item.audio != ""
 
     LaunchedEffect(item) {
-        onInit()
         if (isPlay) {
             mediaPlayer.reset()
             mediaPlayer.setDataSource(item.audio)

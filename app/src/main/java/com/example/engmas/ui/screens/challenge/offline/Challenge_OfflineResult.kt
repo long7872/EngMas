@@ -1,6 +1,9 @@
 package com.example.engmas.ui.screens.challenge.offline
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -8,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -15,14 +20,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.engmas.R
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.CircleFrame
@@ -30,6 +39,10 @@ import com.example.engmas.ui.utils.CustomButton
 
 @Composable
 fun Challenge_OfflineResult(
+    userImage: String,
+    questionCorrected: Int,
+    onExit: () -> Unit,
+    onPlayAgain: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -45,7 +58,8 @@ fun Challenge_OfflineResult(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             ScoreCard(
-                questionCorrected = 10
+                userImage = userImage,
+                questionCorrected = questionCorrected
             )
 
             Row(
@@ -57,7 +71,7 @@ fun Challenge_OfflineResult(
                     text = "Exit",
                     fontSize = 14.sp,
                     color = Color(0xFFDD0909),
-                    onClick = {  },
+                    onClick = onExit,
                     modifier = Modifier.weight(0.5f)
                         .padding(
                             start = dimensionResource(R.dimen.button_horizontal_padding),
@@ -71,7 +85,7 @@ fun Challenge_OfflineResult(
                     text = "Play Again",
                     fontSize = 14.sp,
                     color = Color(0xFF09DD30),
-                    onClick = {  },
+                    onClick = onPlayAgain,
                     modifier = Modifier.weight(0.5f)
                         .padding(
                             start = dimensionResource(R.dimen.button_horizontal_padding) / 2,
@@ -88,6 +102,7 @@ fun Challenge_OfflineResult(
 
 @Composable
 private fun ScoreCard(
+    userImage: String,
     questionCorrected: Int,
     modifier: Modifier = Modifier
 ) {
@@ -111,10 +126,27 @@ private fun ScoreCard(
                 modifier = Modifier
                     .padding(vertical = dimensionResource(R.dimen.offline_result_vertical_padding))
             ) {
-                CircleFrame(
-                    avatarRes = R.drawable.avatar1_test,
-                    frameSize = dimensionResource(R.dimen.avatar_frame_size)
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .background(Color.Transparent)
+                        .size(dimensionResource(R.dimen.avatar_frame_size))
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.avatar_circle_frame),
+                        contentDescription = null
+                    )
+                    Image(
+                        painter = if (userImage == "") painterResource(R.drawable.avatardefault)
+                        else rememberAsyncImagePainter(userImage),
+                        contentDescription = stringResource(R.string.avatar),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(dimensionResource(R.dimen.avatar_frame_size))
+                            .clip(CircleShape)
+                            .padding(dimensionResource(R.dimen.frame_gap_size))
+                    )
+                }
                 Text(
                     text = "User",
                     fontFamily = KufamFont,
@@ -150,5 +182,5 @@ private fun ScoreCard(
 @Preview(showBackground = true)
 @Composable
 private fun Challenge_OfflineResultPreview() {
-    Challenge_OfflineResult()
+//    Challenge_OfflineResult()
 }

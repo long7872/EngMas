@@ -28,6 +28,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -72,10 +73,13 @@ import com.example.engmas.ui.screens.challenge.online.Challenge_PlayOnlineScreen
 import com.example.engmas.ui.screens.challenge.online.ResultState
 import com.example.engmas.ui.screens.challenge.scoreboard.ChallengeScoreBoardDestination
 import com.example.engmas.ui.screens.exam.ExamDestination
+import com.example.engmas.ui.screens.exam.ExamStartDestination
 import com.example.engmas.ui.screens.home.HomeDestination
 import com.example.engmas.ui.screens.home.HomeScreen
 import com.example.engmas.ui.screens.practice.PracticeDestination
+import com.example.engmas.ui.screens.practice.courses.PracticeCourseDestination
 import com.example.engmas.ui.screens.practice.courses.PracticeFlashcardDestination
+import com.example.engmas.ui.screens.practice.courses.PracticeReviewDestination
 import com.example.engmas.ui.screens.practice.flashcard.PracticeFlashCardInTopicDestination
 import com.example.engmas.ui.screens.practice.grammar.PracticeGrammarDestination
 import com.example.engmas.ui.screens.practice.grammar.PracticeGrammarsDestination
@@ -91,66 +95,80 @@ fun EngMasApp(
     navController: NavHostController = rememberNavController()
 ) {
 
-    val allDestinations = listOf<NavigationDestination>(
-        HomeDestination,
-        PracticeDestination,
-        PracticeVocabularyDestination,
-        PracticeGrammarsDestination,
-        PracticeGrammarDestination,
-        PracticeFlashcardDestination,
-        PracticeFlashCardInTopicDestination,
-        ExamDestination,
-        ChallengeDestination,
-        ChallengeOnlineDestination,
-        ChallengeOfflineDestination,
-        ChallengeScoreBoardDestination,
-        AccountDestination,
-        AuthLoginDestination,
-        AuthSignUpDestination
-    )
+//    val allDestinations = listOf(
+//        HomeDestination,
+//        PracticeDestination,
+//        PracticeCourseDestination,
+//        PracticeVocabularyDestination,
+//        PracticeGrammarsDestination,
+//        PracticeGrammarDestination,
+//        PracticeFlashcardDestination,
+//        PracticeFlashCardInTopicDestination,
+//        PracticeReviewDestination,
+//        ExamDestination,
+//        ChallengeDestination,
+//        ChallengeOnlineDestination,
+//        ChallengeOfflineDestination,
+//        ChallengeScoreBoardDestination,
+//        AccountDestination,
+//        AuthLoginDestination,
+//        AuthSignUpDestination
+//    )
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentEngMasScreen = allDestinations.find {
-        it.route == backStackEntry?.destination?.route
-    } ?: HomeDestination
+    val currentRoute = backStackEntry?.destination?.route
 
     var selectedIndex by remember { mutableIntStateOf(0) }
-    val isChallengeSubRoute by remember(currentEngMasScreen) {
-        derivedStateOf { currentEngMasScreen.route.startsWith(ChallengeDestination.route) }
+    // Tính toán các điều kiện sử dụng derivedStateOf
+    val isChallengeSubRoute by remember(currentRoute) {
+        derivedStateOf { currentRoute?.startsWith(ChallengeDestination.route) == true }
     }
-    val isAuthSubRoute by remember(currentEngMasScreen) {
-        derivedStateOf { currentEngMasScreen.route.startsWith("auth") }
+    val isAuthSubRoute by remember(currentRoute) {
+        derivedStateOf { currentRoute?.startsWith("auth") == true }
     }
-    val isPracticeSubRoute by remember(currentEngMasScreen) {
-        derivedStateOf { currentEngMasScreen.route.startsWith(PracticeDestination.route) }
+    val isPracticeSubRoute by remember(currentRoute) {
+        derivedStateOf { currentRoute?.startsWith(PracticeDestination.route) == true }
+    }
+    val isExamSubRoute by remember(currentRoute) {
+        derivedStateOf { currentRoute?.startsWith(ExamStartDestination.route) == true }
+    }
+    val isAccountSubRoute by remember(currentRoute) {
+        derivedStateOf { currentRoute?.startsWith(AccountDestination.route) == true }
+    }
+    val isHomeSubRoute by remember(currentRoute) {
+        derivedStateOf { currentRoute?.startsWith(HomeDestination.route) == true }
     }
 
-    LaunchedEffect(currentEngMasScreen) {
-        // Điều chỉnh selectedIndex khi currentEngMasScreen thay đổi
-        when (currentEngMasScreen) {
-            is HomeDestination -> selectedIndex = 1
-            is PracticeDestination -> selectedIndex = 2
-            is ExamDestination -> selectedIndex = 3
-            is ChallengeDestination -> selectedIndex = 4
-            is AccountDestination -> selectedIndex = 5
+    LaunchedEffect(currentRoute) {
+        Log.d("Eng Mas Screen", "current route: $currentRoute")
+        Log.d("Eng Mas Screen", "challenge sub route? : $isChallengeSubRoute")
+        Log.d("Eng Mas Screen", "auth sub route? : $isAuthSubRoute")
+        Log.d("Eng Mas Screen", "practice sub route? : $isPracticeSubRoute")
+        Log.d("Eng Mas Screen", "exam sub route? : $isExamSubRoute")
+        Log.d("Eng Mas Screen", "account sub route? : $isAccountSubRoute")
+        when (currentRoute) {
+            HomeDestination.route -> selectedIndex = 1
+            PracticeDestination.route -> selectedIndex = 2
+            ExamDestination.route -> selectedIndex = 3
+            ChallengeDestination.route -> selectedIndex = 4
+            AccountDestination.route -> selectedIndex = 5
             else -> selectedIndex = 0
         }
     }
 
-    if (isPracticeSubRoute) selectedIndex = 2
 
-    Log.d(TAG, "$selectedIndex $currentEngMasScreen")
-    Log.d(TAG, "isAuthSubRoute: $isAuthSubRoute")
+
     Scaffold(
         topBar = { EngMasTopAppBar(
-            isAuthScreen = isAuthSubRoute,
-            canNavigateBack = selectedIndex == 0,
+            isNotDisplay = isAuthSubRoute || isExamSubRoute,
+            canNavigateBack = if (isPracticeSubRoute || isAccountSubRoute) false else selectedIndex == 0,
             navigateUp = {
                 if (isChallengeSubRoute) {
                     navController.navigate(ChallengeDestination.route)
                 } else {
                     navController.navigateUp()
                 }
-            }
+            },
+            onActionButtonClicked = {}
         ) },
         bottomBar = { EngMasBottomNavigationBar(
             selectedIndex = selectedIndex,
@@ -170,13 +188,16 @@ fun EngMasApp(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EngMasTopAppBar(
-    isAuthScreen: Boolean,
+    isNotDisplay: Boolean,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit,
+    onActionButtonClicked: () -> Unit,
+    isSubmit: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    if (!isAuthScreen) {
+    if (!isNotDisplay) {
         TopAppBar(
+//            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
             navigationIcon = {
                 if (canNavigateBack) {
                     IconButton(
@@ -210,15 +231,17 @@ fun EngMasTopAppBar(
             },
             actions = {
                 IconButton(
-                    onClick = {},
+                    onClick = onActionButtonClicked,
                     modifier = Modifier.padding(end = dimensionResource(R.dimen.padding_medium))
                         .size(dimensionResource(R.dimen.icon_size)
                                 + dimensionResource(R.dimen.padding_small))
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.chat_icon),
+                        painter = if (!isSubmit) painterResource(R.drawable.chat_icon)
+                            else painterResource(R.drawable.submit_icon),
                         tint = Color(0xFF2B4EA2),
-                        contentDescription = stringResource(R.string.chat),
+                        contentDescription = if (!isSubmit) stringResource(R.string.chat)
+                            else stringResource(R.string.submit),
                         modifier = Modifier.size(dimensionResource(R.dimen.icon_size))
                     )
                 }

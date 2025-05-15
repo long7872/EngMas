@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
+import com.example.engmas.RequestNotificationPermission
 import com.example.engmas.data.model.Stats
 import com.example.engmas.data.model.Today
 import com.example.engmas.ui.GeneralViewModel
@@ -74,11 +75,12 @@ object HomeDestination: NavigationDestination {
 @Composable
 fun HomeScreen(
     onCourseClicked: (Int) -> Unit,
+    onSearchItemClicked: (Int) -> Unit,
     viewModel: HomeViewModel = viewModel(),
     timerViewModel: GeneralViewModel,
     modifier: Modifier = Modifier
 ) {
-
+    RequestNotificationPermission()
     val context = LocalContext.current
     val hasStartedTracking = rememberSaveable { mutableStateOf(false) }
 
@@ -112,9 +114,6 @@ fun HomeScreen(
 
     val courses = uiState.courseList
 
-    val scroll = rememberScrollState()
-    val innerScroll = rememberScrollState()
-
     Column(
         modifier = modifier.fillMaxSize()
             .verticalScroll(rememberScrollState())
@@ -133,8 +132,9 @@ fun HomeScreen(
                 onActiveChange = { isActive = it },
                 onClearButton = { viewModel.searchVocab("") },
                 queryItems = searchResult,
-                onItemClicked = {},
+                onItemClicked = { onSearchItemClicked(it.id) },
                 modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = dimensionResource(R.dimen.padding_medium))
                     .align(Alignment.TopCenter)
             )
         }
@@ -369,7 +369,7 @@ private fun WeeklyAnalysisCard(
     modifier: Modifier = Modifier
 ) {
     val isLearnedOkay = currentWeek.wordsLearned >= previousWeek.wordsLearned
-    val isReviewOkay = currentWeek.wordsToReview <= previousWeek.wordsToReview
+    val isReviewOkay = currentWeek.wordsToReview >= previousWeek.wordsToReview
     val okayColorContainer = Color(0xFF63F632).copy(alpha = 0.42f)
     val okayColorItem = Color(0xFF07C500)
     val notOkayColorContainer = Color(0xFFF63232).copy(alpha = 0.58f)
