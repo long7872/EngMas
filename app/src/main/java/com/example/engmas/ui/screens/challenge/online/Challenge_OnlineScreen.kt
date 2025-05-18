@@ -10,11 +10,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.engmas.R
-import com.example.engmas.coroutine.AppCoroutineScope
 import com.example.engmas.network.SocketManager
 import com.example.engmas.ui.navigation.NavigationDestination
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.cancel
 
 object ChallengeOnlineDestination: NavigationDestination {
     override val route = "challenge/online"

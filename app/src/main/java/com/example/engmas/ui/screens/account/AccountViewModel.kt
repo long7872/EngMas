@@ -172,7 +172,7 @@ class AccountViewModel: ViewModel() {
         _uiState.update { it.copy(isSearchScreen = isSearch) }
     }
 
-    fun createMultipartFromUri(context: Context, uri: Uri): MultipartBody.Part {
+    private fun createMultipartFromUri(context: Context, uri: Uri): MultipartBody.Part {
         val contentResolver = context.contentResolver
         val inputStream = contentResolver.openInputStream(uri)
         val bytes = inputStream?.readBytes() ?: ByteArray(0)

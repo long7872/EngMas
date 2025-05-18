@@ -66,6 +66,8 @@ import com.example.engmas.ui.screens.practice.vocabulary.PracticeVocabularyDesti
 import com.example.engmas.ui.screens.practice.vocabulary.PracticeVocabularyLearningDestination
 import com.example.engmas.ui.screens.practice.vocabulary.VocabularyProcessing
 import com.example.engmas.ui.screens.practice.vocabulary.VocabularyScreen
+import com.example.engmas.ui.screens.practice.voices.PracticeVoiceDestination
+import com.example.engmas.ui.screens.practice.voices.VoiceScreen
 
 @Composable
 fun EngMasNavHost(
@@ -126,7 +128,8 @@ fun EngMasNavHost(
                 onCourseClicked = {
                     navController.navigate("${PracticeCourseDestination.route}/$it")
                     Log.d("Eng Mas Nav Host", "Practice on course click: ${PracticeCourseDestination.route}/$it")
-                }
+                },
+                onVoiceClicked = { navController.navigate(PracticeVoiceDestination.route) }
             )
         }
 
@@ -241,6 +244,12 @@ fun EngMasNavHost(
                 onFlashcardClick = { navController.navigate(
                     "${PracticeFlashCardInTopicDestination.route}/$it"
                 ) },
+                onBackClicked = { navController.navigateUp() }
+            )
+        }
+
+        composable(route = PracticeVoiceDestination.route) {
+            VoiceScreen(
                 onBackClicked = { navController.navigateUp() }
             )
         }

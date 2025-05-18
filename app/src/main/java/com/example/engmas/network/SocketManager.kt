@@ -27,6 +27,10 @@ object SocketManager {
         socket?.disconnect()
     }
 
+    fun leave() {
+        emit("leave", "")
+    }
+
     fun emit(event: String, data: Any) {
         socket?.emit(event, data)
     }

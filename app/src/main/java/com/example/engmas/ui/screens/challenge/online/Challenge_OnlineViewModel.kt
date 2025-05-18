@@ -3,18 +3,12 @@ package com.example.engmas.ui.screens.challenge.online
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.engmas.coroutine.AppCoroutineScope
-import com.example.engmas.data.model.Challenge
 import com.example.engmas.data.model.User
-import com.example.engmas.data.model.UserStatus
-import com.example.engmas.data.repository.ChallengeRepository
 import com.example.engmas.data.repository.NetworkUserRepository
 import com.example.engmas.data.repository.NetworkUserScoreRepository
-import com.example.engmas.data.repository.NetworkVocabRepository
 import com.example.engmas.network.RetrofitClient
 import com.example.engmas.network.SocketManager
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import io.socket.emitter.Emitter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,11 +16,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
-import kotlin.random.Random
 
 class Challenge_OnlineViewModel: ViewModel() {
     private val auth = FirebaseAuth.getInstance()
@@ -80,24 +72,40 @@ class Challenge_OnlineViewModel: ViewModel() {
         checkDone()
     }
 
-    private fun checkDone() {
+    private fun checkDone(forceWin: Boolean = false) {
         viewModelScope.launch {
-            if (_uiState.value.thisUserCurrentQuestion == 9
-                && _uiState.value.opponentUserCurrentQuestion == 9) {
-                if (_uiState.value.thisUserScore <= _uiState.value.opponentUserScore) {
-                    _uiState.update { it.copy(resultState = ResultState.Lose) }
-                } else {
-                    _uiState.update { it.copy(resultState = ResultState.Win) }
-                    val result = userScoreRepository.getUser(userId)
-                    result.onSuccess { user ->
-                        val currentScore = user.score
-                        val updatedScore = currentScore + 1
-                        val updatedUser = user.copy(score = updatedScore)
-                        val updateResult = userScoreRepository.updateUser(userId, updatedUser)
-                        updateResult.onSuccess {
-                            Log.d("OnlineViewModel", "✅ Firestore đã cập nhật userScore mới thành công")
-                        }.onFailure { e ->
-                            Log.e("OnlineViewModel", "❌ Lỗi khi cập nhật Firestore: ${e.message}")
+            if (forceWin) {
+                _uiState.update { it.copy(resultState = ResultState.Win) }
+                val result = userScoreRepository.getUser(userId)
+                result.onSuccess { user ->
+                    val currentScore = user.score
+                    val updatedScore = currentScore + 1
+                    val updatedUser = user.copy(score = updatedScore)
+                    val updateResult = userScoreRepository.updateUser(userId, updatedUser)
+                    updateResult.onSuccess {
+                        Log.d("OnlineViewModel", "✅ Firestore đã cập nhật userScore mới thành công")
+                    }.onFailure { e ->
+                        Log.e("OnlineViewModel", "❌ Lỗi khi cập nhật Firestore: ${e.message}")
+                    }
+                }
+            } else {
+                if (_uiState.value.thisUserCurrentQuestion == 9
+                    && _uiState.value.opponentUserCurrentQuestion == 9) {
+                    if (_uiState.value.thisUserScore <= _uiState.value.opponentUserScore) {
+                        _uiState.update { it.copy(resultState = ResultState.Lose) }
+                    } else {
+                        _uiState.update { it.copy(resultState = ResultState.Win) }
+                        val result = userScoreRepository.getUser(userId)
+                        result.onSuccess { user ->
+                            val currentScore = user.score
+                            val updatedScore = currentScore + 1
+                            val updatedUser = user.copy(score = updatedScore)
+                            val updateResult = userScoreRepository.updateUser(userId, updatedUser)
+                            updateResult.onSuccess {
+                                Log.d("OnlineViewModel", "✅ Firestore đã cập nhật userScore mới thành công")
+                            }.onFailure { e ->
+                                Log.e("OnlineViewModel", "❌ Lỗi khi cập nhật Firestore: ${e.message}")
+                            }
                         }
                     }
                 }
@@ -159,6 +167,14 @@ class Challenge_OnlineViewModel: ViewModel() {
                 )
             }
             checkDone()
+        })
+
+        SocketManager.on("opponent_left", Emitter.Listener { args ->
+            val data = args[0] as JSONObject
+            val message = data.getString("message")
+
+            Log.d("Socket", "Đối thủ thoát: $message")
+            checkDone(forceWin = true)
         })
     }
 

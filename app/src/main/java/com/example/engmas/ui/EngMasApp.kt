@@ -60,6 +60,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.engmas.R
+import com.example.engmas.network.SocketManager
 import com.example.engmas.ui.navigation.EngMasNavHost
 import com.example.engmas.ui.navigation.NavigationDestination
 import com.example.engmas.ui.screens.account.AccountDestination
@@ -164,6 +165,7 @@ fun EngMasApp(
             navigateUp = {
                 if (isChallengeSubRoute) {
                     navController.navigate(ChallengeDestination.route)
+                    SocketManager.leave()
                 } else {
                     navController.navigateUp()
                 }

@@ -61,6 +61,7 @@ fun PracticeScreen(
     onFlashCardClicked: () -> Unit,
     onReviewClicked: () -> Unit,
     onCourseClicked: (Int) -> Unit,
+    onVoiceClicked: () -> Unit,
     viewModel: PracticeViewModel = viewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -95,7 +96,9 @@ fun PracticeScreen(
                 onFlashCardClicked = onFlashCardClicked,
                 onReviewClicked = onReviewClicked
             )
-            Pronunciation()
+            Pronunciation(
+                onClicked = onVoiceClicked
+            )
         }
     }
 }
@@ -272,6 +275,7 @@ private fun ItemCard(
 
 @Composable
 private fun Pronunciation(
+    onClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -286,7 +290,7 @@ private fun Pronunciation(
                 bottom = 16.dp,
                 start = 16.dp,
                 end = 16.dp
-            ),
+            ).clickable { onClicked() },
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -315,7 +319,7 @@ private fun Pronunciation(
                 )
                 Spacer(modifier = Modifier.padding(4.dp))
                 Button(
-                    onClick = {},
+                    onClick = onClicked,
                     colors = ButtonDefaults.buttonColors(Color(0xAB24D3E3)),
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.size(180.dp, 40.dp)
@@ -350,7 +354,8 @@ private fun PracticeScreenPreview() {
             onGrammarClicked = {},
             onFlashCardClicked = {},
             onReviewClicked = {},
-            onCourseClicked = {}
+            onCourseClicked = {},
+            onVoiceClicked = {}
         )
     }
 }

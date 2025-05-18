@@ -15,7 +15,9 @@ import com.example.engmas.ui.screens.practice.courses.data.QuestionInCourse
 import com.example.engmas.ui.screens.practice.courses.data.UpdateStatusRequest
 import com.example.engmas.ui.screens.practice.vocabulary.model.TopicProgress
 import com.example.engmas.ui.screens.practice.vocabulary.model.VocabsInTopic
+import com.example.engmas.ui.screens.practice.voices.data.VoiceAnalysisResponse
 import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -118,4 +120,14 @@ interface EngMasApiService {
     suspend fun updatesUserLearningStatus(@Body request: UpdateStatusRequest): Response<ResponseBody>
     @GET("courses/user_course/{user_id}")
     suspend fun getUserCourses(@Path("user_id") userId: String): Response<List<CourseLearning>>
+
+    @GET("voices/sentences")
+    suspend fun getSentences(): Response<List<String>>
+    @Multipart
+    @POST("voices/analyze")
+    suspend fun analyzeVoice(
+        @Part audio: MultipartBody.Part,
+        @Part("expected_text") expectedText: RequestBody,
+        @Part("accent") accent: RequestBody
+    ): Response<VoiceAnalysisResponse>
 }

@@ -44,6 +44,7 @@
     <string name="tab_vocabulary">Vocabulary Topic</string>
     <string name="tab_flashcard">Flashcard Topic</string>
     <string name="tab_review">Review Topic</string>
+    <string name="tab_voice">Practice Voice</string>
     <string name="tab_vocabulary_learning">Vocabulary Learning</string>
     <string name="tab_flashcard_learning">Flashcard Learning</string>
     <string name="course1">Course 1</string>
@@ -51,10 +52,12 @@
     <string name="flashcard">Flashcard</string>
     <string name="grammar">Grammar</string>
     <string name="review">Review</string>
+    <string name="voice">Pronunciation Practice</string>
     <string name="moreoptions">More Options</string>
     <string name="foodicon">Food Icon</string>
     <string name="item_icon">Items Icon</string>
     <string name="food">Food</string>
+    <string name="record">Record Button</string>
 
 <!--exam-->
     <string name="tab_exam_start">Exam Start</string>
