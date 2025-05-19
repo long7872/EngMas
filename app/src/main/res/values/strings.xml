@@ -14,6 +14,7 @@
     <string name="hide_icon">Hide</string>
 
 <!--nav-->
+    <string name="tab_chat">Chat</string>
     <string name="tab_home">Home</string>
     <string name="tab_practice">Practice</string>
     <string name="tab_exam">Exam</string>
@@ -125,5 +126,5 @@
 
 
 <!--API KEY-->
-    <string name="gemini_api_key">AIzaSyARZhj49ynYXFDRiChknpEzGXMWJSCubXs</string>
+    <string name="api_key">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</string>
 </resources>

@@ -38,6 +38,8 @@ import com.example.engmas.ui.screens.challenge.online.ChallengeOnlineDestination
 import com.example.engmas.ui.screens.challenge.online.Challenge_OnlineScreen
 import com.example.engmas.ui.screens.challenge.scoreboard.ChallengeScoreBoardDestination
 import com.example.engmas.ui.screens.challenge.scoreboard.Challenge_ScoreBoardScreen
+import com.example.engmas.ui.screens.chat.chatbot_gemini.ChatDestination
+import com.example.engmas.ui.screens.chat.chatbot_gemini.ChatPage
 import com.example.engmas.ui.screens.exam.ExamDestination
 import com.example.engmas.ui.screens.exam.ExamProcessing
 import com.example.engmas.ui.screens.exam.ExamScreen
@@ -98,6 +100,10 @@ fun EngMasNavHost(
                     navController.navigate("${HomeSearchDestination.route}/$it")
                 }
             )
+        }
+
+        composable(route = ChatDestination.route) {
+            ChatPage()
         }
 
         composable(

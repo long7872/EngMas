@@ -62,6 +62,7 @@ import com.example.engmas.data.model.Stats
 import com.example.engmas.data.model.Today
 import com.example.engmas.ui.GeneralViewModel
 import com.example.engmas.ui.navigation.NavigationDestination
+import com.example.engmas.ui.screens.chat.chatbot_gemini.ChatPage
 import com.example.engmas.ui.screens.home.data.CourseLearning
 import com.example.engmas.ui.theme.KufamFont
 import com.example.engmas.ui.utils.CustomSearchBar

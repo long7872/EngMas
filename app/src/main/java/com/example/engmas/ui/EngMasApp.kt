@@ -73,6 +73,7 @@ import com.example.engmas.ui.screens.challenge.online.Challenge_OnlineUiState
 import com.example.engmas.ui.screens.challenge.online.Challenge_PlayOnlineScreen
 import com.example.engmas.ui.screens.challenge.online.ResultState
 import com.example.engmas.ui.screens.challenge.scoreboard.ChallengeScoreBoardDestination
+import com.example.engmas.ui.screens.chat.chatbot_gemini.ChatDestination
 import com.example.engmas.ui.screens.exam.ExamDestination
 import com.example.engmas.ui.screens.exam.ExamStartDestination
 import com.example.engmas.ui.screens.home.HomeDestination
@@ -170,7 +171,7 @@ fun EngMasApp(
                     navController.navigateUp()
                 }
             },
-            onActionButtonClicked = {}
+            onActionButtonClicked = { navController.navigate(ChatDestination.route) }
         ) },
         bottomBar = { EngMasBottomNavigationBar(
             selectedIndex = selectedIndex,
